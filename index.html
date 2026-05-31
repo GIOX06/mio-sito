@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuratore Menu Medievale - Layout Bilanciato e Giustificato</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #5c1d1d;
+            --bg-panel: #fdfbf7;
+            --border-color: #d4a373;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: #ebdcb9;
+            padding: 20px;
+            display: flex;
+            gap: 20px;
+        }
+
+        /* PANNELLO DI CONTROLLO UTENTE */
+        #control-panel {
+            flex: 1;
+            background: var(--bg-panel);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            max-width: 450px;
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        h2 { color: var(--primary-color); margin-bottom: 15px; font-size: 1.3rem; border-bottom: 2px solid var(--border-color); padding-bottom: 5px;}
+
+        .file-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .file-box {
+            background: #fff;
+            border: 1px dashed var(--border-color);
+            padding: 8px;
+            text-align: center;
+            font-size: 12px;
+            cursor: pointer;
+            border-radius: 6px;
+            position: relative;
+        }
+
+        .file-box.has-image {
+            background: #e8f5e9;
+            border: 1px solid #27ae60;
+        }
+
+        .file-box input { display: none; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
+            background: white;
+            font-size: 12px;
+        }
+
+        th, td { padding: 8px; border: 1px solid #e0e0e0; text-align: left; }
+        th { background-color: var(--primary-color); color: white; text-transform: uppercase; font-size: 11px; }
+
+        input[type="text"], textarea {
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 4px;
+            font-family: inherit;
+        }
+        textarea { resize: vertical; height: 40px; font-size: 11px; }
+
+        .btn-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn-download {
+            background-color: #27ae60;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            width: 100%;
+            box-shadow: 0 4px 10px rgba(39,174,96,0.2);
+            transition: background 0.2s;
+        }
+        .btn-download:hover { background-color: #219653; }
+
+        .btn-reset {
+            background-color: #c0392b;
+            color: white;
+            padding: 6px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            margin-top: 10px;
+            width: 100%;
+            opacity: 0.8;
+        }
+        .btn-reset:hover { opacity: 1; }
+
+        /* AREA DI VISUALIZZAZIONE DELLE PAGINE */
+        #preview-workspace {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .menu-page-block {
+            width: 560px;
+            height: 685px;
+            position: relative;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-color: #fff;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            overflow: hidden;
+            
+            /* Ottimizzazione rendering immagine HD */
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            image-rendering: pixelated;
+        }
+
+        .placeholder-text {
+            position: absolute; top:50%; left:50%; transform:translate(-50%, -50%);
+            color: #aaa; font-style: italic; font-size: 14px; pointer-events: none;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        /* POSIZIONAMENTO TESTI CENTRATI - PAGINA 1 */
+        .menu-overlay {
+            position: absolute;
+            left: 23%;
+            width: 54%;
+            color: #1c0e00;
+            font-family: 'EB Garamond', 'Georgia', serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 1px;
+        }
+
+        #box-mastro-birraio     { top: 41.7%; }
+        #box-condottiero        { top: 54.7%; }
+        #box-viandante          { top: 65.3%; }
+        #box-castellano         { top: 75.4%; }
+        #box-piccolo-cavaliere  { top: 85.0%; }
+
+        .item-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .item-n { 
+            font-size: 12px; 
+            font-weight: 600; 
+            line-height: 1.1; 
+            letter-spacing: 0.3px;
+        }
+        
+        .item-p { 
+            font-size: 11px; 
+            font-weight: bold; 
+            color: #5c1d1d; 
+            margin-top: 1px;
+            line-height: 1.1;
+        }
+
+        /* STRUTTURA ADATTIVA OTTIMIZZATA - PAGINA 2 */
+        #legenda-content {
+            position: absolute;
+            top: 39.6%;
+            left: 24%;             /* Spostato verso il centro per non sovrapporsi agli elementi grafici di sinistra */
+            width: 52%;            /* Restretto il canale utile per blindare il testo all'interno dello spazio libero */
+            height: 53%;           /* Ampliata l'altezza totale per una distribuzione verticale più ariosa */
+            overflow: hidden;
+            font-family: 'EB Garamond', 'Georgia', serif;
+            color: #1c0e00;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .legenda-title {
+            text-align: center;
+            font-size: 26px;    
+            font-weight: bold;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(56, 29, 29, 0.25);
+            padding-bottom: 4px;
+            width: 100%;
+        }
+
+        #legenda-items-target {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around; /* Distribuzione spaziale omogenea e bilanciata */
+            height: 100%;
+            width: 100%;
+        }
+
+        .legenda-block { 
+            text-align: center;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            margin-bottom: 2px;
+        }
+
+        /* Margine per distanziare il primo elemento sotto la scritta "Elenco Menu" */
+        .first-item-offset {
+            margin-top: 12px; 
+        }
+
+        .legenda-head { 
+            font-weight: bold; 
+            font-size: 13.5px; 
+            color: #5c1d1d;
+            margin-bottom: 2px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .legenda-desc {
+            white-space: pre-line;
+            display: block;
+            width: 100%;
+            font-size: 11.5px; 
+            line-height: 1.25;  
+            font-style: italic;
+            text-align: justify;     /* Testo giustificato per la massima pulizia geometrica */
+            text-align-last: center; /* L'ultima riga rimane centrata per preservare l'estetica del menu */
+            padding: 0 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="control-panel">
+        <h2>Impostazioni Grafiche</h2>
+        <div class="file-inputs">
+            <div class="file-box" id="box-lbl-bg1">
+                <label for="bg1" id="lbl-bg1">🖼️ Carica Sfondo 1</label>
+                <input type="file" id="bg1" accept="image/*" onchange="processAndSaveBg(this, 'page-menu', 'db_bg_page1', 'box-lbl-bg1')">
+            </div>
+            <div class="file-box" id="box-lbl-bg2">
+                <label for="bg2" id="lbl-bg2">🖼️ Carica Sfondo 2</label>
+                <input type="file" id="bg2" accept="image/*" onchange="processAndSaveBg(this, 'page-legenda', 'db_bg_page2', 'box-lbl-bg2')">
+            </div>
+        </div>
+
+        <h2>Gestione Piatti e Prezzi</h2>
+        <table id="editor-table">
+            <thead>
+                <tr>
+                    <th style="width: 30px;">Usa</th>
+                    <th>Categoria / Piatto</th>
+                    <th style="width: 75px;">Prezzo</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <div class="btn-container">
+            <button class="btn-download" onclick="downloadPageAsPNG('page-menu', 'Menu_Pagina_1.png')">📸 Scarica Pagina 1 (PNG)</button>
+            <button class="btn-download" onclick="downloadPageAsPNG('page-legenda', 'Menu_Pagina_2.png')">📸 Scarica Pagina 2 (PNG)</button>
+        </div>
+        
+        <button class="btn-reset" onclick="resetToDefault()">🔄 Inizializza Menu Predefinito</button>
+    </div>
+
+    <div id="preview-workspace">
+        
+        <div id="page-menu" class="menu-page-block">
+            <div id="p1-placeholder" class="placeholder-text">Nessuno Sfondo caricato per Pagina 1</div>
+            <div id="box-mastro-birraio" class="menu-overlay"></div>
+            <div id="box-condottiero" class="menu-overlay"></div>
+            <div id="box-viandante" class="menu-overlay"></div>
+            <div id="box-castellano" class="menu-overlay"></div>
+            <div id="box-piccolo-cavaliere" class="menu-overlay"></div>
+        </div>
+
+        <div id="page-legenda" class="menu-page-block">
+            <div id="p2-placeholder" class="placeholder-text">Nessuno Sfondo caricato per Pagina 2</div>
+            <div id="legenda-content">
+                <div class="legenda-title">Elenco Menu</div>
+                <div id="legenda-items-target"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const defaultDataset = [
+            { id: 1, active: true, cat: "mastro-birraio", catName: "Mastro Birraio", name: "Birra del Borgo", price: "6.00", desc: "Artigianale rossa prodotta con grani locali e luppoli selvatici a km 0." },
+            { id: 2, active: true, cat: "condottiero", catName: "Condottiero", name: "Pappardelle al Cinghiale", price: "14.00", desc: "Pasta fresca all'uovo trafilata al bronzo con ragù bianco di cinghiale locale." },
+            { id: 3, active: true, cat: "viandante", catName: "Viandante", name: "Zuppa di Farro e Castagne", price: "9.00", desc: "Antica ricetta medievale con legumi, farro spezzato, castagne e olio d'oliva a crudo." },
+            { id: 4, active: true, cat: "castellano", catName: "Castellano", name: "Ravioli ai Funghi Porcini", price: "16.00", desc: "Pasta ripiena di ricotta ed erbe fini, saltata con funghi porcini e scaglie di pecorino." },
+            { id: 5, active: true, cat: "piccolo-cavaliere", catName: "Piccolo Cavaliere", name: "Gnocchetti al Pomodoro", price: "7.00", desc: "Porzione ridotta di gnocchi fatti in casa con passata di pomodoro dolce e parmigiano." }
+        ];
+
+        let menuDataset = [];
+
+        function initDatabase() {
+            const savedData = localStorage.getItem('db_menu_medievale');
+            if (savedData) {
+                menuDataset = JSON.parse(savedData);
+            } else {
+                menuDataset = JSON.parse(JSON.stringify(defaultDataset));
+                localStorage.setItem('db_menu_medievale', JSON.stringify(menuDataset));
+            }
+        }
+
+        function loadSavedBackgrounds() {
+            const bg1 = localStorage.getItem('db_bg_page1');
+            const bg2 = localStorage.getItem('db_bg_page2');
+
+            if (bg1) applyBgToElement('page-menu', bg1, 'p1-placeholder', 'box-lbl-bg1');
+            if (bg2) applyBgToElement('page-legenda', bg2, 'p2-placeholder', 'box-lbl-bg2');
+        }
+
+        function applyBgToElement(elementId, base64Data, placeholderId, labelBoxId) {
+            document.getElementById(elementId).style.backgroundImage = `url('${base64Data}')`;
+            const ph = document.getElementById(placeholderId);
+            if (ph) ph.style.display = 'none';
+            
+            const box = document.getElementById(labelBoxId);
+            if (box) {
+                box.classList.add('has-image');
+                box.querySelector('label').innerText = "✅ Sfondo Memorizzato";
+            }
+        }
+
+        function processAndSaveBg(input, targetId, storageKey, labelBoxId) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const base64Data = e.target.result;
+                    try {
+                        localStorage.setItem(storageKey, base64Data);
+                        applyBgToElement(targetId, base64Data, targetId === 'page-menu' ? 'p1-placeholder' : 'p2-placeholder', labelBoxId);
+                    } catch (error) {
+                        alert("Spazio di archiviazione insufficiente! L'immagine è troppo pesante per essere salvata automaticamente in memoria. Verrà mostrata a schermo ma dovrai caricarla nuovamente alla prossima riapertura.");
+                        document.getElementById(targetId).style.backgroundImage = `url('${base64Data}')`;
+                        const ph = document.getElementById(targetId === 'page-menu' ? 'p1-placeholder' : 'p2-placeholder');
+                        if (ph) ph.style.display = 'none';
+                    }
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function formatDescription(text, maxChars = 42) {
+            if (!text) return "";
+            let words = text.split(" ");
+            let lines = [];
+            let currentLine = "";
+
+            words.forEach(word => {
+                if ((currentLine + word).length > maxChars) {
+                    lines.push(currentLine.trim());
+                    currentLine = word + " ";
+                } else {
+                    currentLine += word + " ";
+                }
+            });
+            if (currentLine.trim()) lines.push(currentLine.trim());
+            
+            return lines.join("\n");
+        }
+
+        function buildEditorTable() {
+            const tbody = document.querySelector("#editor-table tbody");
+            tbody.innerHTML = menuDataset.map(item => `
+                <tr>
+                    <td style="text-align:center;">
+                        <input type="checkbox" ${item.active ? 'checked' : ''} id="active-${item.id}" onchange="syncDataAndRender()">
+                    </td>
+                    <td>
+                        <b style="color:var(--primary-color); font-size:10px; display:block;">MENU DEL ${item.catName.toUpperCase()}</b>
+                        <input type="text" value="${item.name}" id="name-${item.id}" oninput="syncDataAndRender()" style="margin-bottom:4px;">
+                        <textarea id="desc-${item.id}" oninput="syncDataAndRender()">${item.desc}</textarea>
+                    </td>
+                    <td><input type="text" value="${item.price}" id="price-${item.id}" oninput="syncDataAndRender()" style="text-align:right;"></td>
+                </tr>
+            `).join('');
+        }
+
+        function syncDataAndRender() {
+            menuDataset.forEach(item => {
+                item.name = document.getElementById(`name-${item.id}`).value;
+                item.price = document.getElementById(`price-${item.id}`).value;
+                item.desc = document.getElementById(`desc-${item.id}`).value;
+                item.active = document.getElementById(`active-${item.id}`).checked;
+            });
+            
+            localStorage.setItem('db_menu_medievale', JSON.stringify(menuDataset));
+            renderGraphics();
+        }
+
+        function renderGraphics() {
+            const categories = ['mastro-birraio', 'condottiero', 'viandante', 'castellano', 'piccolo-cavaliere'];
+            categories.forEach(c => document.getElementById(`box-${c}`).innerHTML = '');
+            
+            const targetContainer = document.getElementById('legenda-items-target');
+            targetContainer.innerHTML = '';
+
+            let totalDescLength = 0;
+            let isFirstRendered = true;
+
+            menuDataset.forEach(item => {
+                if (item.active) {
+                    totalDescLength += item.desc.trim().length;
+
+                    // Render Pagina 1
+                    const box = document.getElementById(`box-${item.cat}`);
+                    if (box) {
+                        const wrapper = document.createElement('div');
+                        wrapper.className = 'item-wrapper';
+                        wrapper.innerHTML = `
+                            <span class="item-n">${item.name}</span>
+                            <span class="item-p">€ ${item.price}</span>
+                        `;
+                        box.appendChild(wrapper);
+                    }
+
+                    // Render Pagina 2
+                    if(item.desc.trim() !== "") {
+                        const block = document.createElement('div');
+                        block.className = 'legenda-block';
+                        
+                        if (isFirstRendered) {
+                            block.classList.add('first-item-offset');
+                            isFirstRendered = false;
+                        }
+
+                        // Ridotto maxChars a 42 per adattarsi perfettamente alla colonna più stretta
+                        const formattedDesc = formatDescription(item.desc, 42);
+
+                        block.innerHTML = `
+                            <div class="legenda-head">${item.name}</div>
+                            <div class="legenda-desc" id="desc-text-${item.id}">${formattedDesc}</div>
+                        `;
+                        targetContainer.appendChild(block);
+                    }
+                }
+            });
+
+            // Calcolo e scalabilità dinamica ottimizzata con limiti di leggibilità minimi elevati
+            let baseFontSize = 12.5; 
+            let headFontSize = 14.5;
+            if (totalDescLength > 350) { baseFontSize = 12.0; headFontSize = 14.0; }
+            if (totalDescLength > 430) { baseFontSize = 11.5; headFontSize = 13.0; }
+            if (totalDescLength > 500) { baseFontSize = 11.0; headFontSize = 12.0; } // Limite per preservare la visibilità in stampa
+
+            menuDataset.forEach(item => {
+                const textElem = document.getElementById(`desc-text-${item.id}`);
+                const blockElem = textElem ? textElem.previousElementSibling : null;
+                if (textElem) textElem.style.fontSize = `${baseFontSize}px`;
+                if (blockElem) blockElem.style.fontSize = `${headFontSize}px`;
+            });
+        }
+
+        function downloadPageAsPNG(elementId, filename) {
+            const element = document.getElementById(elementId);
+            
+            html2canvas(element, {
+                scale: 3, 
+                useCORS: true,
+                allowTaint: true,
+                logging: false,
+                imageTimeout: 0
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }).catch(err => {
+                alert("Errore durante la generazione dell'immagine: " + err);
+            });
+        }
+
+        function resetToDefault() {
+            if (confirm("Sei sicuro di voler resettare il menu? Tutti i dati inseriti e le immagini salvate verranno cancellati.")) {
+                localStorage.clear();
+                window.location.reload();
+            }
+        }
+
+        // Avvio Applicazione
+        initDatabase();
+        buildEditorTable();
+        loadSavedBackgrounds();
+        renderGraphics();
+    </script>
+</body>
+</html>
