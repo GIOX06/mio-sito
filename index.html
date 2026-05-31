@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configuratore Menu Medievale - Salvataggio Persistente</title>
+    <title>Configuratore Menu Medievale - Controllo Spaziale 2D Totale</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -57,16 +57,16 @@
         #main-container {
             display: flex;
             flex-direction: row; 
-            gap: 40px;
+            gap: 35px;
             width: 100%;
-            max-width: 1250px;
+            max-width: 1350px;
             align-items: flex-start;
             justify-content: center;
         }
 
         #control-panel {
             flex: 1;
-            max-width: 650px;
+            max-width: 720px;
             background: var(--bg-panel);
             padding: 25px;
             border-radius: 12px;
@@ -124,8 +124,8 @@
 
         .menu-overlay-container {
             position: absolute;
-            left: 20%;
-            width: 60%;
+            left: 15%;
+            width: 70%;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -138,6 +138,7 @@
         #anchor-castellano         { top: 75.4%; }
         #anchor-piccolo-cavaliere  { top: 85.0%; }
 
+        /* BOX ATOMICI INDIPENDENTI */
         .inspectable-box {
             width: 100%;
             color: #1c0e00;
@@ -161,9 +162,12 @@
             margin-top: 2px;
         }
 
-        .item-price-span {
+        .item-price-box {
+            font-family: 'EB Garamond', serif;
             color: var(--primary-color);
-            margin-left: 5px;
+            font-weight: bold;
+            line-height: 1.1em;
+            margin-top: 1px;
         }
 
         #debug-tooltip {
@@ -204,16 +208,16 @@
         th { background-color: var(--primary-color); color: white; text-transform: uppercase; font-size: 11px; }
         
         input[type="text"], textarea { width: 100%; border: 1px solid #ccc; border-radius: 4px; padding: 6px; font-family: inherit; }
-        textarea { resize: vertical; height: 54px; font-size: 12px; }
+        textarea { resize: vertical; height: 48px; font-size: 12px; }
         
         .typo-controls-block {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 5px;
             margin-top: 8px;
             background: #f7f2e8;
-            padding: 6px;
-            border-radius: 4px;
+            padding: 8px;
+            border-radius: 6px;
             border: 1px solid #eadecc;
         }
 
@@ -221,19 +225,22 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 10px;
+            gap: 8px;
+            border-bottom: 1px dashed rgba(212, 163, 115, 0.4);
+            padding-bottom: 4px;
         }
+        .control-row-item:last-child { border-bottom: none; padding-bottom: 0; }
 
         .control-row-item span.label-target {
             font-size: 11px;
             font-weight: bold;
-            color: #555;
-            min-width: 65px;
+            color: #444;
+            min-width: 60px;
         }
 
         .micro-controls {
             display: flex;
-            gap: 3px;
+            gap: 2px;
             align-items: center;
         }
 
@@ -241,7 +248,7 @@
             background: #f0e6d2;
             border: 1px solid var(--border-color);
             color: #5c1d1d;
-            padding: 2px 6px;
+            padding: 2px 5px;
             font-size: 11px;
             font-weight: bold;
             border-radius: 3px;
@@ -249,15 +256,15 @@
             user-select: none;
         }
         .btn-micro:hover { background: #e4d5b7; }
-        .lbl-micro-status { font-size: 10px; color: #666; font-family: monospace; min-width: 80px; text-align: right; }
+        .lbl-micro-status { font-size: 10px; color: #666; font-family: monospace; min-width: 105px; text-align: right; }
 
         .btn-container { display: flex; flex-direction: column; gap: 10px; }
         .btn-download { background-color: #27ae60; color: white; padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; width: 100%; box-shadow: 0 4px 10px rgba(39,174,96,0.2); }
         .btn-reset { background-color: #c0392b; color: white; padding: 6px; border: none; border-radius: 4px; cursor: pointer; font-size: 11px; margin-top: 15px; width: 100%; opacity: 0.8; }
 
         @media (min-width: 769px) and (max-width: 1180px) {
-            #main-container { gap: 20px; }
-            #preview-workspace { --pc-scale: calc((100vw - 690px) / 560); }
+            #main-container { gap: 15px; }
+            #preview-workspace { --pc-scale: calc((100vw - 760px) / 560); }
             .page-scale-wrapper { width: calc(560px * var(--pc-scale)); height: calc(685px * var(--pc-scale)); }
             .menu-page-block { transform: scale(var(--pc-scale)); }
         }
@@ -306,13 +313,12 @@
                 </div>
             </div>
 
-            <h2>Gestione Piatti (Salvataggio Persistente)</h2>
+            <h2>Gestione Piatti (Controllo Spaziale 2D Totale)</h2>
             <table id="editor-table">
                 <thead>
                     <tr>
                         <th style="width: 30px;">Usa</th>
-                        <th>Dati Piatto & Regolazioni Disaccoppiate</th>
-                        <th style="width: 70px;">Prezzo</th>
+                        <th>Dati Piatto & Regolazioni Spaziali</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -346,14 +352,14 @@
 
     <script>
         const DEFAULT_BG_PATH = "menu_bg.png"; 
-        const DB_KEY = "db_menu_medievale_v3_stable"; // Nuova chiave sicura e isolata
+        const DB_KEY = "db_menu_medievale_v4_2d"; // Database evoluto con supporto vettoriale 2D e controllo prezzo
 
         const defaultDataset = [
-            { id: 1, active: true, cat: "mastro-birraio", catName: "Mastro Birraio", name: "Birra del Borgo", price: "6.00", desc: "Artigianale rossa prodotta con\ngrani locali e luppoli selvatici.", nameFontDelta: 0, nameOffsetTop: 0, descFontDelta: 0, descOffsetTop: 0 },
-            { id: 2, active: true, cat: "condottiero", catName: "Condottiero", name: "Pappardelle al Cinghiale", price: "14.00", desc: "Pasta fresca all'uovo con\nragù bianco di cinghiale locale.", nameFontDelta: 0, nameOffsetTop: 0, descFontDelta: 0, descOffsetTop: 0 },
-            { id: 3, active: true, cat: "viandante", catName: "Viandante", name: "Zuppa di Farro e Castagne", price: "9.00", desc: "Antica ricetta medievale con\nlegumi, farro e castagne.", nameFontDelta: 0, nameOffsetTop: 0, descFontDelta: 0, descOffsetTop: 0 },
-            { id: 4, active: true, cat: "castellano", catName: "Castellano", name: "Ravioli ai Funghi Porcini", price: "16.00", desc: "Pasta ripiena saltata con porcini\ne scaglie di pecorino.", nameFontDelta: 0, nameOffsetTop: 0, descFontDelta: 0, descOffsetTop: 0 },
-            { id: 5, active: true, cat: "piccolo-cavaliere", catName: "Piccolo Cavaliere", name: "Gnocchetti al Pomodoro", price: "7.00", desc: "Porzione ridotta con passata\ndi pomodoro dolce e parmigiano.", nameFontDelta: 0, nameOffsetTop: 0, descFontDelta: 0, descOffsetTop: 0 }
+            { id: 1, active: true, cat: "mastro-birraio", catName: "Mastro Birraio", name: "Birra del Borgo", price: "6.00", desc: "Artigianale rossa prodotta con\ngrani locali e luppoli selvatici.", nameFontDelta: 0, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 0, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 0, priceOffsetTop: 0, priceOffsetLeft: 0 },
+            { id: 2, active: true, cat: "condottiero", catName: "Condottiero", name: "Pappardelle al Cinghiale", price: "14.00", desc: "Pasta fresca all'uovo con\nragù bianco di cinghiale locale.", nameFontDelta: 0, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 0, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 0, priceOffsetTop: 0, priceOffsetLeft: 0 },
+            { id: 3, active: true, cat: "viandante", catName: "Viandante", name: "Zuppa di Farro e Castagne", price: "9.00", desc: "Antica ricetta medievale con\nlegumi, farro e castagne.", nameFontDelta: 0, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 0, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 0, priceOffsetTop: 0, priceOffsetLeft: 0 },
+            { id: 4, active: true, cat: "castellano", catName: "Castellano", name: "Ravioli ai Funghi Porcini", price: "16.00", desc: "Pasta ripiena saltata con porcini\ne scaglie di pecorino.", nameFontDelta: 0, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 0, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 0, priceOffsetTop: 0, priceOffsetLeft: 0 },
+            { id: 5, active: true, cat: "piccolo-cavaliere", catName: "Piccolo Cavaliere", name: "Gnocchetti al Pomodoro", price: "7.00", desc: "Porzione ridotta con passata\ndi pomodoro dolce e parmigiano.", nameFontDelta: 0, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 0, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 0, priceOffsetTop: 0, priceOffsetLeft: 0 }
         ];
 
         let menuDataset = [];
@@ -377,30 +383,33 @@
             }
         }
 
-        // FUNZIONE DI INIZIALIZZAZIONE ADATTIVA: Unisce i dati esistenti salvati con la nuova struttura
         function initDatabase() {
             const savedData = localStorage.getItem(DB_KEY);
             if (savedData) {
                 try {
                     menuDataset = JSON.parse(savedData);
-                    // Controllo di sicurezza: se mancano parametri tipografici li aggiunge dinamicamente senza resettare i testi
                     menuDataset.forEach(item => {
                         if (item.nameFontDelta === undefined) item.nameFontDelta = 0;
                         if (item.nameOffsetTop === undefined) item.nameOffsetTop = 0;
+                        if (item.nameOffsetLeft === undefined) item.nameOffsetLeft = 0;
+                        
                         if (item.descFontDelta === undefined) item.descFontDelta = 0;
                         if (item.descOffsetTop === undefined) item.descOffsetTop = 0;
+                        if (item.descOffsetLeft === undefined) item.descOffsetLeft = 0;
+
+                        if (item.priceFontDelta === undefined) item.priceFontDelta = 0;
+                        if (item.priceOffsetTop === undefined) item.priceOffsetTop = 0;
+                        if (item.priceOffsetLeft === undefined) item.priceOffsetLeft = 0;
                     });
                 } catch(e) {
-                    // In caso di errore irreversibile nel JSON, carica i predefiniti
                     menuDataset = JSON.parse(JSON.stringify(defaultDataset));
                 }
             } else {
-                // Primo avvio assoluto
                 menuDataset = JSON.parse(JSON.stringify(defaultDataset));
                 localStorage.setItem(DB_KEY, JSON.stringify(menuDataset));
             }
 
-            const savedTitle = localStorage.getItem('db_menu_main_title_v3');
+            const savedTitle = localStorage.getItem('db_menu_main_title_v4');
             if(savedTitle) {
                 document.getElementById('input-main-title').value = savedTitle;
             }
@@ -435,7 +444,7 @@
                         document.getElementById(targetId).style.backgroundImage = `url('${base64Data}')`;
                         setLabelUploaded();
                     } catch (error) {
-                        alert("Spazio memoria locale pieno. L'immagine verrà mostrata solo temporaneamente.");
+                        alert("LocalStorage pieno, rendering temporaneo applicato.");
                         document.getElementById(targetId).style.backgroundImage = `url('${base64Data}')`;
                     }
                 }
@@ -447,69 +456,96 @@
             const tbody = document.querySelector("#editor-table tbody");
             tbody.innerHTML = menuDataset.map(item => `
                 <tr id="editor-row-${item.id}" data-target-group="anchor-${item.cat}">
-                    <td style="text-align:center;">
+                    <td style="text-align:center; vertical-align: middle;">
                         <input type="checkbox" ${item.active ? 'checked' : ''} id="active-${item.id}" onchange="syncDataAndRender()">
                     </td>
                     <td>
-                        <b style="color:var(--primary-color); font-size:10px; display:block;">MENU DEL ${item.catName.toUpperCase()}</b>
-                        <textarea id="name-${item.id}" oninput="syncDataAndRender()" style="margin-bottom:4px; font-weight:bold; height:36px;" placeholder="Nome piatto...">${item.name}</textarea>
+                        <b style="color:var(--primary-color); font-size:10px; display:block; margin-bottom: 2px;">MENU DEL ${item.catName.toUpperCase()}</b>
+                        
+                        <div style="display: flex; gap: 8px; margin-bottom: 4px;">
+                            <textarea id="name-${item.id}" oninput="syncDataAndRender()" style="flex: 2; font-weight:bold; height:36px;" placeholder="Nome piatto...">${item.name}</textarea>
+                            <input type="text" id="price-${item.id}" value="${item.price}" oninput="syncDataAndRender()" style="flex: 0 0 75px; text-align:right; font-weight:bold; height:36px;" placeholder="Prezzo...">
+                        </div>
+                        
                         <textarea id="desc-${item.id}" oninput="syncDataAndRender()" placeholder="Descrizione piatto...">${item.desc}</textarea>
                         
                         <div class="typo-controls-block">
                             <div class="control-row-item" data-subbox-target="box-${item.cat}-name">
                                 <span class="label-target">Box Nome:</span>
                                 <div class="micro-controls">
-                                    <button class="btn-micro" onclick="adjustAtomicTypography(${item.id}, 'name', 'font', -0.5)">A-</button>
-                                    <button class="btn-micro" onclick="adjustAtomicTypography(${item.id}, 'name', 'font', 0.5)">A+</button>
-                                    <button class="btn-micro" onclick="adjustAtomicTypography(${item.id}, 'name', 'position', -1)">↑</button>
-                                    <button class="btn-micro" onclick="adjustAtomicTypography(${item.id}, 'name', 'position', 1)">↓</button>
+                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'name', 'font', -0.5)">A-</button>
+                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'name', 'font', 0.5)">A+</button>
+                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'name', 'X', -2)">←</button>
+                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'name', 'X', 2)">→</button>
+                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'name', 'Y', -1)">↑</button>
+                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'name', 'Y', 1)">↓</button>
                                 </div>
-                                <span id="status-name-${item.id}" class="lbl-micro-status">${item.nameFontDelta >= 0 ? '+' : ''}${item.nameFontDelta}pt / ${item.nameOffsetTop >= 0 ? '+' : ''}${item.nameOffsetTop}px</span>
+                                <span id="status-name-${item.id}" class="lbl-micro-status">${item.nameFontDelta >= 0 ? '+' : ''}${item.nameFontDelta}pt | X:${item.nameOffsetLeft}px Y:${item.nameOffsetTop}px</span>
                             </div>
                             
+                            <div class="control-row-item" data-subbox-target="box-${item.cat}-price">
+                                <span class="label-target">Box Prezzo:</span>
+                                <div class="micro-controls">
+                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'price', 'font', -0.5)">A-</button>
+                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'price', 'font', 0.5)">A+</button>
+                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'price', 'X', -2)">←</button>
+                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'price', 'X', 2)">→</button>
+                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'price', 'Y', -1)">↑</button>
+                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'price', 'Y', 1)">↓</button>
+                                </div>
+                                <span id="status-price-${item.id}" class="lbl-micro-status">${item.priceFontDelta >= 0 ? '+' : ''}${item.priceFontDelta}pt | X:${item.priceOffsetLeft}px Y:${item.priceOffsetTop}px</span>
+                            </div>
+
                             <div class="control-row-item" data-subbox-target="box-${item.cat}-desc">
                                 <span class="label-target">Box Desc:</span>
                                 <div class="micro-controls">
-                                    <button class="btn-micro" onclick="adjustAtomicTypography(${item.id}, 'desc', 'font', -0.5)">A-</button>
-                                    <button class="btn-micro" onclick="adjustAtomicTypography(${item.id}, 'desc', 'font', 0.5)">A+</button>
-                                    <button class="btn-micro" onclick="adjustAtomicTypography(${item.id}, 'desc', 'position', -1)">↑</button>
-                                    <button class="btn-micro" onclick="adjustAtomicTypography(${item.id}, 'desc', 'position', 1)">↓</button>
+                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'desc', 'font', -0.5)">A-</button>
+                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'desc', 'font', 0.5)">A+</button>
+                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'desc', 'X', -2)">←</button>
+                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'desc', 'X', 2)">→</button>
+                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'desc', 'Y', -1)">↑</button>
+                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'desc', 'Y', 1)">↓</button>
                                 </div>
-                                <span id="status-desc-${item.id}" class="lbl-micro-status">${item.descFontDelta >= 0 ? '+' : ''}${item.descFontDelta}pt / ${item.descOffsetTop >= 0 ? '+' : ''}${item.descOffsetTop}px</span>
+                                <span id="status-desc-${item.id}" class="lbl-micro-status">${item.descFontDelta >= 0 ? '+' : ''}${item.descFontDelta}pt | X:${item.descOffsetLeft}px Y:${item.descOffsetTop}px</span>
                             </div>
                         </div>
                     </td>
-                    <td><input type="text" value="${item.price}" id="price-${item.id}" oninput="syncDataAndRender()" style="text-align:right; font-weight:bold;"></td>
                 </tr>
             `).join('');
         }
 
-        function adjustAtomicTypography(id, targetBox, type, amount) {
+        // MOTORE DI TRASLAZIONE VETTORIALE 2D BILANCIATO
+        function adjustVectorTypography(id, targetBox, axis, amount) {
             const item = menuDataset.find(x => x.id === id);
             if (!item) return;
 
             if (targetBox === 'name') {
-                if (type === 'font') item.nameFontDelta = parseFloat((item.nameFontDelta + amount).toFixed(1));
-                else if (type === 'position') item.nameOffsetTop = parseInt(item.nameOffsetTop + amount);
-                document.getElementById(`status-name-${id}`).innerText = `${item.nameFontDelta >= 0 ? '+' : ''}${item.nameFontDelta}pt / ${item.nameOffsetTop >= 0 ? '+' : ''}${item.nameOffsetTop}px`;
+                if (axis === 'font') item.nameFontDelta = parseFloat((item.nameFontDelta + amount).toFixed(1));
+                else if (axis === 'X') item.nameOffsetLeft = parseInt(item.nameOffsetLeft + amount);
+                else if (axis === 'Y') item.nameOffsetTop = parseInt(item.nameOffsetTop + amount);
+                document.getElementById(`status-name-${id}`).innerText = `${item.nameFontDelta >= 0 ? '+' : ''}${item.nameFontDelta}pt | X:${item.nameOffsetLeft}px Y:${item.nameOffsetTop}px`;
             } else if (targetBox === 'desc') {
-                if (type === 'font') item.descFontDelta = parseFloat((item.descFontDelta + amount).toFixed(1));
-                else if (type === 'position') item.descOffsetTop = parseInt(item.descOffsetTop + amount);
-                document.getElementById(`status-desc-${id}`).innerText = `${item.descFontDelta >= 0 ? '+' : ''}${item.descFontDelta}pt / ${item.descOffsetTop >= 0 ? '+' : ''}${item.descOffsetTop}px`;
+                if (axis === 'font') item.descFontDelta = parseFloat((item.descFontDelta + amount).toFixed(1));
+                else if (axis === 'X') item.descOffsetLeft = parseInt(item.descOffsetLeft + amount);
+                else if (axis === 'Y') item.descOffsetTop = parseInt(item.descOffsetTop + amount);
+                document.getElementById(`status-desc-${id}`).innerText = `${item.descFontDelta >= 0 ? '+' : ''}${item.descFontDelta}pt | X:${item.descOffsetLeft}px Y:${item.descOffsetTop}px`;
+            } else if (targetBox === 'price') {
+                if (axis === 'font') item.priceFontDelta = parseFloat((item.priceFontDelta + amount).toFixed(1));
+                else if (axis === 'X') item.priceOffsetLeft = parseInt(item.priceOffsetLeft + amount);
+                else if (axis === 'Y') item.priceOffsetTop = parseInt(item.priceOffsetTop + amount);
+                document.getElementById(`status-price-${id}`).innerText = `${item.priceFontDelta >= 0 ? '+' : ''}${item.priceFontDelta}pt | X:${item.priceOffsetLeft}px Y:${item.priceOffsetTop}px`;
             }
 
-            // Salvataggio immediato al click dei pulsanti
             localStorage.setItem(DB_KEY, JSON.stringify(menuDataset));
             renderGraphics();
         }
 
         function updateTitleAndRender() {
             const titleVal = document.getElementById('input-main-title').value;
-            localStorage.setItem('db_menu_main_title_v3', titleVal);
+            localStorage.setItem('db_menu_main_title_v4', titleVal);
             renderGraphics();
         }
 
-        // SALVATAGGIO IN TEMPO REALE AD OGNI LETTERA DIGITATA (AUTO-IMPLEMENTAZIONE)
         function syncDataAndRender() {
             menuDataset.forEach(item => {
                 item.name = document.getElementById(`name-${item.id}`).value;
@@ -529,6 +565,7 @@
             return Math.max(8.0, baseFont * scaleFactor);
         }
 
+        // GENERATORE DEI 3 TRAGUARDI INIETTATI SULLA PERGAMENA
         function renderGraphics() {
             const currentTitle = document.getElementById('input-main-title').value;
             document.getElementById('menu-title-target').innerText = currentTitle;
@@ -543,26 +580,34 @@
                 if (item.active) {
                     const anchor = document.getElementById(`anchor-${item.cat}`);
                     if (anchor) {
+                        // 1. Box Nome Separato
                         const nameBox = document.createElement('div');
                         nameBox.id = `box-${item.cat}-name`;
                         nameBox.className = 'inspectable-box item-name-box';
+                        nameBox.style.fontSize = `${13.5 + item.nameFontDelta}px`;
+                        nameBox.style.transform = `translate(${item.nameOffsetLeft}px, ${item.nameOffsetTop}px)`;
+                        nameBox.textContent = item.name;
                         
-                        const baseNameSize = 13.5 + item.nameFontDelta;
-                        nameBox.style.fontSize = `${baseNameSize}px`;
-                        nameBox.style.transform = `translateY(${item.nameOffsetTop}px)`;
-                        nameBox.innerHTML = `${item.name} <span class="item-price-span">- € ${item.price}</span>`;
-                        
+                        // 2. Box Prezzo Separato
+                        const priceBox = document.createElement('div');
+                        priceBox.id = `box-${item.cat}-price`;
+                        priceBox.className = 'inspectable-box item-price-box';
+                        priceBox.style.fontSize = `${12.5 + item.priceFontDelta}px`;
+                        priceBox.style.transform = `translate(${item.priceOffsetLeft}px, ${item.priceOffsetTop}px)`;
+                        priceBox.textContent = item.price ? `€ ${item.price}` : '';
+
+                        // 3. Box Descrizione Separata
                         const descBox = document.createElement('div');
                         descBox.id = `box-${item.cat}-desc`;
                         descBox.className = 'inspectable-box item-desc-box';
-                        
-                        const calculatedDescBase = calculateAutoscalingFont(item.desc, 70, 11.5);
-                        const finalDescSize = calculatedDescBase + item.descFontDelta;
+                        const finalDescSize = calculateAutoscalingFont(item.desc, 70, 11.5) + item.descFontDelta;
                         descBox.style.fontSize = `${finalDescSize}px`;
-                        descBox.style.transform = `translateY(${item.descOffsetTop}px)`;
+                        descBox.style.transform = `translate(${item.descOffsetLeft}px, ${item.descOffsetTop}px)`;
                         descBox.textContent = item.desc; 
 
+                        // Iniezione ordinata dei tre box atomici
                         anchor.appendChild(nameBox);
+                        anchor.appendChild(priceBox);
                         anchor.appendChild(descBox);
                     }
                 }
@@ -597,14 +642,14 @@
         }
 
         function resetToDefault() {
-            if (confirm("Attenzione! Questo cancellerà definitivamente tutti i tuoi testi salvati e le modifiche grafiche. Vuoi procedere?")) {
+            if (confirm("Attenzione! Questo cancellerà tutti i testi inseriti e le posizioni 2D dei tre Box. Vuoi procedere?")) {
                 localStorage.clear();
                 window.location.reload();
             }
         }
 
         // ==========================================================================
-        // ISPEZIONE COORDINATA BI-DIREZIONALE
+        // ISPEZIONE COORDINATA BI-DIREZIONALE COMPLETA (3 LIVELLI ATOMICI)
         // ==========================================================================
         const workspace = document.getElementById('preview-workspace');
         const controlPanel = document.getElementById('control-panel');
@@ -628,7 +673,7 @@
         workspace.addEventListener('mousemove', (e) => {
             clearAllHighlights();
             const hitElement = e.target;
-            const targetNode = hitElement.closest('.item-name-box, .item-desc-box, #menu-title-container, .menu-page-block');
+            const targetNode = hitElement.closest('.item-name-box, .item-desc-box, .item-price-box, #menu-title-container, .menu-page-block');
             
             if (targetNode) {
                 targetNode.classList.add('inspect-highlight');
@@ -638,7 +683,7 @@
                     const idString = targetNode.id;
                     moveAndShowTooltip(e, `Anteprima -> #${idString}`);
                     
-                    const match = idString.match(/box-(.+)-(name|desc)/);
+                    const match = idString.match(/box-(.+)-(name|desc|price)/);
                     if (match) {
                         const cat = match[1];
                         const row = controlPanel.querySelector(`tr[data-target-group="anchor-${cat}"]`);
@@ -717,7 +762,7 @@
 
         controlPanel.addEventListener('mouseleave', clearAllHighlights);
 
-        // Core Boot
+        // Bootstrap App
         initDatabase();
         buildEditorTable();
         loadBackground();
