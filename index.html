@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configuratore Menu Medievale - Ispezione Strutturale</title>
+    <title>Configuratore Menu Medievale - Advanced Typography Control</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -59,14 +59,14 @@
             flex-direction: row; 
             gap: 40px;
             width: 100%;
-            max-width: 1200px;
+            max-width: 1250px;
             align-items: flex-start;
             justify-content: center;
         }
 
         #control-panel {
             flex: 1;
-            max-width: 580px;
+            max-width: 650px;
             background: var(--bg-panel);
             padding: 25px;
             border-radius: 12px;
@@ -103,13 +103,6 @@
             image-rendering: crisp-edges;
         }
 
-        .placeholder-text {
-            position: absolute; top:50%; left:50%; transform:translate(-50%, -50%);
-            color: #aaa; font-style: italic; font-size: 14px; pointer-events: none;
-            font-family: 'Segoe UI', sans-serif;
-            display: none;
-        }
-
         #menu-title-container {
             position: absolute;
             top: 28%;
@@ -127,59 +120,52 @@
             letter-spacing: 1.5px;
             border-bottom: 1px solid rgba(92, 29, 29, 0.3);
             padding-bottom: 4px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
 
-        .menu-overlay {
+        /* I CONTENITORI MASTER AGISCONO DA ANCORE POSIZIONALI SULLA PERGAMENA */
+        .menu-overlay-container {
             position: absolute;
             left: 20%;
             width: 60%;
-            color: #1c0e00;
-            font-family: 'EB Garamond', 'Georgia', serif;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            text-align: center;
-            gap: 2px;
-            transition: transform 0.1s ease;
         }
 
-        #box-mastro-birraio     { top: 41.7%; }
-        #box-condottiero        { top: 54.7%; }
-        #box-viandante          { top: 65.3%; }
-        #box-castellano         { top: 75.4%; }
-        #box-piccolo-cavaliere  { top: 85.0%; }
+        #anchor-mastro-birraio     { top: 41.7%; }
+        #anchor-condottiero        { top: 54.7%; }
+        #anchor-viandante          { top: 65.3%; }
+        #anchor-castellano         { top: 75.4%; }
+        #anchor-piccolo-cavaliere  { top: 85.0%; }
 
-        .item-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        /* BOX ATOMICI INDIPENDENTI CON INTERLINEA ADATTIVA ED EDIT MULTILINEA */
+        .inspectable-box {
             width: 100%;
+            color: #1c0e00;
+            font-family: 'EB Garamond', 'Georgia', serif;
+            text-align: center;
+            transition: transform 0.05s ease;
+            white-space: pre-line; /* Supporto nativo per i ritorni a capo (\n) */
+            word-wrap: break-word;
         }
 
-        .item-header {
+        .item-name-box {
             font-weight: bold;
-            color: #1c0e00;
-            white-space: nowrap;
             letter-spacing: 0.3px;
+            line-height: 1.25em; /* Interlinea proporzionale al font */
+        }
+
+        .item-desc-box {
+            font-style: italic;
+            color: #3d250d;
+            line-height: 1.2em;  /* Interlinea proporzionale al font */
+            margin-top: 2px;
         }
 
         .item-price-span {
             color: var(--primary-color);
             margin-left: 5px;
-        }
-
-        .item-desc {
-            display: block;
-            width: 100%;
-            font-style: italic;
-            color: #3d250d;
-            text-align: center;
-            white-space: nowrap;
-            overflow: hidden;
         }
 
         #debug-tooltip {
@@ -202,8 +188,12 @@
             outline: 2px dashed #3498db !important;
             background-color: rgba(52, 152, 219, 0.08) !important;
         }
+        
+        tr.inspect-highlight td {
+            background-color: rgba(52, 152, 219, 0.12) !important;
+        }
 
-        h2 { color: var(--primary-color); margin-bottom: 15px; font-size: 1.3rem; border-bottom: 2px solid var(--border-color); padding-bottom: 5px;}
+        h2 { color: var(--primary-color); margin-bottom: 15px; font-size: 1.2rem; border-bottom: 2px solid var(--border-color); padding-bottom: 5px;}
         .control-group { margin-bottom: 15px; }
         .control-group label { display: block; font-size: 12px; font-weight: bold; color: var(--primary-color); margin-bottom: 5px; }
         .file-inputs { margin-bottom: 15px; }
@@ -212,18 +202,43 @@
         .file-box input { display: none; }
         
         table { width: 100%; border-collapse: collapse; margin-bottom: 25px; background: white; font-size: 12px; }
-        th, td { padding: 8px; border: 1px solid #e0e0e0; text-align: left; vertical-align: top; }
+        th, td { padding: 10px 8px; border: 1px solid #e0e0e0; text-align: left; vertical-align: top; }
         th { background-color: var(--primary-color); color: white; text-transform: uppercase; font-size: 11px; }
         
         input[type="text"], textarea { width: 100%; border: 1px solid #ccc; border-radius: 4px; padding: 6px; font-family: inherit; }
-        textarea { resize: vertical; height: 42px; font-size: 11px; }
+        textarea { resize: vertical; height: 54px; font-size: 12px; }
         
+        .typo-controls-block {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 8px;
+            background: #f7f2e8;
+            padding: 6px;
+            border-radius: 4px;
+            border: 1px solid #eadecc;
+        }
+
+        .control-row-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .control-row-item span.label-target {
+            font-size: 11px;
+            font-weight: bold;
+            color: #555;
+            min-width: 65px;
+        }
+
         .micro-controls {
             display: flex;
-            gap: 5px;
-            margin-top: 5px;
+            gap: 3px;
             align-items: center;
         }
+
         .btn-micro {
             background: #f0e6d2;
             border: 1px solid var(--border-color);
@@ -236,7 +251,7 @@
             user-select: none;
         }
         .btn-micro:hover { background: #e4d5b7; }
-        .lbl-micro-status { font-size: 10px; color: #666; font-family: monospace; }
+        .lbl-micro-status { font-size: 10px; color: #666; font-family: monospace; min-width: 80px; text-align: right; }
 
         .btn-container { display: flex; flex-direction: column; gap: 10px; }
         .btn-download { background-color: #27ae60; color: white; padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; width: 100%; box-shadow: 0 4px 10px rgba(39,174,96,0.2); }
@@ -244,7 +259,7 @@
 
         @media (min-width: 769px) and (max-width: 1180px) {
             #main-container { gap: 20px; }
-            #preview-workspace { --pc-scale: calc((100vw - 620px) / 560); }
+            #preview-workspace { --pc-scale: calc((100vw - 690px) / 560); }
             .page-scale-wrapper { width: calc(560px * var(--pc-scale)); height: calc(685px * var(--pc-scale)); }
             .menu-page-block { transform: scale(var(--pc-scale)); }
         }
@@ -279,53 +294,55 @@
 
     <div id="main-container">
 
+        <!-- PANEL -->
         <div id="control-panel">
             <h2>Impostazioni Titolo e Grafica</h2>
-            <div class="control-group">
+            <div class="control-group" data-inspect-name="Input Titolo">
                 <label for="input-main-title">Titolo Principale del Menu:</label>
                 <input type="text" id="input-main-title" value="Antica Osteria" oninput="updateTitleAndRender()">
             </div>
 
-            <div class="file-inputs">
+            <div class="file-inputs" data-inspect-name="Input File Sfondo">
                 <div class="file-box" id="box-lbl-bg1">
-                    <label for="bg1" id="lbl-bg1">🖼️ Sovrascrivi Sfondo (Opzionale)</label>
+                    <label for="bg1" id="lbl-bg1">🖼️ Sfondo Predefinito Attivo (menu_bg.png)</label>
                     <input type="file" id="bg1" accept="image/*" onchange="processAndSaveBg(this, 'page-menu', 'db_single_bg', 'box-lbl-bg1')">
                 </div>
             </div>
 
-            <h2>Gestione Piatti, Prezzi e Grafica Linee</h2>
+            <h2>Gestione Piatti (Controlli Indipendenti)</h2>
             <table id="editor-table">
                 <thead>
                     <tr>
                         <th style="width: 30px;">Usa</th>
-                        <th>Dati Piatto & Regolazioni Spaziali</th>
-                        <th style="width: 65px;">Prezzo</th>
+                        <th>Dati Piatto & Regolazioni Disaccoppiate</th>
+                        <th style="width: 70px;">Prezzo</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
             </table>
 
-            <div class="btn-container">
+            <div class="btn-container" data-inspect-name="Pulsante di Esportazione">
                 <button class="btn-download" onclick="downloadPageAsPNG('page-menu', 'Menu_Completo.png')">📸 Scarica Menu Completo (PNG)</button>
             </div>
             
             <button class="btn-reset" onclick="resetToDefault()">🔄 Inizializza Tutto a Predefinito</button>
         </div>
 
+        <!-- WORKSPACE PREVIEW -->
         <div id="preview-workspace">
             <div class="page-scale-wrapper">
                 <div id="page-menu" class="menu-page-block">
-                    <div id="p1-placeholder" class="placeholder-text">Caricamento sfondo...</div>
                     
                     <div id="menu-title-container">
                         <div id="menu-title-target" class="main-menu-title">Antica Osteria</div>
                     </div>
 
-                    <div id="box-mastro-birraio" class="menu-overlay"></div>
-                    <div id="box-condottiero" class="menu-overlay"></div>
-                    <div id="box-viandante" class="menu-overlay"></div>
-                    <div id="box-castellano" class="menu-overlay"></div>
-                    <div id="box-piccolo-cavaliere" class="menu-overlay"></div>
+                    <!-- ANCORE FISSE PER I GRUPPI PORTATA -->
+                    <div id="anchor-mastro-birraio" class="menu-overlay-container"></div>
+                    <div id="anchor-condottiero" class="menu-overlay-container"></div>
+                    <div id="anchor-viandante" class="menu-overlay-container"></div>
+                    <div id="anchor-castellano" class="menu-overlay-container"></div>
+                    <div id="anchor-piccolo-cavaliere" class="menu-overlay-container"></div>
                 </div>
             </div>
         </div>
@@ -333,15 +350,15 @@
     </div>
 
     <script>
-        // Corretto da menu_bg.jpg a menu_bg.png per allinearsi al repository GitHub
         const DEFAULT_BG_PATH = "menu_bg.png"; 
 
+        // DATASET STRUTTURATO CON VARIABILI TIPOGRAFICHE SEPARATE PER NOME E DESCRIZIONE
         const defaultDataset = [
-            { id: 1, active: true, cat: "mastro-birraio", catName: "Mastro Birraio", name: "Birra del Borgo", price: "6.00", desc: "Artigianale rossa prodotta con grani locali e luppoli selvatici.", fontDelta: 0, offsetTop: 0 },
-            { id: 2, active: true, cat: "condottiero", catName: "Condottiero", name: "Pappardelle al Cinghiale", price: "14.00", desc: "Pasta fresca all'uovo con ragù bianco di cinghiale locale.", fontDelta: 0, offsetTop: 0 },
-            { id: 3, active: true, cat: "viandante", catName: "Viandante", name: "Zuppa di Farro e Castagne", price: "9.00", desc: "Antica ricetta medievale con legumi, farro e castagne.", fontDelta: 0, offsetTop: 0 },
-            { id: 4, active: true, cat: "castellano", catName: "Castellano", name: "Ravioli ai Funghi Porcini", price: "16.00", desc: "Pasta ripiena saltata con porcini e scaglie di pecorino.", fontDelta: 0, offsetTop: 0 },
-            { id: 5, active: true, cat: "piccolo-cavaliere", catName: "Piccolo Cavaliere", name: "Gnocchetti al Pomodoro", price: "7.00", desc: "Porzione ridotta con passata di pomodoro dolce e parmigiano.", fontDelta: 0, offsetTop: 0 }
+            { id: 1, active: true, cat: "mastro-birraio", catName: "Mastro Birraio", name: "Birra del Borgo", price: "6.00", desc: "Artigianale rossa prodotta con\ngrani locali e luppoli selvatici.", nameFontDelta: 0, nameOffsetTop: 0, descFontDelta: 0, descOffsetTop: 0 },
+            { id: 2, active: true, cat: "condottiero", catName: "Condottiero", name: "Pappardelle al Cinghiale", price: "14.00", desc: "Pasta fresca all'uovo con\nragù bianco di cinghiale locale.", nameFontDelta: 0, nameOffsetTop: 0, descFontDelta: 0, descOffsetTop: 0 },
+            { id: 3, active: true, cat: "viandante", catName: "Viandante", name: "Zuppa di Farro e Castagne", price: "9.00", desc: "Antica ricetta medievale con\nlegumi, farro e castagne.", nameFontDelta: 0, nameOffsetTop: 0, descFontDelta: 0, descOffsetTop: 0 },
+            { id: 4, active: true, cat: "castellano", catName: "Castellano", name: "Ravioli ai Funghi Porcini", price: "16.00", desc: "Pasta ripiena saltata con porcini\ne scaglie di pecorino.", nameFontDelta: 0, nameOffsetTop: 0, descFontDelta: 0, descOffsetTop: 0 },
+            { id: 5, active: true, cat: "piccolo-cavaliere", catName: "Piccolo Cavaliere", name: "Gnocchetti al Pomodoro", price: "7.00", desc: "Porzione ridotta con passata\ndi pomodoro dolce e parmigiano.", nameFontDelta: 0, nameOffsetTop: 0, descFontDelta: 0, descOffsetTop: 0 }
         ];
 
         let menuDataset = [];
@@ -366,16 +383,19 @@
         }
 
         function initDatabase() {
-            const savedData = localStorage.getItem('db_menu_medievale_single');
+            const savedData = localStorage.getItem('db_menu_medievale_v2');
             if (savedData) {
                 menuDataset = JSON.parse(savedData);
+                // Sanificazione per retrocompatibilità parametri atomici
                 menuDataset.forEach(item => {
-                    if (item.fontDelta === undefined) item.fontDelta = 0;
-                    if (item.offsetTop === undefined) item.offsetTop = 0;
+                    if (item.nameFontDelta === undefined) item.nameFontDelta = 0;
+                    if (item.nameOffsetTop === undefined) item.nameOffsetTop = 0;
+                    if (item.descFontDelta === undefined) item.descFontDelta = 0;
+                    if (item.descOffsetTop === undefined) item.descOffsetTop = 0;
                 });
             } else {
                 menuDataset = JSON.parse(JSON.stringify(defaultDataset));
-                localStorage.setItem('db_menu_medievale_single', JSON.stringify(menuDataset));
+                localStorage.setItem('db_menu_medievale_v2', JSON.stringify(menuDataset));
             }
 
             const savedTitle = localStorage.getItem('db_menu_main_title');
@@ -413,7 +433,7 @@
                         document.getElementById(targetId).style.backgroundImage = `url('${base64Data}')`;
                         setLabelUploaded();
                     } catch (error) {
-                        alert("LocalStorage pieno, visualizzazione solo temporanea.");
+                        alert("Spazio di archiviazione locale esaurito. Rendering temporaneo applicato.");
                         document.getElementById(targetId).style.backgroundImage = `url('${base64Data}')`;
                     }
                 }
@@ -421,51 +441,66 @@
             }
         }
 
+        // GENERAZIONE RIGHE TABELLA CON INTERFACCIA DI CONTROLLO DOUBLE-BOX MULTI-TARGET
         function buildEditorTable() {
             const tbody = document.querySelector("#editor-table tbody");
             tbody.innerHTML = menuDataset.map(item => `
-                <tr>
+                <tr id="editor-row-${item.id}" data-target-group="anchor-${item.cat}">
                     <td style="text-align:center;">
                         <input type="checkbox" ${item.active ? 'checked' : ''} id="active-${item.id}" onchange="syncDataAndRender()">
                     </td>
                     <td>
                         <b style="color:var(--primary-color); font-size:10px; display:block;">MENU DEL ${item.catName.toUpperCase()}</b>
-                        <input type="text" value="${item.name}" id="name-${item.id}" oninput="syncDataAndRender()" style="margin-bottom:4px; font-weight:bold;">
-                        <textarea id="desc-${item.id}" oninput="syncDataAndRender()">${item.desc}</textarea>
+                        <textarea id="name-${item.id}" oninput="syncDataAndRender()" style="margin-bottom:4px; font-weight:bold; height:36px;" placeholder="Nome piatto (Invio per andare a capo)">${item.name}</textarea>
+                        <textarea id="desc-${item.id}" oninput="syncDataAndRender()" placeholder="Descrizione piatto (Invio per andare a capo)">${item.desc}</textarea>
                         
-                        <div class="micro-controls">
-                            <span style="font-size:11px; font-weight:bold; margin-right:2px;">Testo:</span>
-                            <button class="btn-micro" onclick="adjustTypography(${item.id}, 'font', -0.5)">A-</button>
-                            <button class="btn-micro" onclick="adjustTypography(${item.id}, 'font', 0.5)">A+</button>
+                        <div class="typo-controls-block">
+                            <!-- CONTROLLI NOME -->
+                            <div class="control-row-item" data-subbox-target="box-${item.cat}-name">
+                                <span class="label-target">Box Nome:</span>
+                                <div class="micro-controls">
+                                    <button class="btn-micro" onclick="adjustAtomicTypography(${item.id}, 'name', 'font', -0.5)">A-</button>
+                                    <button class="btn-micro" onclick="adjustAtomicTypography(${item.id}, 'name', 'font', 0.5)">A+</button>
+                                    <button class="btn-micro" onclick="adjustAtomicTypography(${item.id}, 'name', 'position', -1)">↑</button>
+                                    <button class="btn-micro" onclick="adjustAtomicTypography(${item.id}, 'name', 'position', 1)">↓</button>
+                                </div>
+                                <span id="status-name-${item.id}" class="lbl-micro-status">${item.nameFontDelta >= 0 ? '+' : ''}${item.nameFontDelta}pt / ${item.nameOffsetTop >= 0 ? '+' : ''}${item.nameOffsetTop}px</span>
+                            </div>
                             
-                            <span style="font-size:11px; font-weight:bold; margin-left:8px; margin-right:2px;">Posizione:</span>
-                            <button class="btn-micro" onclick="adjustTypography(${item.id}, 'position', -1)">↑ Su</button>
-                            <button class="btn-micro" onclick="adjustTypography(${item.id}, 'position', 1)">↓ Giù</button>
-                            
-                            <span id="status-${item.id}" class="lbl-micro-status">(${item.fontDelta >= 0 ? '+' : ''}${item.fontDelta}pt / ${item.offsetTop >= 0 ? '+' : ''}${item.offsetTop}px)</span>
+                            <!-- CONTROLLI DESCRIZIONE -->
+                            <div class="control-row-item" data-subbox-target="box-${item.cat}-desc">
+                                <span class="label-target">Box Desc:</span>
+                                <div class="micro-controls">
+                                    <button class="btn-micro" onclick="adjustAtomicTypography(${item.id}, 'desc', 'font', -0.5)">A-</button>
+                                    <button class="btn-micro" onclick="adjustAtomicTypography(${item.id}, 'desc', 'font', 0.5)">A+</button>
+                                    <button class="btn-micro" onclick="adjustAtomicTypography(${item.id}, 'desc', 'position', -1)">↑</button>
+                                    <button class="btn-micro" onclick="adjustAtomicTypography(${item.id}, 'desc', 'position', 1)">↓</button>
+                                </div>
+                                <span id="status-desc-${item.id}" class="lbl-micro-status">${item.descFontDelta >= 0 ? '+' : ''}${item.descFontDelta}pt / ${item.descOffsetTop >= 0 ? '+' : ''}${item.descOffsetTop}px</span>
+                            </div>
                         </div>
                     </td>
-                    <td><input type="text" value="${item.price}" id="price-${item.id}" oninput="syncDataAndRender()" style="text-align:right;"></td>
+                    <td><input type="text" value="${item.price}" id="price-${item.id}" oninput="syncDataAndRender()" style="text-align:right; font-weight:bold;"></td>
                 </tr>
             `).join('');
         }
 
-        function adjustTypography(id, type, amount) {
+        // MOTORE DI AGGIORNAMENTO TIPOGRAFICO SELETTIVO (ATOMIC ENGINE)
+        function adjustAtomicTypography(id, targetBox, type, amount) {
             const item = menuDataset.find(x => x.id === id);
             if (!item) return;
 
-            if (type === 'font') {
-                item.fontDelta = parseFloat((item.fontDelta + amount).toFixed(1));
-            } else if (type === 'position') {
-                item.offsetTop = parseInt(item.offsetTop + amount);
+            if (targetBox === 'name') {
+                if (type === 'font') item.nameFontDelta = parseFloat((item.nameFontDelta + amount).toFixed(1));
+                else if (type === 'position') item.nameOffsetTop = parseInt(item.nameOffsetTop + amount);
+                document.getElementById(`status-name-${id}`).innerText = `${item.nameFontDelta >= 0 ? '+' : ''}${item.nameFontDelta}pt / ${item.nameOffsetTop >= 0 ? '+' : ''}${item.nameOffsetTop}px`;
+            } else if (targetBox === 'desc') {
+                if (type === 'font') item.descFontDelta = parseFloat((item.descFontDelta + amount).toFixed(1));
+                else if (type === 'position') item.descOffsetTop = parseInt(item.descOffsetTop + amount);
+                document.getElementById(`status-desc-${id}`).innerText = `${item.descFontDelta >= 0 ? '+' : ''}${item.descFontDelta}pt / ${item.descOffsetTop >= 0 ? '+' : ''}${item.descOffsetTop}px`;
             }
 
-            const statusLabel = document.getElementById(`status-${id}`);
-            if (statusLabel) {
-                statusLabel.innerText = `(${item.fontDelta >= 0 ? '+' : ''}${item.fontDelta}pt / ${item.offsetTop >= 0 ? '+' : ''}${item.offsetTop}px)`;
-            }
-
-            localStorage.setItem('db_menu_medievale_single', JSON.stringify(menuDataset));
+            localStorage.setItem('db_menu_medievale_v2', JSON.stringify(menuDataset));
             renderGraphics();
         }
 
@@ -483,62 +518,68 @@
                 item.active = document.getElementById(`active-${item.id}`).checked;
             });
             
-            localStorage.setItem('db_menu_medievale_single', JSON.stringify(menuDataset));
+            localStorage.setItem('db_menu_medievale_v2', JSON.stringify(menuDataset));
             renderGraphics();
         }
 
-        function calculateAutoscalingFont(text, maxChars = 60, baseFont = 11.5) {
+        // CALCOLO DINAMICO DI SICUREZZA PER SCONGIURARE OVERFLOW MACROSCOPICI
+        function calculateAutoscalingFont(text, maxChars = 70, baseFont = 11.5) {
             const length = text.length;
             if (length <= 40) return baseFont;
             const scaleFactor = (maxChars - (length - 40)) / maxChars;
-            return Math.max(8.5, baseFont * scaleFactor);
+            return Math.max(8.0, baseFont * scaleFactor);
         }
 
+        // INIEZIONE GRAFICA CON DOPPIO BOX SEPARATO E REGOLE DI INTERLINEA PROPORZIONALI EM
         function renderGraphics() {
             const currentTitle = document.getElementById('input-main-title').value;
             document.getElementById('menu-title-target').innerText = currentTitle;
 
             const categories = ['mastro-birraio', 'condottiero', 'viandante', 'castellano', 'piccolo-cavaliere'];
             categories.forEach(c => {
-                const box = document.getElementById(`box-${c}`);
-                box.innerHTML = '';
-                box.style.transform = 'none'; 
+                const anchor = document.getElementById(`anchor-${c}`);
+                anchor.innerHTML = '';
             });
 
             menuDataset.forEach(item => {
                 if (item.active) {
-                    const box = document.getElementById(`box-${item.cat}`);
-                    if (box) {
-                        const wrapper = document.createElement('div');
-                        wrapper.className = 'item-wrapper';
+                    const anchor = document.getElementById(`anchor-${item.cat}`);
+                    if (anchor) {
+                        // 1. Costruzione Box Nome Indipendente
+                        const nameBox = document.createElement('div');
+                        nameBox.id = `box-${item.cat}-name`;
+                        nameBox.className = 'inspectable-box item-name-box';
+                        
+                        const baseNameSize = 13.5 + item.nameFontDelta;
+                        nameBox.style.fontSize = `${baseNameSize}px`;
+                        nameBox.style.transform = `translateY(${item.nameOffsetTop}px)`;
+                        nameBox.innerHTML = `${item.name} <span class="item-price-span">- € ${item.price}</span>`;
+                        
+                        // 2. Costruzione Box Descrizione Indipendente (Mantiene nativamente i \n scritti nell'editor)
+                        const descBox = document.createElement('div');
+                        descBox.id = `box-${item.cat}-desc`;
+                        descBox.className = 'inspectable-box item-desc-box';
+                        
+                        const calculatedDescBase = calculateAutoscalingFont(item.desc, 70, 11.5);
+                        const finalDescSize = calculatedDescBase + item.descFontDelta;
+                        descBox.style.fontSize = `${finalDescSize}px`;
+                        descBox.style.transform = `translateY(${item.descOffsetTop}px)`;
+                        descBox.textContent = item.desc; 
 
-                        const cleanDesc = item.desc.replace(/\n/g, " ").trim();
-                        const autoDescSize = calculateAutoscalingFont(cleanDesc, 60, 11.5) + item.fontDelta;
-                        const headerFontSize = 13.5 + item.fontDelta;
-
-                        wrapper.innerHTML = `
-                            <div class="item-header" style="font-size: ${headerFontSize}px;">
-                                ${item.name} <span class="item-price-span">- € ${item.price}</span>
-                            </div>
-                            <div class="item-desc" style="font-size: ${autoDescSize}px;" title="${cleanDesc}">
-                                ${cleanDesc}
-                            </div>
-                        `;
-                        box.appendChild(wrapper);
-                        box.style.transform = `translateY(${item.offsetTop}px)`;
+                        // Aggancio dei nodi disaccoppiati all'ancora della portata
+                        anchor.appendChild(nameBox);
+                        anchor.appendChild(descBox);
                     }
                 }
             });
         }
 
         function downloadPageAsPNG(elementId, filename) {
-            const activeHighlights = document.querySelectorAll('.inspect-highlight');
-            activeHighlights.forEach(el => el.classList.remove('inspect-highlight'));
+            document.querySelectorAll('.inspect-highlight').forEach(el => el.classList.remove('inspect-highlight'));
             document.getElementById('debug-tooltip').style.display = 'none';
 
             const preview = document.getElementById('preview-workspace');
             const originalDisplay = window.getComputedStyle(preview).display;
-            
             if (originalDisplay === 'none') preview.style.display = 'flex';
 
             const element = document.getElementById(elementId);
@@ -561,57 +602,133 @@
         }
 
         function resetToDefault() {
-            if (confirm("Vuoi azzerare tutte le modifiche, i font personalizzati e gli spostamenti verticali delle linee?")) {
+            if (confirm("Vuoi azzerare tutte le modifiche, i ritorni a capo e le configurazioni dei singoli Box?")) {
                 localStorage.clear();
                 window.location.reload();
             }
         }
 
+        // ==========================================================================
+        // ISPEZIONE INCROCIATA BI-DIREZIONALE ESTESA PER BOX ATOMICI DISACCOPPIATI
+        // ==========================================================================
         const workspace = document.getElementById('preview-workspace');
+        const controlPanel = document.getElementById('control-panel');
         const tooltip = document.getElementById('debug-tooltip');
-        let lastHighlightedElement = null;
+        
+        let activeElementsRegistry = [];
 
-        workspace.addEventListener('mousemove', (e) => {
-            const hitElement = e.target;
-            const targetNode = hitElement.closest('.menu-overlay, #menu-title-container, .menu-page-block');
-            
-            if (targetNode) {
-                if (lastHighlightedElement && lastHighlightedElement !== targetNode) {
-                    lastHighlightedElement.classList.remove('inspect-highlight');
-                }
-                targetNode.classList.add('inspect-highlight');
-                lastHighlightedElement = targetNode;
-
-                let identifierText = "";
-                if (targetNode.id) {
-                    identifierText = `ID: #${targetNode.id}`;
-                } else if (targetNode.className) {
-                    const cleanClass = targetNode.className.replace('inspect-highlight', '').trim();
-                    identifierText = `Classe: .${cleanClass.split(' ').join('.')}`;
-                }
-
-                tooltip.style.display = 'block';
-                tooltip.innerText = identifierText;
-                
-                tooltip.style.left = (e.clientX + 15) + 'px';
-                tooltip.style.top = (e.clientY + 15) + 'px';
-            } else {
-                clearInspectorState();
-            }
-        });
-
-        workspace.addEventListener('mouseleave', () => {
-            clearInspectorState();
-        });
-
-        function clearInspectorState() {
-            tooltip.style.display = 'none';
-            if (lastHighlightedElement) {
-                lastHighlightedElement.classList.remove('inspect-highlight');
-                lastHighlightedElement = null;
-            }
+        function moveAndShowTooltip(e, label) {
+            tooltip.style.display = 'block';
+            tooltip.innerText = label;
+            tooltip.style.left = (e.clientX + 15) + 'px';
+            tooltip.style.top = (e.clientY + 15) + 'px';
         }
 
+        function clearAllHighlights() {
+            tooltip.style.display = 'none';
+            activeElementsRegistry.forEach(el => { if (el) el.classList.remove('inspect-highlight'); });
+            activeElementsRegistry = [];
+        }
+
+        // Eventi Mouse su Anteprima (Pergamena -> Tabella)
+        workspace.addEventListener('mousemove', (e) => {
+            clearAllHighlights();
+            const hitElement = e.target;
+            const targetNode = hitElement.closest('.item-name-box, .item-desc-box, #menu-title-container, .menu-page-block');
+            
+            if (targetNode) {
+                targetNode.classList.add('inspect-highlight');
+                activeElementsRegistry.push(targetNode);
+
+                if (targetNode.id) {
+                    const idString = targetNode.id;
+                    moveAndShowTooltip(e, `Anteprima -> #${idString}`);
+                    
+                    // Seleziona la riga della tabella associata alla categoria
+                    const match = idString.match(/box-(.+)-(name|desc)/);
+                    if (match) {
+                        const cat = match[1];
+                        const sub = match[2];
+                        const row = controlPanel.querySelector(`tr[data-target-group="anchor-${cat}"]`);
+                        if (row) {
+                            row.classList.add('inspect-highlight');
+                            activeElementsRegistry.push(row);
+                        }
+                        // Evidenzia lo specifico sub-controllo nel pannello
+                        const rowControl = controlPanel.querySelector(`[data-subbox-target="${idString}"]`);
+                        if (rowControl) {
+                            rowControl.classList.add('inspect-highlight');
+                            activeElementsRegistry.push(rowControl);
+                        }
+                    }
+                } else {
+                    moveAndShowTooltip(e, `Anteprima -> Sfondo Pergamena`);
+                }
+            }
+        });
+
+        workspace.addEventListener('mouseleave', clearAllHighlights);
+
+        // Eventi Mouse su Pannello Controllo (Tabella -> Anteprima)
+        controlPanel.addEventListener('mousemove', (e) => {
+            const hitElement = e.target;
+            const subControlRow = hitElement.closest('[data-subbox-target]');
+            const mainTableRow = hitElement.closest('#editor-table tbody tr');
+            const groupTarget = hitElement.closest('.control-group, .file-inputs');
+
+            if (subControlRow) {
+                clearAllHighlights();
+                subControlRow.classList.add('inspect-highlight');
+                activeElementsRegistry.push(subControlRow);
+
+                const targetBoxId = subControlRow.getAttribute('data-subbox-target');
+                const visualBox = document.getElementById(targetBoxId);
+                if (visualBox) {
+                    visualBox.classList.add('inspect-highlight');
+                    activeElementsRegistry.push(visualBox);
+                }
+                moveAndShowTooltip(e, `Editor -> #${targetBoxId}`);
+            } 
+            else if (mainTableRow && !subControlRow) {
+                clearAllHighlights();
+                mainTableRow.classList.add('inspect-highlight');
+                activeElementsRegistry.push(mainTableRow);
+                
+                const anchorId = mainTableRow.getAttribute('data-target-group');
+                const anchorEl = document.getElementById(anchorId);
+                if (anchorEl) {
+                    // Evidenzia l'intero blocco (sia nome che descrizione contemporaneamente)
+                    Array.from(anchorEl.children).forEach(child => {
+                        child.classList.add('inspect-highlight');
+                        activeElementsRegistry.push(child);
+                    });
+                }
+                moveAndShowTooltip(e, `Editor Gruppo -> #${anchorId}`);
+            }
+            else if (groupTarget) {
+                clearAllHighlights();
+                groupTarget.classList.add('inspect-highlight');
+                activeElementsRegistry.push(groupTarget);
+
+                const name = groupTarget.getAttribute('data-inspect-name') || "Controllo Grafico";
+                if(groupTarget.querySelector('#input-main-title')) {
+                    const titleBox = document.getElementById('menu-title-container');
+                    if(titleBox) {
+                        titleBox.classList.add('inspect-highlight');
+                        activeElementsRegistry.push(titleBox);
+                    }
+                }
+                moveAndShowTooltip(e, `Pannello -> ${name}`);
+            } else {
+                if(!hitElement.closest('input, textarea, button, td, label')) {
+                    clearAllHighlights();
+                }
+            }
+        });
+
+        controlPanel.addEventListener('mouseleave', clearAllHighlights);
+
+        // Bootstrap applicazione
         initDatabase();
         buildEditorTable();
         loadBackground();
