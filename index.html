@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configuratore Menu Medievale - Posizionamento Libero Zecchini</title>
+    <title>Configuratore Menu Medievale - Fix Sfondo</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -96,7 +96,7 @@
             background-size: 100% 100%;
             background-repeat: no-repeat;
             background-position: center;
-            background-color: #fff;
+            background-color: #f5e6c4; /* Colore di fallback se l'immagine non carica subito */
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             overflow: hidden;
             transform-origin: top left;
@@ -104,7 +104,6 @@
             image-rendering: crisp-edges;
         }
 
-        /* Container principale della riga di testo */
         .menu-overlay-container {
             position: absolute;
             left: 15%;
@@ -155,34 +154,26 @@
             margin-top: 2px;
         }
 
-        /* REPLICA ZECCHINO CON POSIZIONAMENTO ASSOLUTO LIBERO */
         .item-price-box {
             position: absolute;
-            /* Valori iniziali di fallback a sinistra del blocco */
             left: -45px; 
             top: 0px;
             display: flex;
             align-items: center;
             justify-content: center;
-            zIndex: 10;
+            z-index: 10;
             width: 44px;
             height: 44px;
-            
-            /* Taglio asimmetrico per simulare la battitura a martello medievale */
             border-radius: 44% 56% 47% 53% / 52% 46% 54% 48%;
-            
-            /* Texture metallica oro antico riflesso */
             background: 
                 radial-gradient(circle at 35% 35%, rgba(255,228,140,0.95) 0%, rgba(217,152,30,0.95) 45%, rgba(145,87,6,0.98) 80%, rgba(54,30,2,1) 100%),
                 linear-gradient(135deg, #ffe042 0%, #bd8e14 50%, #6e4d02 100%);
-            
             border: 2px dashed #472603;
             outline: 1px solid #241301;
             box-shadow: 
                 0 3px 6px rgba(0,0,0,0.5), 
                 inset 1px 1px 2px rgba(255,255,255,0.7),
                 inset -2px -2px 4px rgba(0,0,0,0.75);
-            
             color: #211101; 
             font-weight: 800;
             font-family: 'EB Garamond', serif;
@@ -217,8 +208,21 @@
 
         h2 { color: var(--primary-color); margin-bottom: 15px; font-size: 1.2rem; border-bottom: 2px solid var(--border-color); padding-bottom: 5px;}
         .file-inputs { margin-bottom: 15px; }
-        .file-box { background: #fff; border: 1px dashed var(--border-color); padding: 12px; text-align: center; font-size: 13px; cursor: pointer; border-radius: 6px; }
-        .file-box.has-image { background: #e8f5e9; border: 1px solid #27ae60; }
+        
+        .file-box { 
+            background: #fff; 
+            border: 2px dashed var(--border-color); 
+            padding: 18px; 
+            text-align: center; 
+            font-size: 14px; 
+            font-weight: bold;
+            color: var(--primary-color);
+            cursor: pointer; 
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        .file-box:hover { background: #fdf5e6; }
+        .file-box.has-image { background: #e8f5e9; border: 2px solid #27ae60; color: #27ae60; }
         .file-box input { display: none; }
         
         table { width: 100%; border-collapse: collapse; margin-bottom: 25px; background: white; font-size: 12px; }
@@ -320,7 +324,7 @@
             <h2>Impostazioni Grafica di Sfondo</h2>
             <div class="file-inputs">
                 <div class="file-box" id="box-lbl-bg1">
-                    <label for="bg1" id="lbl-bg1">🖼️ Clicca qui per caricare Menu_Completo.jpg</label>
+                    <label for="bg1" id="lbl-bg1" style="cursor:pointer;">📂 CLICCA QUI PER CARICARE IL TUO FILE SFONDO (menu_bg.png o Menu_Completo.jpg)</label>
                     <input type="file" id="bg1" accept="image/*" onchange="processAndSaveBg(this, 'page-menu', 'db_single_bg', 'box-lbl-bg1')">
                 </div>
             </div>
@@ -340,7 +344,7 @@
                 <button class="btn-download" onclick="downloadPageAsPNG('page-menu', 'Menu_Zecchini_Finale.png')">📸 Scarica Menu Completo (PNG)</button>
             </div>
             
-            <button class="btn-reset" onclick="resetToDefault()">🔄 Inizializza Tutto a Predefinito</button>
+            <button class="btn-reset" onclick="resetToDefault()">🔄 Inizializza Tutto a Predefinito (Sblocca Sfondo)</button>
         </div>
 
         <div id="preview-workspace">
@@ -358,10 +362,11 @@
     </div>
 
     <script>
-        const DEFAULT_BG_PATH = "Menu_Completo.jpg"; 
-        const DB_KEY = "db_menu_medievale_v9_libero";
+        // Rilassiamo i vincoli: proviamo a cercare i file locali, altrimenti l'utente può caricarli liberamente dal bottone
+        const FALLBACK_BG_1 = "Menu_Completo.jpg"; 
+        const FALLBACK_BG_2 = "menu_bg.png"; 
+        const DB_KEY = "db_menu_medievale_v10_fix";
 
-        // Coordinazione di default impostate leggermente spostate per renderle subito visibili e trascinabili
         const defaultDataset = [
             { id: 1, active: true, cat: "mastro-birraio", catName: "Mastro Birraio", name: "MENU DEL MASTRO BIRRAIO", price: "6", desc: "Succo di luppolo e scaglie di drago\nBirra artigianale fresca\nservita con una focaccia sottile e croccante.", nameFontDelta: 2, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 1, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 2, priceOffsetTop: -5, priceOffsetLeft: -55 },
             { id: 2, active: true, cat: "condottiero", catName: "Condottiero", name: "MENU DEL CONDOTTIERO", price: "10", desc: "opzione 2\nverdure e birra", nameFontDelta: 2, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 1, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 2, priceOffsetTop: -5, priceOffsetLeft: 400 },
@@ -408,13 +413,39 @@
         function loadBackground() {
             const savedBg = localStorage.getItem('db_single_bg');
             const menuElement = document.getElementById('page-menu');
-            if (savedBg) { menuElement.style.backgroundImage = `url('${savedBg}')`; setLabelUploaded(); } 
-            else { menuElement.style.backgroundImage = `url('${DEFAULT_BG_PATH}')`; }
+            
+            if (savedBg) { 
+                menuElement.style.backgroundImage = `url('${savedBg}')`; 
+                setLabelUploaded(true); 
+            } else { 
+                // Tenta di caricare uno dei file di fallback
+                const img = new Image();
+                img.src = FALLBACK_BG_1;
+                img.onload = function() { menuElement.style.backgroundImage = `url('${FALLBACK_BG_1}')`; };
+                img.onerror = function() {
+                    // Se fallisce il primo tenta il secondo nome file conosciuto
+                    const img2 = new Image();
+                    img2.src = FALLBACK_BG_2;
+                    img2.onload = function() { menuElement.style.backgroundImage = `url('${FALLBACK_BG_2}')`; };
+                    img2.onerror = function() {
+                        // Se non trova file locali lascia lo sfondo beige pronti a riceverlo dal pulsante
+                        setLabelUploaded(false);
+                    };
+                };
+            }
         }
 
-        function setLabelUploaded() {
+        function setLabelUploaded(isCustom) {
             const box = document.getElementById('box-lbl-bg1');
-            if (box) { box.classList.add('has-image'); box.querySelector('label').innerText = "✅ Sfondo Personalizzato Caricato"; }
+            if (box) { 
+                if(isCustom) {
+                    box.classList.add('has-image'); 
+                    box.querySelector('label').innerText = "✅ SFONDO ATTIVO (Ricarica un altro file per cambiare)"; 
+                } else {
+                    box.classList.remove('has-image'); 
+                    box.querySelector('label').innerText = "📂 CLICCA QUI PER CARICARE IL TUO FILE SFONDO (menu_bg.png o Menu_Completo.jpg)";
+                }
+            }
         }
 
         function processAndSaveBg(input, targetId, storageKey, labelBoxId) {
@@ -423,7 +454,7 @@
                 reader.onload = function(e) {
                     localStorage.setItem(storageKey, e.target.result);
                     document.getElementById(targetId).style.backgroundImage = `url('${e.target.result}')`;
-                    setLabelUploaded();
+                    setLabelUploaded(true);
                 }
                 reader.readAsDataURL(input.files[0]);
             }
@@ -513,7 +544,6 @@
                 if (item.active) {
                     const anchor = document.getElementById(`anchor-${item.cat}`);
                     if (anchor) {
-                        // 1. Bottone Prezzo ZECCHINO (Assoluto Libero)
                         if (item.price) {
                             const priceBox = document.createElement('div');
                             priceBox.id = `box-${item.cat}-price`;
@@ -526,7 +556,6 @@
                             anchor.appendChild(priceBox);
                         }
 
-                        // 2. Blocco Testi Centrato
                         const textBlock = document.createElement('div');
                         textBlock.className = 'menu-text-block';
 
@@ -554,7 +583,6 @@
             });
         }
 
-        // POINTER DRAG ENGINE CALIBRATO
         function setupDragStart(e, id, field) {
             if (e.button !== 0 && e.pointerType === 'mouse') return;
             
@@ -617,7 +645,6 @@
             localStorage.setItem(DB_KEY, JSON.stringify(menuDataset));
         });
 
-        // ISPEZIONE VISIVA
         const workspace = document.getElementById('preview-workspace');
         const controlPanel = document.getElementById('control-panel');
         const tooltip = document.getElementById('debug-tooltip');
@@ -648,7 +675,7 @@
 
                 if (targetNode.id) {
                     const idString = targetNode.id;
-                    moveAndShowTooltip(e, `Trascina l'elemento per spostarlo -> #${idString}`);
+                    moveAndShowTooltip(e, `Trascina per spostare -> #${idString}`);
                     const match = idString.match(/box-(.+)-(name|desc|price)/);
                     if (match) {
                         const cat = match[1];
@@ -679,7 +706,7 @@
         }
 
         function resetToDefault() {
-            if (confirm("Resettare le posizioni degli zecchini?")) {
+            if (confirm("Vuoi azzerare la memoria cache e sbloccare lo sfondo?")) {
                 localStorage.clear(); window.location.reload();
             }
         }
