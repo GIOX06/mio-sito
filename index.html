@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configuratore Menu Medievale - Fix Sfondo</title>
+    <title>Configuratore Menu Medievale - Ripristino Sfondo Predefinito</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -96,7 +96,7 @@
             background-size: 100% 100%;
             background-repeat: no-repeat;
             background-position: center;
-            background-color: #f5e6c4; /* Colore di fallback se l'immagine non carica subito */
+            background-color: #fff;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             overflow: hidden;
             transform-origin: top left;
@@ -208,21 +208,8 @@
 
         h2 { color: var(--primary-color); margin-bottom: 15px; font-size: 1.2rem; border-bottom: 2px solid var(--border-color); padding-bottom: 5px;}
         .file-inputs { margin-bottom: 15px; }
-        
-        .file-box { 
-            background: #fff; 
-            border: 2px dashed var(--border-color); 
-            padding: 18px; 
-            text-align: center; 
-            font-size: 14px; 
-            font-weight: bold;
-            color: var(--primary-color);
-            cursor: pointer; 
-            border-radius: 8px;
-            transition: all 0.2s ease;
-        }
-        .file-box:hover { background: #fdf5e6; }
-        .file-box.has-image { background: #e8f5e9; border: 2px solid #27ae60; color: #27ae60; }
+        .file-box { background: #fff; border: 1px dashed var(--border-color); padding: 12px; text-align: center; font-size: 13px; cursor: pointer; border-radius: 6px; }
+        .file-box.has-image { background: #e8f5e9; border: 1px solid #27ae60; }
         .file-box input { display: none; }
         
         table { width: 100%; border-collapse: collapse; margin-bottom: 25px; background: white; font-size: 12px; }
@@ -324,7 +311,7 @@
             <h2>Impostazioni Grafica di Sfondo</h2>
             <div class="file-inputs">
                 <div class="file-box" id="box-lbl-bg1">
-                    <label for="bg1" id="lbl-bg1" style="cursor:pointer;">📂 CLICCA QUI PER CARICARE IL TUO FILE SFONDO (menu_bg.png o Menu_Completo.jpg)</label>
+                    <label for="bg1" id="lbl-bg1">🖼️ Sfondo Predefinito Attivo (menu_bg.png)</label>
                     <input type="file" id="bg1" accept="image/*" onchange="processAndSaveBg(this, 'page-menu', 'db_single_bg', 'box-lbl-bg1')">
                 </div>
             </div>
@@ -344,7 +331,7 @@
                 <button class="btn-download" onclick="downloadPageAsPNG('page-menu', 'Menu_Zecchini_Finale.png')">📸 Scarica Menu Completo (PNG)</button>
             </div>
             
-            <button class="btn-reset" onclick="resetToDefault()">🔄 Inizializza Tutto a Predefinito (Sblocca Sfondo)</button>
+            <button class="btn-reset" onclick="resetToDefault()">🔄 Inizializza Tutto a Predefinito</button>
         </div>
 
         <div id="preview-workspace">
@@ -362,17 +349,16 @@
     </div>
 
     <script>
-        // Rilassiamo i vincoli: proviamo a cercare i file locali, altrimenti l'utente può caricarli liberamente dal bottone
-        const FALLBACK_BG_1 = "Menu_Completo.jpg"; 
-        const FALLBACK_BG_2 = "menu_bg.png"; 
-        const DB_KEY = "db_menu_medievale_v10_fix";
+        // RIPRISTINATO IL FILE PREDEFINITO CORRETTO
+        const DEFAULT_BG_PATH = "menu_bg.png"; 
+        const DB_KEY = "db_menu_medievale_v10_bg";
 
         const defaultDataset = [
-            { id: 1, active: true, cat: "mastro-birraio", catName: "Mastro Birraio", name: "MENU DEL MASTRO BIRRAIO", price: "6", desc: "Succo di luppolo e scaglie di drago\nBirra artigianale fresca\nservita con una focaccia sottile e croccante.", nameFontDelta: 2, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 1, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 2, priceOffsetTop: -5, priceOffsetLeft: -55 },
-            { id: 2, active: true, cat: "condottiero", catName: "Condottiero", name: "MENU DEL CONDOTTIERO", price: "10", desc: "opzione 2\nverdure e birra", nameFontDelta: 2, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 1, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 2, priceOffsetTop: -5, priceOffsetLeft: 400 },
-            { id: 3, active: true, cat: "viandante", catName: "Viandante", name: "MENU DEL VIANDANTE", price: "9", desc: "opzione 3\nprimo e birra", nameFontDelta: 2, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 1, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 2, priceOffsetTop: -5, priceOffsetLeft: -55 },
-            { id: 4, active: true, cat: "castellano", catName: "Castellano", name: "MENU DEL CASTELLANO", price: "11", desc: "opzione 4\nsecondo e birra", nameFontDelta: 2, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 1, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 2, priceOffsetTop: -5, priceOffsetLeft: 400 },
-            { id: 5, active: true, cat: "piccolo-cavaliere", catName: "Piccolo Cavaliere", name: "MENU DEL PICCOLO CAVALIERE", price: "7", desc: "opzione 5\nmenu bambini", nameFontDelta: 2, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 1, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 2, priceOffsetTop: -5, priceOffsetLeft: -55 }
+            { id: 1, active: true, cat: "mastro-birraio", catName: "Mastro Birraio", name: "Birra del Borgo", price: "6", desc: "Artigianale rossa prodotta con\ngrani locali e luppoli selvatici.", nameFontDelta: 0, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 0, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 2, priceOffsetTop: -5, priceOffsetLeft: -55 },
+            { id: 2, active: true, cat: "condottiero", catName: "Condottiero", name: "Pappardelle al Cinghiale", price: "14", desc: "Pasta fresca all'uovo con\nragù bianco di cinghiale locale.", nameFontDelta: 0, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 0, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 2, priceOffsetTop: -5, priceOffsetLeft: 400 },
+            { id: 3, active: true, cat: "viandante", catName: "Viandante", name: "Zuppa di Farro e Castagne", price: "9", desc: "Antica ricetta medievale con\nlegumi, farro e castagne.", nameFontDelta: 0, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 0, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 2, priceOffsetTop: -5, priceOffsetLeft: -55 },
+            { id: 4, active: true, cat: "castellano", catName: "Castellano", name: "Ravioli ai Funghi Porcini", price: "16", desc: "Pasta ripiena saltata con porcini\ne scaglie di pecorino.", nameFontDelta: 0, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 0, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 2, priceOffsetTop: -5, priceOffsetLeft: 400 },
+            { id: 5, active: true, cat: "piccolo-cavaliere", catName: "Piccolo Cavaliere", name: "Gnocchetti al Pomodoro", price: "7", desc: "Porzione ridotta con passata\ndi pomodoro dolce e parmigiano.", nameFontDelta: 0, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 0, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 2, priceOffsetTop: -5, priceOffsetLeft: -55 }
         ];
 
         let menuDataset = [];
@@ -413,39 +399,13 @@
         function loadBackground() {
             const savedBg = localStorage.getItem('db_single_bg');
             const menuElement = document.getElementById('page-menu');
-            
-            if (savedBg) { 
-                menuElement.style.backgroundImage = `url('${savedBg}')`; 
-                setLabelUploaded(true); 
-            } else { 
-                // Tenta di caricare uno dei file di fallback
-                const img = new Image();
-                img.src = FALLBACK_BG_1;
-                img.onload = function() { menuElement.style.backgroundImage = `url('${FALLBACK_BG_1}')`; };
-                img.onerror = function() {
-                    // Se fallisce il primo tenta il secondo nome file conosciuto
-                    const img2 = new Image();
-                    img2.src = FALLBACK_BG_2;
-                    img2.onload = function() { menuElement.style.backgroundImage = `url('${FALLBACK_BG_2}')`; };
-                    img2.onerror = function() {
-                        // Se non trova file locali lascia lo sfondo beige pronti a riceverlo dal pulsante
-                        setLabelUploaded(false);
-                    };
-                };
-            }
+            if (savedBg) { menuElement.style.backgroundImage = `url('${savedBg}')`; setLabelUploaded(); } 
+            else { menuElement.style.backgroundImage = `url('${DEFAULT_BG_PATH}')`; }
         }
 
-        function setLabelUploaded(isCustom) {
+        function setLabelUploaded() {
             const box = document.getElementById('box-lbl-bg1');
-            if (box) { 
-                if(isCustom) {
-                    box.classList.add('has-image'); 
-                    box.querySelector('label').innerText = "✅ SFONDO ATTIVO (Ricarica un altro file per cambiare)"; 
-                } else {
-                    box.classList.remove('has-image'); 
-                    box.querySelector('label').innerText = "📂 CLICCA QUI PER CARICARE IL TUO FILE SFONDO (menu_bg.png o Menu_Completo.jpg)";
-                }
-            }
+            if (box) { box.classList.add('has-image'); box.querySelector('label').innerText = "✅ Sfondo Personalizzato Caricato"; }
         }
 
         function processAndSaveBg(input, targetId, storageKey, labelBoxId) {
@@ -454,7 +414,7 @@
                 reader.onload = function(e) {
                     localStorage.setItem(storageKey, e.target.result);
                     document.getElementById(targetId).style.backgroundImage = `url('${e.target.result}')`;
-                    setLabelUploaded(true);
+                    setLabelUploaded();
                 }
                 reader.readAsDataURL(input.files[0]);
             }
@@ -468,10 +428,10 @@
                         <input type="checkbox" ${item.active ? 'checked' : ''} id="active-${item.id}" onchange="syncDataAndRender()">
                     </td>
                     <td>
-                        <b style="color:var(--primary-color); font-size:10px; display:block; margin-bottom: 2px;">GRUPPO: ${item.catName.toUpperCase()}</b>
+                        <b style="color:var(--primary-color); font-size:10px; display:block; margin-bottom: 2px;">PORTATA: ${item.catName.toUpperCase()}</b>
                         <div style="display: flex; gap: 8px; margin-bottom: 4px;">
                             <textarea id="name-${item.id}" oninput="syncDataAndRender()" style="flex: 2; font-weight:bold; height:36px;">${item.name}</textarea>
-                            <input type="text" id="price-${item.id}" value="${item.price}" oninput="syncDataAndRender()" style="flex: 0 0 75px; text-align:right; font-weight:bold; height:36px;" placeholder="Prezzo">
+                            <input type="text" id="price-${item.id}" value="${item.price}" oninput="syncDataAndRender()" style="flex: 0 0 75px; text-align:right; font-weight:bold; height:36px;">
                         </div>
                         <textarea id="desc-${item.id}" oninput="syncDataAndRender()">${item.desc}</textarea>
                         
@@ -485,7 +445,7 @@
                                 <span id="status-price-${item.id}" class="lbl-micro-status">pt | X:${item.priceOffsetLeft}px Y:${item.priceOffsetTop}px</span>
                             </div>
                             <div class="control-row-item" data-subbox-target="box-${item.cat}-name">
-                                <span class="label-target">Testo Titolo:</span>
+                                <span class="label-target">Testo Nome:</span>
                                 <div class="micro-controls">
                                     <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'name', 'font', -0.5)">A-</button>
                                     <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'name', 'font', 0.5)">A+</button>
@@ -544,6 +504,7 @@
                 if (item.active) {
                     const anchor = document.getElementById(`anchor-${item.cat}`);
                     if (anchor) {
+                        // Zecchino Libero
                         if (item.price) {
                             const priceBox = document.createElement('div');
                             priceBox.id = `box-${item.cat}-price`;
@@ -556,13 +517,14 @@
                             anchor.appendChild(priceBox);
                         }
 
+                        // Testi Centrati
                         const textBlock = document.createElement('div');
                         textBlock.className = 'menu-text-block';
 
                         const nameBox = document.createElement('div');
                         nameBox.id = `box-${item.cat}-name`;
                         nameBox.className = 'inspectable-box item-name-box';
-                        nameBox.style.fontSize = `${13 + item.nameFontDelta}px`;
+                        nameBox.style.fontSize = `${13.5 + item.nameFontDelta}px`;
                         nameBox.style.transform = `translate(${item.nameOffsetLeft}px, ${item.nameOffsetTop}px)`;
                         nameBox.textContent = item.name;
                         nameBox.addEventListener('pointerdown', (e) => setupDragStart(e, item.id, 'name'));
@@ -570,7 +532,7 @@
                         const descBox = document.createElement('div');
                         descBox.id = `box-${item.cat}-desc`;
                         descBox.className = 'inspectable-box item-desc-box';
-                        descBox.style.fontSize = `${11 + item.descFontDelta}px`;
+                        descBox.style.fontSize = `${11.5 + item.descFontDelta}px`;
                         descBox.style.transform = `translate(${item.descOffsetLeft}px, ${item.descOffsetTop}px)`;
                         descBox.textContent = item.desc; 
                         descBox.addEventListener('pointerdown', (e) => setupDragStart(e, item.id, 'desc'));
@@ -583,6 +545,7 @@
             });
         }
 
+        // DRAG ENGINE CONTROL
         function setupDragStart(e, id, field) {
             if (e.button !== 0 && e.pointerType === 'mouse') return;
             
@@ -645,6 +608,7 @@
             localStorage.setItem(DB_KEY, JSON.stringify(menuDataset));
         });
 
+        // HIGHLIGHTS
         const workspace = document.getElementById('preview-workspace');
         const controlPanel = document.getElementById('control-panel');
         const tooltip = document.getElementById('debug-tooltip');
@@ -675,7 +639,7 @@
 
                 if (targetNode.id) {
                     const idString = targetNode.id;
-                    moveAndShowTooltip(e, `Trascina per spostare -> #${idString}`);
+                    moveAndShowTooltip(e, `Trascina per muovere -> #${idString}`);
                     const match = idString.match(/box-(.+)-(name|desc|price)/);
                     if (match) {
                         const cat = match[1];
@@ -706,7 +670,7 @@
         }
 
         function resetToDefault() {
-            if (confirm("Vuoi azzerare la memoria cache e sbloccare lo sfondo?")) {
+            if (confirm("Resettare la configurazione e tornare allo sfondo predefinito?")) {
                 localStorage.clear(); window.location.reload();
             }
         }
