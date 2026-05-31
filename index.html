@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configuratore Menu Medievale - GitHub Production Ready</title>
+    <title>Configuratore Menu Medievale - Controllo Tipografico Avanzato</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -59,14 +59,14 @@
             flex-direction: row; 
             gap: 40px;
             width: 100%;
-            max-width: 1140px;
+            max-width: 1200px;
             align-items: flex-start;
             justify-content: center;
         }
 
         #control-panel {
             flex: 1;
-            max-width: 500px;
+            max-width: 580px;
             background: var(--bg-panel);
             padding: 25px;
             border-radius: 12px;
@@ -106,7 +106,7 @@
             position: absolute; top:50%; left:50%; transform:translate(-50%, -50%);
             color: #aaa; font-style: italic; font-size: 14px; pointer-events: none;
             font-family: 'Segoe UI', sans-serif;
-            display: none; /* Disabilitato di default poiché carichiamo l'asset locale */
+            display: none;
         }
 
         #menu-title-container {
@@ -143,8 +143,10 @@
             justify-content: center;
             text-align: center;
             gap: 2px;
+            transition: transform 0.1s ease; /* Fluidità di spostamento manuale */
         }
 
+        /* Altezze percentuali storiche fisse di partenza */
         #box-mastro-birraio     { top: 41.7%; }
         #box-condottiero        { top: 54.7%; }
         #box-viandante          { top: 65.3%; }
@@ -159,7 +161,6 @@
         }
 
         .item-header {
-            font-size: 13.5px;
             font-weight: bold;
             color: #1c0e00;
             white-space: nowrap;
@@ -188,18 +189,42 @@
         .file-box { background: #fff; border: 1px dashed var(--border-color); padding: 12px; text-align: center; font-size: 13px; cursor: pointer; border-radius: 6px; }
         .file-box.has-image { background: #e8f5e9; border: 1px solid #27ae60; }
         .file-box input { display: none; }
+        
         table { width: 100%; border-collapse: collapse; margin-bottom: 25px; background: white; font-size: 12px; }
-        th, td { padding: 8px; border: 1px solid #e0e0e0; text-align: left; }
+        th, td { padding: 8px; border: 1px solid #e0e0e0; text-align: left; vertical-align: top; }
         th { background-color: var(--primary-color); color: white; text-transform: uppercase; font-size: 11px; }
+        
         input[type="text"], textarea { width: 100%; border: 1px solid #ccc; border-radius: 4px; padding: 6px; font-family: inherit; }
-        textarea { resize: vertical; height: 45px; font-size: 11px; }
+        textarea { resize: vertical; height: 42px; font-size: 11px; }
+        
+        /* MICRO-CONTROLLI INTERFACCIA UTENTE */
+        .micro-controls {
+            display: flex;
+            gap: 5px;
+            margin-top: 5px;
+            align-items: center;
+        }
+        .btn-micro {
+            background: #f0e6d2;
+            border: 1px solid var(--border-color);
+            color: #5c1d1d;
+            padding: 2px 6px;
+            font-size: 11px;
+            font-weight: bold;
+            border-radius: 3px;
+            cursor: pointer;
+            user-select: none;
+        }
+        .btn-micro:hover { background: #e4d5b7; }
+        .lbl-micro-status { font-size: 10px; color: #666; font-family: monospace; }
+
         .btn-container { display: flex; flex-direction: column; gap: 10px; }
         .btn-download { background-color: #27ae60; color: white; padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; width: 100%; box-shadow: 0 4px 10px rgba(39,174,96,0.2); }
         .btn-reset { background-color: #c0392b; color: white; padding: 6px; border: none; border-radius: 4px; cursor: pointer; font-size: 11px; margin-top: 15px; width: 100%; opacity: 0.8; }
 
-        @media (min-width: 769px) and (max-width: 1120px) {
+        @media (min-width: 769px) and (max-width: 1180px) {
             #main-container { gap: 20px; }
-            #preview-workspace { --pc-scale: calc((100vw - 540px) / 560); }
+            #preview-workspace { --pc-scale: calc((100vw - 620px) / 560); }
             .page-scale-wrapper { width: calc(560px * var(--pc-scale)); height: calc(685px * var(--pc-scale)); }
             .menu-page-block { transform: scale(var(--pc-scale)); }
         }
@@ -246,12 +271,12 @@
                 </div>
             </div>
 
-            <h2>Gestione Piatti, Prezzi e Descrizioni</h2>
+            <h2>Gestione Piatti, Prezzi e Grafica Linee</h2>
             <table id="editor-table">
                 <thead>
                     <tr>
                         <th style="width: 30px;">Usa</th>
-                        <th>Categoria / Piatto / Descrizione</th>
+                        <th>Dati Piatto & Regolazioni Spaziali</th>
                         <th style="width: 65px;">Prezzo</th>
                     </tr>
                 </thead>
@@ -262,7 +287,7 @@
                 <button class="btn-download" onclick="downloadPageAsPNG('page-menu', 'Menu_Completo.png')">📸 Scarica Menu Completo (PNG)</button>
             </div>
             
-            <button class="btn-reset" onclick="resetToDefault()">🔄 Inizializza Menu Predefinito</button>
+            <button class="btn-reset" onclick="resetToDefault()">🔄 Inizializza Tutto a Predefinito</button>
         </div>
 
         <div id="preview-workspace">
@@ -286,15 +311,15 @@
     </div>
 
     <script>
-        // Costante per il file locale su GitHub (stessa cartella di index.html)
-        const DEFAULT_BG_PATH = "menu_bg.png"; 
+        const DEFAULT_BG_PATH = "menu_bg.jpg"; 
 
+        // Dataset iniziale arricchito con parametri tipografici extra (fontDelta e offsetTop)
         const defaultDataset = [
-            { id: 1, active: true, cat: "mastro-birraio", catName: "Mastro Birraio", name: "Birra del Borgo", price: "6.00", desc: "Artigianale rossa prodotta con grani locali e luppoli selvatici." },
-            { id: 2, active: true, cat: "condottiero", catName: "Condottiero", name: "Pappardelle al Cinghiale", price: "14.00", desc: "Pasta fresca all'uovo con ragù bianco di cinghiale locale." },
-            { id: 3, active: true, cat: "viandante", catName: "Viandante", name: "Zuppa di Farro e Castagne", price: "9.00", desc: "Antica ricetta medievale con legumi, farro e castagne." },
-            { id: 4, active: true, cat: "castellano", catName: "Castellano", name: "Ravioli ai Funghi Porcini", price: "16.00", desc: "Pasta ripiena saltata con porcini e scaglie di pecorino." },
-            { id: 5, active: true, cat: "piccolo-cavaliere", catName: "Piccolo Cavaliere", name: "Gnocchetti al Pomodoro", price: "7.00", desc: "Porzione ridotta con passata di pomodoro dolce e parmigiano." }
+            { id: 1, active: true, cat: "mastro-birraio", catName: "Mastro Birraio", name: "Birra del Borgo", price: "6.00", desc: "Artigianale rossa prodotta con grani locali e luppoli selvatici.", fontDelta: 0, offsetTop: 0 },
+            { id: 2, active: true, cat: "condottiero", catName: "Condottiero", name: "Pappardelle al Cinghiale", price: "14.00", desc: "Pasta fresca all'uovo con ragù bianco di cinghiale locale.", fontDelta: 0, offsetTop: 0 },
+            { id: 3, active: true, cat: "viandante", catName: "Viandante", name: "Zuppa di Farro e Castagne", price: "9.00", desc: "Antica ricetta medievale con legumi, farro e castagne.", fontDelta: 0, offsetTop: 0 },
+            { id: 4, active: true, cat: "castellano", catName: "Castellano", name: "Ravioli ai Funghi Porcini", price: "16.00", desc: "Pasta ripiena saltata con porcini e scaglie di pecorino.", fontDelta: 0, offsetTop: 0 },
+            { id: 5, active: true, cat: "piccolo-cavaliere", catName: "Piccolo Cavaliere", name: "Gnocchetti al Pomodoro", price: "7.00", desc: "Porzione ridotta con passata di pomodoro dolce e parmigiano.", fontDelta: 0, offsetTop: 0 }
         ];
 
         let menuDataset = [];
@@ -322,6 +347,11 @@
             const savedData = localStorage.getItem('db_menu_medievale_single');
             if (savedData) {
                 menuDataset = JSON.parse(savedData);
+                // Patch protettiva per retrocompatibilità qualora mancassero i nuovi campi nei vecchi salvataggi
+                menuDataset.forEach(item => {
+                    if (item.fontDelta === undefined) item.fontDelta = 0;
+                    if (item.offsetTop === undefined) item.offsetTop = 0;
+                });
             } else {
                 menuDataset = JSON.parse(JSON.stringify(defaultDataset));
                 localStorage.setItem('db_menu_medievale_single', JSON.stringify(menuDataset));
@@ -333,16 +363,13 @@
             }
         }
 
-        // Modificato per gestire la priorità LocalStorage -> Percorso Relativo Locale
         function loadBackground() {
             const savedBg = localStorage.getItem('db_single_bg');
             const menuElement = document.getElementById('page-menu');
-            
             if (savedBg) {
                 menuElement.style.backgroundImage = `url('${savedBg}')`;
                 setLabelUploaded();
             } else {
-                // Caricamento diretto dal repository GitHub locale
                 menuElement.style.backgroundImage = `url('${DEFAULT_BG_PATH}')`;
             }
         }
@@ -365,7 +392,7 @@
                         document.getElementById(targetId).style.backgroundImage = `url('${base64Data}')`;
                         setLabelUploaded();
                     } catch (error) {
-                        alert("Spazio LocalStorage esaurito. L'immagine verrà applicata solo temporaneamente.");
+                        alert("LocalStorage pieno, visualizzazione solo temporanea.");
                         document.getElementById(targetId).style.backgroundImage = `url('${base64Data}')`;
                     }
                 }
@@ -373,6 +400,7 @@
             }
         }
 
+        // Creazione interfaccia con l'aggiunta delle pulsantiere per Font e Posizionamento Verticale
         function buildEditorTable() {
             const tbody = document.querySelector("#editor-table tbody");
             tbody.innerHTML = menuDataset.map(item => `
@@ -384,10 +412,44 @@
                         <b style="color:var(--primary-color); font-size:10px; display:block;">MENU DEL ${item.catName.toUpperCase()}</b>
                         <input type="text" value="${item.name}" id="name-${item.id}" oninput="syncDataAndRender()" style="margin-bottom:4px; font-weight:bold;">
                         <textarea id="desc-${item.id}" oninput="syncDataAndRender()">${item.desc}</textarea>
+                        
+                        <div class="micro-controls">
+                            <span style="font-size:11px; font-weight:bold; margin-right:2px;">Testo:</span>
+                            <button class="btn-micro" onclick="adjustTypography(${item.id}, 'font', -0.5)">A-</button>
+                            <button class="btn-micro" onclick="adjustTypography(${item.id}, 'font', 0.5)">A+</button>
+                            
+                            <span style="font-size:11px; font-weight:bold; margin-left:8px; margin-right:2px;">Posizione:</span>
+                            <button class="btn-micro" onclick="adjustTypography(${item.id}, 'position', -1)">↑ Su</button>
+                            <button class="btn-micro" onclick="adjustTypography(${item.id}, 'position', 1)">↓ Giù</button>
+                            
+                            <span id="status-${item.id}" class="lbl-micro-status">(${item.fontDelta >= 0 ? '+' : ''}${item.fontDelta}pt / ${item.offsetTop >= 0 ? '+' : ''}${item.offsetTop}px)</span>
+                        </div>
                     </td>
                     <td><input type="text" value="${item.price}" id="price-${item.id}" oninput="syncDataAndRender()" style="text-align:right;"></td>
                 </tr>
             `).join('');
+        }
+
+        // Modifica dei dati tipografici dinamici
+        function adjustTypography(id, type, amount) {
+            const item = menuDataset.find(x => x.id === id);
+            if (!item) return;
+
+            if (type === 'font') {
+                item.fontDelta = parseFloat((item.fontDelta + amount).toFixed(1));
+            } else if (type === 'position') {
+                item.offsetTop = parseInt(item.offsetTop + amount);
+            }
+
+            // Aggiorna l'etichetta di stato numerica nel pannello di controllo
+            const statusLabel = document.getElementById(`status-${id}`);
+            if (statusLabel) {
+                statusLabel.innerText = `(${item.fontDelta >= 0 ? '+' : ''}${item.fontDelta}pt / ${item.offsetTop >= 0 ? '+' : ''}${item.offsetTop}px)`;
+            }
+
+            // Salva e renderizza i cambiamenti all'istante
+            localStorage.setItem('db_menu_medievale_single', JSON.stringify(menuDataset));
+            renderGraphics();
         }
 
         function updateTitleAndRender() {
@@ -420,7 +482,11 @@
             document.getElementById('menu-title-target').innerText = currentTitle;
 
             const categories = ['mastro-birraio', 'condottiero', 'viandante', 'castellano', 'piccolo-cavaliere'];
-            categories.forEach(c => document.getElementById(`box-${c}`).innerHTML = '');
+            categories.forEach(c => {
+                const box = document.getElementById(`box-${c}`);
+                box.innerHTML = '';
+                box.style.transform = 'none'; // reset posizionamento manuale prima del ricalcolo
+            });
 
             menuDataset.forEach(item => {
                 if (item.active) {
@@ -430,17 +496,23 @@
                         wrapper.className = 'item-wrapper';
 
                         const cleanDesc = item.desc.replace(/\n/g, " ").trim();
-                        const calculatedFontSize = calculateAutoscalingFont(cleanDesc, 60, 11.5);
+                        
+                        // Calcola basi e applica le correzioni manuali inserite dall'utente (+/- fontDelta)
+                        const autoDescSize = calculateAutoscalingFont(cleanDesc, 60, 11.5) + item.fontDelta;
+                        const headerFontSize = 13.5 + item.fontDelta;
 
                         wrapper.innerHTML = `
-                            <div class="item-header">
+                            <div class="item-header" style="font-size: ${headerFontSize}px;">
                                 ${item.name} <span class="item-price-span">- € ${item.price}</span>
                             </div>
-                            <div class="item-desc" style="font-size: ${calculatedFontSize}px;" title="${cleanDesc}">
+                            <div class="item-desc" style="font-size: ${autoDescSize}px;" title="${cleanDesc}">
                                 ${cleanDesc}
                             </div>
                         `;
                         box.appendChild(wrapper);
+
+                        // Applica lo spostamento verticale personalizzato (Up/Down) via CSS Translate
+                        box.style.transform = `translateY(${item.offsetTop}px)`;
                     }
                 }
             });
@@ -455,8 +527,8 @@
             const element = document.getElementById(elementId);
             html2canvas(element, {
                 scale: 3,
-                useCORS: true,       // Fondamentale su GitHub Pages per evitare blocchi cross-origin degli asset locali
-                allowTaint: false,   // Deve essere impostato su false se si usa useCORS
+                useCORS: true,       
+                allowTaint: false,   
                 logging: false,
                 imageTimeout: 0
             }).then(canvas => {
@@ -472,13 +544,13 @@
         }
 
         function resetToDefault() {
-            if (confirm("Ripristinare i dati predefiniti? Lo sfondo caricato manualmente verrà rimosso.")) {
+            if (confirm("Vuoi azzerare tutte le modifiche, i font personalizzati e gli spostamenti verticali delle linee?")) {
                 localStorage.clear();
                 window.location.reload();
             }
         }
 
-        // Init sequenziale ordinato
+        // Bootstrapping iniziale dell'applicazione
         initDatabase();
         buildEditorTable();
         loadBackground();
