@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configuratore Menu Medievale - Layout Bilanciato e Giustificato</title>
+    <title>Configuratore Menu Medievale - Layout Centralizzato con Scaling PC</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,20 +23,65 @@
             background-color: #ebdcb9;
             padding: 20px;
             display: flex;
-            gap: 20px;
+            flex-direction: column; /* Imposta il flusso verticale: Anteprime in alto, controlli in basso */
+            align-items: center;    /* Centra tutti gli elementi orizzontalmente */
+            gap: 30px;
+            min-height: 100vh;
         }
 
-        /* PANNELLO DI CONTROLLO UTENTE */
+        /* AREA DI VISUALIZZAZIONE DELLE PAGINE (IN ALTO SU PC) */
+        #preview-workspace {
+            display: flex;
+            flex-direction: row; /* Affiancate su PC */
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Contenitore di sicurezza necessario per lo scaling fluido */
+        .page-scale-wrapper {
+            width: 560px;
+            height: 685px;
+            flex-shrink: 0;
+        }
+
+        .menu-page-block {
+            width: 560px;
+            height: 685px;
+            position: relative;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-color: #fff;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            overflow: hidden;
+            transform-origin: top left; /* Necessario per il ridimensionamento proporzionale */
+            
+            /* Ottimizzazione rendering immagine HD */
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            image-rendering: pixelated;
+        }
+
+        .placeholder-text {
+            position: absolute; top:50%; left:50%; transform:translate(-50%, -50%);
+            color: #aaa; font-style: italic; font-size: 14px; pointer-events: none;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        /* PANNELLO DI CONTROLLO UTENTE (IN BASSO SU PC) */
         #control-panel {
-            flex: 1;
+            width: 100%;
+            max-width: 650px; /* Allargato leggermente per un look più bilanciato quando è in basso */
             background: var(--bg-panel);
-            padding: 20px;
+            padding: 25px;
             border-radius: 12px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-            max-width: 450px;
             height: fit-content;
-            position: sticky;
-            top: 20px;
+            margin-bottom: 20px;
         }
 
         h2 { color: var(--primary-color); margin-bottom: 15px; font-size: 1.3rem; border-bottom: 2px solid var(--border-color); padding-bottom: 5px;}
@@ -121,36 +166,6 @@
         }
         .btn-reset:hover { opacity: 1; }
 
-        /* AREA DI VISUALIZZAZIONE DELLE PAGINE */
-        #preview-workspace {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .menu-page-block {
-            width: 560px;
-            height: 685px;
-            position: relative;
-            background-size: 100% 100%;
-            background-repeat: no-repeat;
-            background-position: center;
-            background-color: #fff;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            overflow: hidden;
-            
-            /* Ottimizzazione rendering immagine HD */
-            image-rendering: -webkit-optimize-contrast;
-            image-rendering: crisp-edges;
-            image-rendering: pixelated;
-        }
-
-        .placeholder-text {
-            position: absolute; top:50%; left:50%; transform:translate(-50%, -50%);
-            color: #aaa; font-style: italic; font-size: 14px; pointer-events: none;
-            font-family: 'Segoe UI', sans-serif;
-        }
-
         /* POSIZIONAMENTO TESTI CENTRATI - PAGINA 1 */
         .menu-overlay {
             position: absolute;
@@ -198,9 +213,9 @@
         #legenda-content {
             position: absolute;
             top: 39.6%;
-            left: 24%;             /* Spostato verso il centro per non sovrapporsi agli elementi grafici di sinistra */
-            width: 52%;            /* Restretto il canale utile per blindare il testo all'interno dello spazio libero */
-            height: 53%;           /* Ampliata l'altezza totale per una distribuzione verticale più ariosa */
+            left: 24%;             
+            width: 52%;            
+            height: 53%;           
             overflow: hidden;
             font-family: 'EB Garamond', 'Georgia', serif;
             color: #1c0e00;
@@ -224,7 +239,7 @@
         #legenda-items-target {
             display: flex;
             flex-direction: column;
-            justify-content: space-around; /* Distribuzione spaziale omogenea e bilanciata */
+            justify-content: space-around; 
             height: 100%;
             width: 100%;
         }
@@ -238,7 +253,6 @@
             margin-bottom: 2px;
         }
 
-        /* Margine per distanziare il primo elemento sotto la scritta "Elenco Menu" */
         .first-item-offset {
             margin-top: 12px; 
         }
@@ -259,23 +273,103 @@
             font-size: 11.5px; 
             line-height: 1.25;  
             font-style: italic;
-            text-align: justify;     /* Testo giustificato per la massima pulizia geometrica */
-            text-align-last: center; /* L'ultima riga rimane centrata per preservare l'estetica del menu */
+            text-align: justify;     
+            text-align-last: center; 
             padding: 0 4px;
+        }
+
+        /* ==========================================================================
+           LOGICA DI SCALING RESPONSIVE (MEDIA QUERIES DINAMICHE PC E MOBILE)
+           ========================================================================== */
+        
+        /* SCALING SU PC DESKTOP: entra in funzione se la finestra del PC scende sotto i 1180px di larghezza */
+        @media (min-width: 901px) and (max-width: 1180px) {
+            #preview-workspace {
+                justify-content: center;
+                /* Calcola la microscala per far convivere i due fogli affiancati senza mandarli a capo */
+                --pc-scale: calc((100vw - 60px) / 1120); 
+            }
+            .page-scale-wrapper {
+                width: calc(560px * var(--pc-scale));
+                height: calc(685px * var(--pc-scale));
+            }
+            .menu-page-block {
+                transform: scale(var(--pc-scale));
+            }
+        }
+
+        /* CONFIGURAZIONE SMARTPHONE E DISPOSITIVI MOBILE */
+        @media (max-width: 900px) {
+            body {
+                padding: 10px;
+                gap: 20px;
+            }
+
+            #preview-workspace {
+                flex-direction: column; /* Incolonna le pagine verticalmente sui telefoni */
+                align-items: center;
+            }
+
+            #control-panel {
+                max-width: 100%;
+                width: 100%;
+                padding: 15px;
+                order: 2; /* Sposta i controlli sotto le anteprime anche su mobile se necessario, oppure rimuovi per lasciarlo sopra */
+            }
+
+            table { font-size: 11px; }
+            th, td { padding: 6px; }
+
+            .page-scale-wrapper {
+                --mobile-scale: calc((100vw - 40px) / 560); 
+                max-width: 560px; 
+                width: calc(100vw - 40px);
+                height: calc(685px * var(--mobile-scale)); 
+            }
+
+            .menu-page-block {
+                transform: scale(calc((100vw - 40px) / 560));
+                max-width: 560px;
+            }
         }
     </style>
 </head>
 <body>
 
+    <div id="preview-workspace">
+        
+        <div class="page-scale-wrapper">
+            <div id="page-menu" class="menu-page-block">
+                <div id="p1-placeholder" class="placeholder-text">Nessuno Sfondo caricato per Pagina 1</div>
+                <div id="box-mastro-birraio" class="menu-overlay"></div>
+                <div id="box-condottiero" class="menu-overlay"></div>
+                <div id="box-viandante" class="menu-overlay"></div>
+                <div id="box-castellano" class="menu-overlay"></div>
+                <div id="box-piccolo-cavaliere" class="menu-overlay"></div>
+            </div>
+        </div>
+
+        <div class="page-scale-wrapper">
+            <div id="page-legenda" class="menu-page-block">
+                <div id="p2-placeholder" class="placeholder-text">Nessuno Sfondo caricato per Pagina 2</div>
+                <div id="legenda-content">
+                    <div class="legenda-title">Elenco Menu</div>
+                    <div id="legenda-items-target"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
     <div id="control-panel">
         <h2>Impostazioni Grafiche</h2>
         <div class="file-inputs">
             <div class="file-box" id="box-lbl-bg1">
-                <label for="bg1" id="lbl-bg1">🖼️ Carica Sfondo 1</label>
+                <label for="bg1" id="lbl-bg1">🖼️ Sfondo Pag 1</label>
                 <input type="file" id="bg1" accept="image/*" onchange="processAndSaveBg(this, 'page-menu', 'db_bg_page1', 'box-lbl-bg1')">
             </div>
             <div class="file-box" id="box-lbl-bg2">
-                <label for="bg2" id="lbl-bg2">🖼️ Carica Sfondo 2</label>
+                <label for="bg2" id="lbl-bg2">🖼️ Sfondo Pag 2</label>
                 <input type="file" id="bg2" accept="image/*" onchange="processAndSaveBg(this, 'page-legenda', 'db_bg_page2', 'box-lbl-bg2')">
             </div>
         </div>
@@ -286,7 +380,7 @@
                 <tr>
                     <th style="width: 30px;">Usa</th>
                     <th>Categoria / Piatto</th>
-                    <th style="width: 75px;">Prezzo</th>
+                    <th style="width: 65px;">Prezzo</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -300,32 +394,11 @@
         <button class="btn-reset" onclick="resetToDefault()">🔄 Inizializza Menu Predefinito</button>
     </div>
 
-    <div id="preview-workspace">
-        
-        <div id="page-menu" class="menu-page-block">
-            <div id="p1-placeholder" class="placeholder-text">Nessuno Sfondo caricato per Pagina 1</div>
-            <div id="box-mastro-birraio" class="menu-overlay"></div>
-            <div id="box-condottiero" class="menu-overlay"></div>
-            <div id="box-viandante" class="menu-overlay"></div>
-            <div id="box-castellano" class="menu-overlay"></div>
-            <div id="box-piccolo-cavaliere" class="menu-overlay"></div>
-        </div>
-
-        <div id="page-legenda" class="menu-page-block">
-            <div id="p2-placeholder" class="placeholder-text">Nessuno Sfondo caricato per Pagina 2</div>
-            <div id="legenda-content">
-                <div class="legenda-title">Elenco Menu</div>
-                <div id="legenda-items-target"></div>
-            </div>
-        </div>
-
-    </div>
-
     <script>
         const defaultDataset = [
             { id: 1, active: true, cat: "mastro-birraio", catName: "Mastro Birraio", name: "Birra del Borgo", price: "6.00", desc: "Artigianale rossa prodotta con grani locali e luppoli selvatici a km 0." },
             { id: 2, active: true, cat: "condottiero", catName: "Condottiero", name: "Pappardelle al Cinghiale", price: "14.00", desc: "Pasta fresca all'uovo trafilata al bronzo con ragù bianco di cinghiale locale." },
-            { id: 3, active: true, cat: "viandante", catName: "Viandante", name: "Zuppa di Farro e Castagne", price: "9.00", desc: "Antica ricetta medievale con legumi, farro spezzato, castagne e olio d'oliva a crudo." },
+            { id: 3, active: true, cat: "viandante", catName: "Viandante", name: "Zrupa di Farro e Castagne", price: "9.00", desc: "Antica ricetta medievale con legumi, farro spezzato, castagne e olio d'oliva a crudo." },
             { id: 4, active: true, cat: "castellano", catName: "Castellano", name: "Ravioli ai Funghi Porcini", price: "16.00", desc: "Pasta ripiena di ricotta ed erbe fini, saltata con funghi porcini e scaglie di pecorino." },
             { id: 5, active: true, cat: "piccolo-cavaliere", catName: "Piccolo Cavaliere", name: "Gnocchetti al Pomodoro", price: "7.00", desc: "Porzione ridotta di gnocchi fatti in casa con passata di pomodoro dolce e parmigiano." }
         ];
@@ -371,7 +444,7 @@
                         localStorage.setItem(storageKey, base64Data);
                         applyBgToElement(targetId, base64Data, targetId === 'page-menu' ? 'p1-placeholder' : 'p2-placeholder', labelBoxId);
                     } catch (error) {
-                        alert("Spazio di archiviazione insufficiente! L'immagine è troppo pesante per essere salvata automaticamente in memoria. Verrà mostrata a schermo ma dovrai caricarla nuovamente alla prossima riapertura.");
+                        alert("Spazio insufficiente! L'immagine verrà mostrata temporaneamente a schermo ma dovrai caricarla nuovamente al prossimo avvio.");
                         document.getElementById(targetId).style.backgroundImage = `url('${base64Data}')`;
                         const ph = document.getElementById(targetId === 'page-menu' ? 'p1-placeholder' : 'p2-placeholder');
                         if (ph) ph.style.display = 'none';
@@ -465,7 +538,6 @@
                             isFirstRendered = false;
                         }
 
-                        // Ridotto maxChars a 42 per adattarsi perfettamente alla colonna più stretta
                         const formattedDesc = formatDescription(item.desc, 42);
 
                         block.innerHTML = `
@@ -477,12 +549,12 @@
                 }
             });
 
-            // Calcolo e scalabilità dinamica ottimizzata con limiti di leggibilità minimi elevati
+            // Calcolo e scalabilità dinamica del font
             let baseFontSize = 12.5; 
             let headFontSize = 14.5;
             if (totalDescLength > 350) { baseFontSize = 12.0; headFontSize = 14.0; }
             if (totalDescLength > 430) { baseFontSize = 11.5; headFontSize = 13.0; }
-            if (totalDescLength > 500) { baseFontSize = 11.0; headFontSize = 12.0; } // Limite per preservare la visibilità in stampa
+            if (totalDescLength > 500) { baseFontSize = 11.0; headFontSize = 12.0; }
 
             menuDataset.forEach(item => {
                 const textElem = document.getElementById(`desc-text-${item.id}`);
