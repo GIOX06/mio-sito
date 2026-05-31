@@ -154,36 +154,36 @@
             margin-top: 2px;
         }
 
-        /* CONFIGURAZIONE ZECCHINO CON IMMAGINE PNG AUTENTICA */
+        /* STILE DELLA MONETA REALE */
         .item-price-box {
             position: absolute;
-            left: -45px; 
-            top: 0px;
+            left: 0; 
+            top: 0;
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 10;
-            width: 46px; /* Dimensione ideale per coprire i vecchi cerchietti */
-            height: 46px;
+            width: 48px; /* Dimensione ottimale per coprire i vecchi cerchietti */
+            height: 48px;
             
-            /* Caricamento file zecchino-medievale.png */
+            /* Puntamento al file zecchino-medievale.png */
             background-image: url('zecchino-medievale.png');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
             
-            filter: drop-shadow(0px 3px 4px rgba(0,0,0,0.45));
+            filter: drop-shadow(0px 3px 5px rgba(0,0,0,0.5));
             
-            /* Stile testo prezzo sopra la moneta */
-            color: #1b0c02; 
+            /* Stile del numero sopra la moneta */
+            color: #1a0800; 
             font-weight: 800;
             font-family: 'EB Garamond', serif;
-            /* Contorno chiaro per staccare lo scritto dallo sfondo dorato elaborato */
+            /* Forte contorno per renderlo leggibile sulle venature dell'oro */
             text-shadow: 
-                -1px -1px 0 #fff5cc,  
-                 1px -1px 0 #fff5cc,
-                -1px  1px 0 #fff5cc,
-                 1px  1px 0 #fff5cc;
+                -1.5px -1.5px 0 #fff8d6,  
+                 1.5px -1.5px 0 #fff8d6,
+                -1.5px  1.5px 0 #fff8d6,
+                 1.5px  1.5px 0 #fff8d6;
             cursor: move;
             touch-action: none;
         }
@@ -322,7 +322,7 @@
                 </div>
             </div>
 
-            <h2>Gestione Piatti (Trascina gli zecchini nell'anteprima!)</h2>
+            <h2>Gestione Piatti (Trascina gli zecchini reali nell'anteprima!)</h2>
             <table id="editor-table">
                 <thead>
                     <tr>
@@ -356,14 +356,15 @@
 
     <script>
         const DEFAULT_BG_PATH = "menu_bg.png"; 
-        const DB_KEY = "db_menu_medievale_v11_realcoin";
+        const DB_KEY = "db_menu_medievale_v12_perfectcoin";
 
+        // Coordinazione iniziale ottimizzata basata sulle posizioni dei cerchi originali
         const defaultDataset = [
-            { id: 1, active: true, cat: "mastro-birraio", catName: "Mastro Birraio", name: "Birra del Borgo", price: "6", desc: "Artigianale rossa prodotta con\ngrani locali e luppoli selvatici.", nameFontDelta: 0, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 0, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 2, priceOffsetTop: -5, priceOffsetLeft: -55 },
-            { id: 2, active: true, cat: "condottiero", catName: "Condottiero", name: "Pappardelle al Cinghiale", price: "14", desc: "Pasta fresca all'uovo con\nragù bianco di cinghiale locale.", nameFontDelta: 0, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 0, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 2, priceOffsetTop: -5, priceOffsetLeft: 400 },
-            { id: 3, active: true, cat: "viandante", catName: "Viandante", name: "Zuppa di Farro e Castagne", price: "9", desc: "Antica ricetta medievale con\nlegumi, farro e castagne.", nameFontDelta: 0, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 0, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 2, priceOffsetTop: -5, priceOffsetLeft: -55 },
-            { id: 4, active: true, cat: "castellano", catName: "Castellano", name: "Ravioli ai Funghi Porcini", price: "16", desc: "Pasta ripiena saltata con porcini\ne scaglie di pecorino.", nameFontDelta: 0, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 0, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 2, priceOffsetTop: -5, priceOffsetLeft: 400 },
-            { id: 5, active: true, cat: "piccolo-cavaliere", catName: "Piccolo Cavaliere", name: "Gnocchetti al Pomodoro", price: "7", desc: "Porzione ridotta con passata\ndi pomodoro dolce e parmigiano.", nameFontDelta: 0, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 0, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 2, priceOffsetTop: -5, priceOffsetLeft: -55 }
+            { id: 1, active: true, cat: "mastro-birraio", catName: "Mastro Birraio", name: "Birra del Borgo", price: "6", desc: "Artigianale rossa prodotta con\ngrani locali e luppoli selvatici.", nameFontDelta: 0, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 0, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 2, priceOffsetTop: -2, priceOffsetLeft: -54 },
+            { id: 2, active: true, cat: "condottiero", catName: "Condottiero", name: "Pappardelle al Cinghiale", price: "10", desc: "Pasta fresca all'uovo con\nragù bianco di cinghiale locale.", nameFontDelta: 0, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 0, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 2, priceOffsetTop: -12, priceOffsetLeft: 236 },
+            { id: 3, active: true, cat: "viandante", catName: "Viandante", name: "Zuppa di Farro e Castagne", price: "9", desc: "Antica ricetta medievale con\nlegumi, farro e castagne.", nameFontDelta: 0, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 0, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 2, priceOffsetTop: -2, priceOffsetLeft: -54 },
+            { id: 4, active: true, cat: "castellano", catName: "Castellano", name: "Ravioli ai Funghi Porcini", price: "11", desc: "Pasta ripiena saltata con porcini\ne scaglie di pecorino.", nameFontDelta: 0, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 0, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 2, priceOffsetTop: -12, priceOffsetLeft: 236 },
+            { id: 5, active: true, cat: "piccolo-cavaliere", catName: "Piccolo Cavaliere", name: "Gnocchetti al Pomodoro", price: "7", desc: "Porzione ridotta con passata\ndi pomodoro dolce e parmigiano.", nameFontDelta: 0, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 0, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 2, priceOffsetTop: -2, priceOffsetLeft: -54 }
         ];
 
         let menuDataset = [];
@@ -509,7 +510,7 @@
                 if (item.active) {
                     const anchor = document.getElementById(`anchor-${item.cat}`);
                     if (anchor) {
-                        // Rendering Zecchino con immagine PNG
+                        // Moneta Zecchino PNG
                         if (item.price) {
                             const priceBox = document.createElement('div');
                             priceBox.id = `box-${item.cat}-price`;
