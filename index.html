@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configuratore Menu Medievale - Zecchini 3D</title>
+    <title>Configuratore Menu Medievale - Zecchini 3D Rallineati</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -114,11 +114,12 @@
             justify-content: center;
         }
 
-        #anchor-mastro-birraio     { top: 38.0%; }
-        #anchor-condottiero        { top: 51.5%; }
-        #anchor-viandante          { top: 62.5%; }
-        #anchor-castellano         { top: 72.8%; }
-        #anchor-piccolo-cavaliere  { top: 82.5%; }
+        /* ANCORAGGI SPOSTATI IN BASSO DI 30 PIXEL */
+        #anchor-mastro-birraio     { top: 42.4%; }
+        #anchor-condottiero        { top: 55.9%; }
+        #anchor-viandante          { top: 66.9%; }
+        #anchor-castellano         { top: 77.2%; }
+        #anchor-piccolo-cavaliere  { top: 86.9%; }
 
         .menu-text-block {
             display: flex;
@@ -154,7 +155,7 @@
             margin-top: 2px;
         }
 
-        /* CONFIGURAZIONE RITAGLIO TONDO E EFFETTO MONETA 3D */
+        /* STILE DELLO ZECCHINO 3D - CORRETTO SU FILE .JPG */
         .item-price-box {
             position: absolute;
             left: 0; 
@@ -164,35 +165,28 @@
             justify-content: center;
             z-index: 10;
             
-            /* Dimensione della moneta */
             width: 46px; 
             height: 46px;
+            border-radius: 50%; /* Taglio a cerchio perfetto */
             
-            /* Taglio a cerchio perfetto per eliminare gli angoli bianchi */
-            border-radius: 50%; 
-            
-            /* Caricamento e centratura dello zecchino */
-            background-image: url('zecchino-medievale.png');
-            background-size: 108% 108%; /* Leggero zoom per escludere eventuali bordini esterni */
+            /* Puntamento esatto al file zecchino-medievale.jpg */
+            background-image: url('zecchino-medievale.jpg');
+            background-size: 106% 106%;
             background-position: center;
             background-repeat: no-repeat;
+            background-color: #d4af37; /* Colore di riserva */
             
-            /* EFFETTO MULTI-OMBRA ORO E 3D:
-               1. Ombra interna scura (inset) per dare profondità al conio
-               2. Bordino chiaro in alto a sinistra per simulare il riflesso della luce sulla lamina d'oro
-               3. Ombra morbida esterna per staccare la moneta dalla pergamena sottostante */
+            /* Effetti d'ombra tridimensionali */
             box-shadow: 
                 inset 0 0 8px rgba(0, 0, 0, 0.6),
-                inset 2px 2px 3px rgba(255, 240, 180, 0.5),
+                inset 2px 2px 3px rgba(255, 245, 200, 0.5),
                 0 4px 6px rgba(0, 0, 0, 0.4),
                 0 1px 3px rgba(0, 0, 0, 0.3);
             
-            /* Stile del testo sopra la moneta */
+            /* Testo del prezzo sopra la moneta */
             color: #1a0800; 
             font-weight: 800;
             font-family: 'EB Garamond', serif;
-            
-            /* Contorno chiaro per contrastare i rilievi scuri dell'oro antico */
             text-shadow: 
                 -1.5px -1.5px 0 #fff8d6,  
                  1.5px -1.5px 0 #fff8d6,
@@ -337,7 +331,7 @@
                 </div>
             </div>
 
-            <h2>Gestione Piatti (Trascina gli zecchini reali nell'anteprima!)</h2>
+            <h2>Gestione Piatti (Trascina gli zecchini 3D nell'anteprima!)</h2>
             <table id="editor-table">
                 <thead>
                     <tr>
@@ -371,7 +365,7 @@
 
     <script>
         const DEFAULT_BG_PATH = "menu_bg.png"; 
-        const DB_KEY = "db_menu_medievale_v13_3dcoin";
+        const DB_KEY = "db_menu_medievale_v15_fixedjpg";
 
         const defaultDataset = [
             { id: 1, active: true, cat: "mastro-birraio", catName: "Mastro Birraio", name: "Birra del Borgo", price: "6", desc: "Artigianale rossa prodotta con\ngrani locali e luppoli selvatici.", nameFontDelta: 0, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 0, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 2, priceOffsetTop: -2, priceOffsetLeft: -54 },
@@ -524,7 +518,7 @@
                 if (item.active) {
                     const anchor = document.getElementById(`anchor-${item.cat}`);
                     if (anchor) {
-                        // Moneta Zecchino con ritaglio circolare e ombre 3D
+                        // Moneta Zecchino con ritaglio e puntamento corretto
                         if (item.price) {
                             const priceBox = document.createElement('div');
                             priceBox.id = `box-${item.cat}-price`;
