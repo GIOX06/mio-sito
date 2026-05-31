@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configuratore Menu Medievale - Layout Centralizzato con Scaling PC</title>
+    <title>Configuratore Menu Medievale - Layout Adattivo Premium</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,27 +21,71 @@
         body {
             font-family: 'Segoe UI', system-ui, sans-serif;
             background-color: #ebdcb9;
-            padding: 20px;
+            padding: 30px 20px;
             display: flex;
-            flex-direction: column; /* Imposta il flusso verticale: Anteprime in alto, controlli in basso */
-            align-items: center;    /* Centra tutti gli elementi orizzontalmente */
-            gap: 30px;
+            flex-direction: column;
+            align-items: center;
             min-height: 100vh;
         }
 
-        /* AREA DI VISUALIZZAZIONE DELLE PAGINE (IN ALTO SU PC) */
-        #preview-workspace {
-            display: flex;
-            flex-direction: row; /* Affiancate su PC */
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
+        /* BARRA DI NAVIGAZIONE PER SMARTPHONE (Nascosta su PC) */
+        #mobile-tabs {
+            display: none;
             width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
+            max-width: 560px;
+            margin-bottom: 15px;
+            gap: 10px;
         }
 
-        /* Contenitore di sicurezza necessario per lo scaling fluido */
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: bold;
+            border: 2px solid var(--primary-color);
+            background-color: transparent;
+            color: var(--primary-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* CONTENITORE PRINCIPALE (Layout affiancato su PC) */
+        #main-container {
+            display: flex;
+            flex-direction: row; 
+            gap: 40px;
+            width: 100%;
+            max-width: 1140px;
+            align-items: flex-start;
+            justify-content: center;
+        }
+
+        /* PANNELLO DI CONTROLLO UTENTE (A SINISTRA SU PC) */
+        #control-panel {
+            flex: 1;
+            max-width: 500px;
+            background: var(--bg-panel);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            height: fit-content;
+        }
+
+        /* AREA DI VISUALIZZAZIONE DELLA PAGINA (A DESTRA SU PC) */
+        #preview-workspace {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        /* Contenitore per lo scaling proporzionale della pergamena */
         .page-scale-wrapper {
             width: 560px;
             height: 685px;
@@ -58,12 +102,9 @@
             background-color: #fff;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             overflow: hidden;
-            transform-origin: top left; /* Necessario per il ridimensionamento proporzionale */
-            
-            /* Ottimizzazione rendering immagine HD */
+            transform-origin: top left;
             image-rendering: -webkit-optimize-contrast;
             image-rendering: crisp-edges;
-            image-rendering: pixelated;
         }
 
         .placeholder-text {
@@ -72,105 +113,34 @@
             font-family: 'Segoe UI', sans-serif;
         }
 
-        /* PANNELLO DI CONTROLLO UTENTE (IN BASSO SU PC) */
-        #control-panel {
-            width: 100%;
-            max-width: 650px; /* Allargato leggermente per un look più bilanciato quando è in basso */
-            background: var(--bg-panel);
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-            height: fit-content;
-            margin-bottom: 20px;
-        }
-
-        h2 { color: var(--primary-color); margin-bottom: 15px; font-size: 1.3rem; border-bottom: 2px solid var(--border-color); padding-bottom: 5px;}
-
-        .file-inputs {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .file-box {
-            background: #fff;
-            border: 1px dashed var(--border-color);
-            padding: 8px;
+        /* STRUTTURA DEL TITOLO PRINCIPALE PERSONALIZZABILE */
+        #menu-title-container {
+            position: absolute;
+            top: 28%;
+            left: 20%;
+            width: 60%;
             text-align: center;
-            font-size: 12px;
-            cursor: pointer;
-            border-radius: 6px;
-            position: relative;
+            font-family: 'EB Garamond', 'Georgia', serif;
+            color: #1c0e00;
         }
 
-        .file-box.has-image {
-            background: #e8f5e9;
-            border: 1px solid #27ae60;
-        }
-
-        .file-box input { display: none; }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 25px;
-            background: white;
-            font-size: 12px;
-        }
-
-        th, td { padding: 8px; border: 1px solid #e0e0e0; text-align: left; }
-        th { background-color: var(--primary-color); color: white; text-transform: uppercase; font-size: 11px; }
-
-        input[type="text"], textarea {
-            width: 100%;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            padding: 4px;
-            font-family: inherit;
-        }
-        textarea { resize: vertical; height: 40px; font-size: 11px; }
-
-        .btn-container {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .btn-download {
-            background-color: #27ae60;
-            color: white;
-            padding: 12px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
+        .main-menu-title {
+            font-size: 26px;
             font-weight: bold;
-            width: 100%;
-            box-shadow: 0 4px 10px rgba(39,174,96,0.2);
-            transition: background 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            border-bottom: 1px solid rgba(92, 29, 29, 0.3);
+            padding-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
-        .btn-download:hover { background-color: #219653; }
 
-        .btn-reset {
-            background-color: #c0392b;
-            color: white;
-            padding: 6px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 11px;
-            margin-top: 10px;
-            width: 100%;
-            opacity: 0.8;
-        }
-        .btn-reset:hover { opacity: 1; }
-
-        /* POSIZIONAMENTO TESTI CENTRATI - PAGINA 1 */
+        /* POSIZIONAMENTO DEI BLOCCHI DELLE PORTATE */
         .menu-overlay {
             position: absolute;
-            left: 23%;
-            width: 54%;
+            left: 20%;
+            width: 60%;
             color: #1c0e00;
             font-family: 'EB Garamond', 'Georgia', serif;
             display: flex;
@@ -178,9 +148,10 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            gap: 1px;
+            gap: 2px;
         }
 
+        /* Coordinate d'altezza originali */
         #box-mastro-birraio     { top: 41.7%; }
         #box-condottiero        { top: 54.7%; }
         #box-viandante          { top: 65.3%; }
@@ -194,141 +165,100 @@
             width: 100%;
         }
 
-        .item-n { 
-            font-size: 12px; 
-            font-weight: 600; 
-            line-height: 1.1; 
+        .item-header {
+            font-size: 13.5px;
+            font-weight: bold;
+            color: #1c0e00;
+            white-space: nowrap;
             letter-spacing: 0.3px;
         }
-        
-        .item-p { 
-            font-size: 11px; 
-            font-weight: bold; 
-            color: #5c1d1d; 
-            margin-top: 1px;
-            line-height: 1.1;
+
+        .item-price-span {
+            color: var(--primary-color);
+            margin-left: 5px;
         }
 
-        /* STRUTTURA ADATTIVA OTTIMIZZATA - PAGINA 2 */
-        #legenda-content {
-            position: absolute;
-            top: 39.6%;
-            left: 24%;             
-            width: 52%;            
-            height: 53%;           
-            overflow: hidden;
-            font-family: 'EB Garamond', 'Georgia', serif;
-            color: #1c0e00;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .legenda-title {
-            text-align: center;
-            font-size: 26px;    
-            font-weight: bold;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            border-bottom: 1px solid rgba(56, 29, 29, 0.25);
-            padding-bottom: 4px;
-            width: 100%;
-        }
-
-        #legenda-items-target {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-around; 
-            height: 100%;
-            width: 100%;
-        }
-
-        .legenda-block { 
-            text-align: center;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            margin-bottom: 2px;
-        }
-
-        .first-item-offset {
-            margin-top: 12px; 
-        }
-
-        .legenda-head { 
-            font-weight: bold; 
-            font-size: 13.5px; 
-            color: #5c1d1d;
-            margin-bottom: 2px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .legenda-desc {
-            white-space: pre-line;
+        .item-desc {
             display: block;
             width: 100%;
-            font-size: 11.5px; 
-            line-height: 1.25;  
             font-style: italic;
-            text-align: justify;     
-            text-align-last: center; 
-            padding: 0 4px;
+            color: #3d250d;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
         }
+
+        /* ELEMENTI DI INPUT */
+        h2 { color: var(--primary-color); margin-bottom: 15px; font-size: 1.3rem; border-bottom: 2px solid var(--border-color); padding-bottom: 5px;}
+        .control-group { margin-bottom: 15px; }
+        .control-group label { display: block; font-size: 12px; font-weight: bold; color: var(--primary-color); margin-bottom: 5px; }
+        .file-inputs { margin-bottom: 15px; }
+        .file-box { background: #fff; border: 1px dashed var(--border-color); padding: 12px; text-align: center; font-size: 13px; cursor: pointer; border-radius: 6px; }
+        .file-box.has-image { background: #e8f5e9; border: 1px solid #27ae60; }
+        .file-box input { display: none; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 25px; background: white; font-size: 12px; }
+        th, td { padding: 8px; border: 1px solid #e0e0e0; text-align: left; }
+        th { background-color: var(--primary-color); color: white; text-transform: uppercase; font-size: 11px; }
+        input[type="text"], textarea { width: 100%; border: 1px solid #ccc; border-radius: 4px; padding: 6px; font-family: inherit; }
+        textarea { resize: vertical; height: 45px; font-size: 11px; }
+        .btn-container { display: flex; flex-direction: column; gap: 10px; }
+        .btn-download { background-color: #27ae60; color: white; padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; width: 100%; box-shadow: 0 4px 10px rgba(39,174,96,0.2); }
+        .btn-reset { background-color: #c0392b; color: white; padding: 6px; border: none; border-radius: 4px; cursor: pointer; font-size: 11px; margin-top: 15px; width: 100%; opacity: 0.8; }
 
         /* ==========================================================================
-           LOGICA DI SCALING RESPONSIVE (MEDIA QUERIES DINAMICHE PC E MOBILE)
+           LOGICA DI ADATTAMENTO RESPONSIVE (MEDIA QUERIES)
            ========================================================================== */
         
-        /* SCALING SU PC DESKTOP: entra in funzione se la finestra del PC scende sotto i 1180px di larghezza */
-        @media (min-width: 901px) and (max-width: 1180px) {
-            #preview-workspace {
-                justify-content: center;
-                /* Calcola la microscala per far convivere i due fogli affiancati senza mandarli a capo */
-                --pc-scale: calc((100vw - 60px) / 1120); 
-            }
-            .page-scale-wrapper {
-                width: calc(560px * var(--pc-scale));
-                height: calc(685px * var(--pc-scale));
-            }
-            .menu-page-block {
-                transform: scale(var(--pc-scale));
-            }
+        /* RIDUZIONE FLUIDA ANTEPRIMA SU SCHERMI MEDI PC */
+        @media (min-width: 769px) and (max-width: 1120px) {
+            #main-container { gap: 20px; }
+            #preview-workspace { --pc-scale: calc((100vw - 540px) / 560); }
+            .page-scale-wrapper { width: calc(560px * var(--pc-scale)); height: calc(685px * var(--pc-scale)); }
+            .menu-page-block { transform: scale(var(--pc-scale)); }
         }
 
-        /* CONFIGURAZIONE SMARTPHONE E DISPOSITIVI MOBILE */
-        @media (max-width: 900px) {
-            body {
-                padding: 10px;
-                gap: 20px;
+        /* AZIONE SPECIFICA SMARTPHONE: ABILITAZIONE SATELLITE TABS */
+        @media (max-width: 768px) {
+            body { padding: 15px 10px; }
+            
+            #mobile-tabs {
+                display: flex; /* Attiva i selettori a schede in alto */
             }
 
-            #preview-workspace {
-                flex-direction: column; /* Incolonna le pagine verticalmente sui telefoni */
+            #main-container {
+                flex-direction: column;
                 align-items: center;
+                gap: 0;
+                width: 100%;
+            }
+
+            /* Di base nascondiamo l'anteprima, lasciando visibile solo l'editor all'avvio */
+            #preview-workspace {
+                display: none; 
+                width: 100%;
             }
 
             #control-panel {
                 max-width: 100%;
                 width: 100%;
                 padding: 15px;
-                order: 2; /* Sposta i controlli sotto le anteprime anche su mobile se necessario, oppure rimuovi per lasciarlo sopra */
+                display: block; 
             }
 
             table { font-size: 11px; }
-            th, td { padding: 6px; }
+            th, td { padding: 5px; }
 
+            /* Scaling matematico per far aderire al millimetro la pergamena su schermi piccoli */
             .page-scale-wrapper {
-                --mobile-scale: calc((100vw - 40px) / 560); 
-                max-width: 560px; 
-                width: calc(100vw - 40px);
+                --mobile-scale: calc((100vw - 20px) / 560); 
+                width: calc(100vw - 20px);
                 height: calc(685px * var(--mobile-scale)); 
+                max-width: 560px;
+                max-height: 685px;
             }
 
             .menu-page-block {
-                transform: scale(calc((100vw - 40px) / 560));
+                transform: scale(calc((100vw - 20px) / 560));
                 max-width: 560px;
             }
         }
@@ -336,91 +266,115 @@
 </head>
 <body>
 
-    <div id="preview-workspace">
-        
-        <div class="page-scale-wrapper">
-            <div id="page-menu" class="menu-page-block">
-                <div id="p1-placeholder" class="placeholder-text">Nessuno Sfondo caricato per Pagina 1</div>
-                <div id="box-mastro-birraio" class="menu-overlay"></div>
-                <div id="box-condottiero" class="menu-overlay"></div>
-                <div id="box-viandante" class="menu-overlay"></div>
-                <div id="box-castellano" class="menu-overlay"></div>
-                <div id="box-piccolo-cavaliere" class="menu-overlay"></div>
+    <div id="mobile-tabs">
+        <button id="btn-tab-edit" class="tab-btn active" onclick="switchMobileTab('edit')">✍️ Modifica Menu</button>
+        <button id="btn-tab-view" class="tab-btn" onclick="switchMobileTab('view')">👁️ Vedi Anteprima</button>
+    </div>
+
+    <div id="main-container">
+
+        <div id="control-panel">
+            <h2>Impostazioni Titolo e Grafica</h2>
+            <div class="control-group">
+                <label for="input-main-title">Titolo Principale del Menu:</label>
+                <input type="text" id="input-main-title" value="Antica Osteria" oninput="updateTitleAndRender()">
             </div>
+
+            <div class="file-inputs">
+                <div class="file-box" id="box-lbl-bg1">
+                    <label for="bg1" id="lbl-bg1">🖼️ Carica Sfondo Menu (Pagina Unica)</label>
+                    <input type="file" id="bg1" accept="image/*" onchange="processAndSaveBg(this, 'page-menu', 'db_single_bg', 'box-lbl-bg1')">
+                </div>
+            </div>
+
+            <h2>Gestione Piatti, Prezzi e Descrizioni</h2>
+            <table id="editor-table">
+                <thead>
+                    <tr>
+                        <th style="width: 30px;">Usa</th>
+                        <th>Categoria / Piatto / Descrizione</th>
+                        <th style="width: 65px;">Prezzo</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+
+            <div class="btn-container">
+                <button class="btn-download" onclick="downloadPageAsPNG('page-menu', 'Menu_Completo.png')">📸 Scarica Menu Completo (PNG)</button>
+            </div>
+            
+            <button class="btn-reset" onclick="resetToDefault()">🔄 Inizializza Menu Predefinito</button>
         </div>
 
-        <div class="page-scale-wrapper">
-            <div id="page-legenda" class="menu-page-block">
-                <div id="p2-placeholder" class="placeholder-text">Nessuno Sfondo caricato per Pagina 2</div>
-                <div id="legenda-content">
-                    <div class="legenda-title">Elenco Menu</div>
-                    <div id="legenda-items-target"></div>
+        <div id="preview-workspace">
+            <div class="page-scale-wrapper">
+                <div id="page-menu" class="menu-page-block">
+                    <div id="p1-placeholder" class="placeholder-text">Nessuno Sfondo caricato per il Menu</div>
+                    
+                    <div id="menu-title-container">
+                        <div id="menu-title-target" class="main-menu-title">Antica Osteria</div>
+                    </div>
+
+                    <div id="box-mastro-birraio" class="menu-overlay"></div>
+                    <div id="box-condottiero" class="menu-overlay"></div>
+                    <div id="box-viandante" class="menu-overlay"></div>
+                    <div id="box-castellano" class="menu-overlay"></div>
+                    <div id="box-piccolo-cavaliere" class="menu-overlay"></div>
                 </div>
             </div>
         </div>
 
     </div>
 
-    <div id="control-panel">
-        <h2>Impostazioni Grafiche</h2>
-        <div class="file-inputs">
-            <div class="file-box" id="box-lbl-bg1">
-                <label for="bg1" id="lbl-bg1">🖼️ Sfondo Pag 1</label>
-                <input type="file" id="bg1" accept="image/*" onchange="processAndSaveBg(this, 'page-menu', 'db_bg_page1', 'box-lbl-bg1')">
-            </div>
-            <div class="file-box" id="box-lbl-bg2">
-                <label for="bg2" id="lbl-bg2">🖼️ Sfondo Pag 2</label>
-                <input type="file" id="bg2" accept="image/*" onchange="processAndSaveBg(this, 'page-legenda', 'db_bg_page2', 'box-lbl-bg2')">
-            </div>
-        </div>
-
-        <h2>Gestione Piatti e Prezzi</h2>
-        <table id="editor-table">
-            <thead>
-                <tr>
-                    <th style="width: 30px;">Usa</th>
-                    <th>Categoria / Piatto</th>
-                    <th style="width: 65px;">Prezzo</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-
-        <div class="btn-container">
-            <button class="btn-download" onclick="downloadPageAsPNG('page-menu', 'Menu_Pagina_1.png')">📸 Scarica Pagina 1 (PNG)</button>
-            <button class="btn-download" onclick="downloadPageAsPNG('page-legenda', 'Menu_Pagina_2.png')">📸 Scarica Pagina 2 (PNG)</button>
-        </div>
-        
-        <button class="btn-reset" onclick="resetToDefault()">🔄 Inizializza Menu Predefinito</button>
-    </div>
-
     <script>
         const defaultDataset = [
-            { id: 1, active: true, cat: "mastro-birraio", catName: "Mastro Birraio", name: "Birra del Borgo", price: "6.00", desc: "Artigianale rossa prodotta con grani locali e luppoli selvatici a km 0." },
-            { id: 2, active: true, cat: "condottiero", catName: "Condottiero", name: "Pappardelle al Cinghiale", price: "14.00", desc: "Pasta fresca all'uovo trafilata al bronzo con ragù bianco di cinghiale locale." },
-            { id: 3, active: true, cat: "viandante", catName: "Viandante", name: "Zrupa di Farro e Castagne", price: "9.00", desc: "Antica ricetta medievale con legumi, farro spezzato, castagne e olio d'oliva a crudo." },
-            { id: 4, active: true, cat: "castellano", catName: "Castellano", name: "Ravioli ai Funghi Porcini", price: "16.00", desc: "Pasta ripiena di ricotta ed erbe fini, saltata con funghi porcini e scaglie di pecorino." },
-            { id: 5, active: true, cat: "piccolo-cavaliere", catName: "Piccolo Cavaliere", name: "Gnocchetti al Pomodoro", price: "7.00", desc: "Porzione ridotta di gnocchi fatti in casa con passata di pomodoro dolce e parmigiano." }
+            { id: 1, active: true, cat: "mastro-birraio", catName: "Mastro Birraio", name: "Birra del Borgo", price: "6.00", desc: "Artigianale rossa prodotta con grani locali e luppoli selvatici." },
+            { id: 2, active: true, cat: "condottiero", catName: "Condottiero", name: "Pappardelle al Cinghiale", price: "14.00", desc: "Pasta fresca all'uovo con ragù bianco di cinghiale locale." },
+            { id: 3, active: true, cat: "viandante", catName: "Viandante", name: "Zuppa di Farro e Castagne", price: "9.00", desc: "Antica ricetta medievale con legumi, farro e castagne." },
+            { id: 4, active: true, cat: "castellano", catName: "Castellano", name: "Ravioli ai Funghi Porcini", price: "16.00", desc: "Pasta ripiena saltata con porcini e scaglie di pecorino." },
+            { id: 5, active: true, cat: "piccolo-cavaliere", catName: "Piccolo Cavaliere", name: "Gnocchetti al Pomodoro", price: "7.00", desc: "Porzione ridotta con passata di pomodoro dolce e parmigiano." }
         ];
 
         let menuDataset = [];
 
+        // Funzione per scambiare le tab su smartphone
+        function switchMobileTab(targetTab) {
+            const panel = document.getElementById('control-panel');
+            const preview = document.getElementById('preview-workspace');
+            const btnEdit = document.getElementById('btn-tab-edit');
+            const btnView = document.getElementById('btn-tab-view');
+
+            if (targetTab === 'edit') {
+                panel.style.display = 'block';
+                preview.style.display = 'none';
+                btnEdit.classList.add('active');
+                btnView.classList.remove('active');
+            } else {
+                panel.style.display = 'none';
+                preview.style.display = 'flex';
+                btnEdit.classList.remove('active');
+                btnView.classList.add('active');
+            }
+        }
+
         function initDatabase() {
-            const savedData = localStorage.getItem('db_menu_medievale');
+            const savedData = localStorage.getItem('db_menu_medievale_single');
             if (savedData) {
                 menuDataset = JSON.parse(savedData);
             } else {
                 menuDataset = JSON.parse(JSON.stringify(defaultDataset));
-                localStorage.setItem('db_menu_medievale', JSON.stringify(menuDataset));
+                localStorage.setItem('db_menu_medievale_single', JSON.stringify(menuDataset));
+            }
+
+            const savedTitle = localStorage.getItem('db_menu_main_title');
+            if(savedTitle) {
+                document.getElementById('input-main-title').value = savedTitle;
             }
         }
 
         function loadSavedBackgrounds() {
-            const bg1 = localStorage.getItem('db_bg_page1');
-            const bg2 = localStorage.getItem('db_bg_page2');
-
+            const bg1 = localStorage.getItem('db_single_bg');
             if (bg1) applyBgToElement('page-menu', bg1, 'p1-placeholder', 'box-lbl-bg1');
-            if (bg2) applyBgToElement('page-legenda', bg2, 'p2-placeholder', 'box-lbl-bg2');
         }
 
         function applyBgToElement(elementId, base64Data, placeholderId, labelBoxId) {
@@ -442,35 +396,16 @@
                     const base64Data = e.target.result;
                     try {
                         localStorage.setItem(storageKey, base64Data);
-                        applyBgToElement(targetId, base64Data, targetId === 'page-menu' ? 'p1-placeholder' : 'p2-placeholder', labelBoxId);
+                        applyBgToElement(targetId, base64Data, 'p1-placeholder', labelBoxId);
                     } catch (error) {
-                        alert("Spazio insufficiente! L'immagine verrà mostrata temporaneamente a schermo ma dovrai caricarla nuovamente al prossimo avvio.");
+                        alert("Spazio insufficiente! L'immagine verrà comunque mostrata temporaneamente.");
                         document.getElementById(targetId).style.backgroundImage = `url('${base64Data}')`;
-                        const ph = document.getElementById(targetId === 'page-menu' ? 'p1-placeholder' : 'p2-placeholder');
+                        const ph = document.getElementById('p1-placeholder');
                         if (ph) ph.style.display = 'none';
                     }
                 }
                 reader.readAsDataURL(input.files[0]);
             }
-        }
-
-        function formatDescription(text, maxChars = 42) {
-            if (!text) return "";
-            let words = text.split(" ");
-            let lines = [];
-            let currentLine = "";
-
-            words.forEach(word => {
-                if ((currentLine + word).length > maxChars) {
-                    lines.push(currentLine.trim());
-                    currentLine = word + " ";
-                } else {
-                    currentLine += word + " ";
-                }
-            });
-            if (currentLine.trim()) lines.push(currentLine.trim());
-            
-            return lines.join("\n");
         }
 
         function buildEditorTable() {
@@ -482,12 +417,18 @@
                     </td>
                     <td>
                         <b style="color:var(--primary-color); font-size:10px; display:block;">MENU DEL ${item.catName.toUpperCase()}</b>
-                        <input type="text" value="${item.name}" id="name-${item.id}" oninput="syncDataAndRender()" style="margin-bottom:4px;">
+                        <input type="text" value="${item.name}" id="name-${item.id}" oninput="syncDataAndRender()" style="margin-bottom:4px; font-weight:bold;">
                         <textarea id="desc-${item.id}" oninput="syncDataAndRender()">${item.desc}</textarea>
                     </td>
                     <td><input type="text" value="${item.price}" id="price-${item.id}" oninput="syncDataAndRender()" style="text-align:right;"></td>
                 </tr>
             `).join('');
+        }
+
+        function updateTitleAndRender() {
+            const titleVal = document.getElementById('input-main-title').value;
+            localStorage.setItem('db_menu_main_title', titleVal);
+            renderGraphics();
         }
 
         function syncDataAndRender() {
@@ -498,77 +439,58 @@
                 item.active = document.getElementById(`active-${item.id}`).checked;
             });
             
-            localStorage.setItem('db_menu_medievale', JSON.stringify(menuDataset));
+            localStorage.setItem('db_menu_medievale_single', JSON.stringify(menuDataset));
             renderGraphics();
         }
 
+        function calculateAutoscalingFont(text, maxChars = 60, baseFont = 11.5) {
+            const length = text.length;
+            if (length <= 40) return baseFont;
+            const scaleFactor = (maxChars - (length - 40)) / maxChars;
+            return Math.max(8.5, baseFont * scaleFactor);
+        }
+
         function renderGraphics() {
+            const currentTitle = document.getElementById('input-main-title').value;
+            document.getElementById('menu-title-target').innerText = currentTitle;
+
             const categories = ['mastro-birraio', 'condottiero', 'viandante', 'castellano', 'piccolo-cavaliere'];
             categories.forEach(c => document.getElementById(`box-${c}`).innerHTML = '');
-            
-            const targetContainer = document.getElementById('legenda-items-target');
-            targetContainer.innerHTML = '';
-
-            let totalDescLength = 0;
-            let isFirstRendered = true;
 
             menuDataset.forEach(item => {
                 if (item.active) {
-                    totalDescLength += item.desc.trim().length;
-
-                    // Render Pagina 1
                     const box = document.getElementById(`box-${item.cat}`);
                     if (box) {
                         const wrapper = document.createElement('div');
                         wrapper.className = 'item-wrapper';
+
+                        const cleanDesc = item.desc.replace(/\n/g, " ").trim();
+                        const calculatedFontSize = calculateAutoscalingFont(cleanDesc, 60, 11.5);
+
                         wrapper.innerHTML = `
-                            <span class="item-n">${item.name}</span>
-                            <span class="item-p">€ ${item.price}</span>
+                            <div class="item-header">
+                                ${item.name} <span class="item-price-span">- € ${item.price}</span>
+                            </div>
+                            <div class="item-desc" style="font-size: ${calculatedFontSize}px;" title="${cleanDesc}">
+                                ${cleanDesc}
+                            </div>
                         `;
                         box.appendChild(wrapper);
                     }
-
-                    // Render Pagina 2
-                    if(item.desc.trim() !== "") {
-                        const block = document.createElement('div');
-                        block.className = 'legenda-block';
-                        
-                        if (isFirstRendered) {
-                            block.classList.add('first-item-offset');
-                            isFirstRendered = false;
-                        }
-
-                        const formattedDesc = formatDescription(item.desc, 42);
-
-                        block.innerHTML = `
-                            <div class="legenda-head">${item.name}</div>
-                            <div class="legenda-desc" id="desc-text-${item.id}">${formattedDesc}</div>
-                        `;
-                        targetContainer.appendChild(block);
-                    }
                 }
-            });
-
-            // Calcolo e scalabilità dinamica del font
-            let baseFontSize = 12.5; 
-            let headFontSize = 14.5;
-            if (totalDescLength > 350) { baseFontSize = 12.0; headFontSize = 14.0; }
-            if (totalDescLength > 430) { baseFontSize = 11.5; headFontSize = 13.0; }
-            if (totalDescLength > 500) { baseFontSize = 11.0; headFontSize = 12.0; }
-
-            menuDataset.forEach(item => {
-                const textElem = document.getElementById(`desc-text-${item.id}`);
-                const blockElem = textElem ? textElem.previousElementSibling : null;
-                if (textElem) textElem.style.fontSize = `${baseFontSize}px`;
-                if (blockElem) blockElem.style.fontSize = `${headFontSize}px`;
             });
         }
 
         function downloadPageAsPNG(elementId, filename) {
-            const element = document.getElementById(elementId);
+            // Se siamo su mobile e stiamo guardando la tab modifica, forziamo temporaneamente la visibilità del blocco prima dello scatto
+            const preview = document.getElementById('preview-workspace');
+            const originalDisplay = window.getComputedStyle(preview).display;
             
+            if (originalDisplay === 'none') preview.style.display = 'flex';
+
+            const element = document.getElementById(elementId);
             html2canvas(element, {
-                scale: 3, 
+                scale: 3,
                 useCORS: true,
                 allowTaint: true,
                 logging: false,
@@ -578,19 +500,21 @@
                 link.download = filename;
                 link.href = canvas.toDataURL('image/png');
                 link.click();
+                if (originalDisplay === 'none') preview.style.display = 'none';
             }).catch(err => {
                 alert("Errore durante la generazione dell'immagine: " + err);
+                if (originalDisplay === 'none') preview.style.display = 'none';
             });
         }
 
         function resetToDefault() {
-            if (confirm("Sei sicuro di voler resettare il menu? Tutti i dati inseriti e le immagini salvate verranno cancellati.")) {
+            if (confirm("Sei sicuro di voler resettare il menu? Tutti i dati verranno cancellati.")) {
                 localStorage.clear();
                 window.location.reload();
             }
         }
 
-        // Avvio Applicazione
+        // Avvio dell'applicazione
         initDatabase();
         buildEditorTable();
         loadSavedBackgrounds();
