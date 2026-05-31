@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configuratore Menu Medievale - Layout Adattivo Premium</title>
+    <title>Configuratore Menu Medievale - GitHub Production Ready</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,7 +28,6 @@
             min-height: 100vh;
         }
 
-        /* BARRA DI NAVIGAZIONE PER SMARTPHONE (Nascosta su PC) */
         #mobile-tabs {
             display: none;
             width: 100%;
@@ -55,7 +54,6 @@
             color: white;
         }
 
-        /* CONTENITORE PRINCIPALE (Layout affiancato su PC) */
         #main-container {
             display: flex;
             flex-direction: row; 
@@ -66,7 +64,6 @@
             justify-content: center;
         }
 
-        /* PANNELLO DI CONTROLLO UTENTE (A SINISTRA SU PC) */
         #control-panel {
             flex: 1;
             max-width: 500px;
@@ -77,7 +74,6 @@
             height: fit-content;
         }
 
-        /* AREA DI VISUALIZZAZIONE DELLA PAGINA (A DESTRA SU PC) */
         #preview-workspace {
             display: flex;
             justify-content: center;
@@ -85,7 +81,6 @@
             flex-shrink: 0;
         }
 
-        /* Contenitore per lo scaling proporzionale della pergamena */
         .page-scale-wrapper {
             width: 560px;
             height: 685px;
@@ -111,9 +106,9 @@
             position: absolute; top:50%; left:50%; transform:translate(-50%, -50%);
             color: #aaa; font-style: italic; font-size: 14px; pointer-events: none;
             font-family: 'Segoe UI', sans-serif;
+            display: none; /* Disabilitato di default poiché carichiamo l'asset locale */
         }
 
-        /* STRUTTURA DEL TITOLO PRINCIPALE PERSONALIZZABILE */
         #menu-title-container {
             position: absolute;
             top: 28%;
@@ -136,7 +131,6 @@
             text-overflow: ellipsis;
         }
 
-        /* POSIZIONAMENTO DEI BLOCCHI DELLE PORTATE */
         .menu-overlay {
             position: absolute;
             left: 20%;
@@ -151,7 +145,6 @@
             gap: 2px;
         }
 
-        /* Coordinate d'altezza originali */
         #box-mastro-birraio     { top: 41.7%; }
         #box-condottiero        { top: 54.7%; }
         #box-viandante          { top: 65.3%; }
@@ -188,7 +181,6 @@
             overflow: hidden;
         }
 
-        /* ELEMENTI DI INPUT */
         h2 { color: var(--primary-color); margin-bottom: 15px; font-size: 1.3rem; border-bottom: 2px solid var(--border-color); padding-bottom: 5px;}
         .control-group { margin-bottom: 15px; }
         .control-group label { display: block; font-size: 12px; font-weight: bold; color: var(--primary-color); margin-bottom: 5px; }
@@ -205,11 +197,6 @@
         .btn-download { background-color: #27ae60; color: white; padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; width: 100%; box-shadow: 0 4px 10px rgba(39,174,96,0.2); }
         .btn-reset { background-color: #c0392b; color: white; padding: 6px; border: none; border-radius: 4px; cursor: pointer; font-size: 11px; margin-top: 15px; width: 100%; opacity: 0.8; }
 
-        /* ==========================================================================
-           LOGICA DI ADATTAMENTO RESPONSIVE (MEDIA QUERIES)
-           ========================================================================== */
-        
-        /* RIDUZIONE FLUIDA ANTEPRIMA SU SCHERMI MEDI PC */
         @media (min-width: 769px) and (max-width: 1120px) {
             #main-container { gap: 20px; }
             #preview-workspace { --pc-scale: calc((100vw - 540px) / 560); }
@@ -217,38 +204,14 @@
             .menu-page-block { transform: scale(var(--pc-scale)); }
         }
 
-        /* AZIONE SPECIFICA SMARTPHONE: ABILITAZIONE SATELLITE TABS */
         @media (max-width: 768px) {
             body { padding: 15px 10px; }
-            
-            #mobile-tabs {
-                display: flex; /* Attiva i selettori a schede in alto */
-            }
-
-            #main-container {
-                flex-direction: column;
-                align-items: center;
-                gap: 0;
-                width: 100%;
-            }
-
-            /* Di base nascondiamo l'anteprima, lasciando visibile solo l'editor all'avvio */
-            #preview-workspace {
-                display: none; 
-                width: 100%;
-            }
-
-            #control-panel {
-                max-width: 100%;
-                width: 100%;
-                padding: 15px;
-                display: block; 
-            }
-
+            #mobile-tabs { display: flex; }
+            #main-container { flex-direction: column; align-items: center; gap: 0; width: 100%; }
+            #preview-workspace { display: none; width: 100%; }
+            #control-panel { max-width: 100%; width: 100%; padding: 15px; display: block; }
             table { font-size: 11px; }
             th, td { padding: 5px; }
-
-            /* Scaling matematico per far aderire al millimetro la pergamena su schermi piccoli */
             .page-scale-wrapper {
                 --mobile-scale: calc((100vw - 20px) / 560); 
                 width: calc(100vw - 20px);
@@ -256,11 +219,7 @@
                 max-width: 560px;
                 max-height: 685px;
             }
-
-            .menu-page-block {
-                transform: scale(calc((100vw - 20px) / 560));
-                max-width: 560px;
-            }
+            .menu-page-block { transform: scale(calc((100vw - 20px) / 560)); max-width: 560px; }
         }
     </style>
 </head>
@@ -282,7 +241,7 @@
 
             <div class="file-inputs">
                 <div class="file-box" id="box-lbl-bg1">
-                    <label for="bg1" id="lbl-bg1">🖼️ Carica Sfondo Menu (Pagina Unica)</label>
+                    <label for="bg1" id="lbl-bg1">🖼️ Sovrascrivi Sfondo (Opzionale)</label>
                     <input type="file" id="bg1" accept="image/*" onchange="processAndSaveBg(this, 'page-menu', 'db_single_bg', 'box-lbl-bg1')">
                 </div>
             </div>
@@ -309,7 +268,7 @@
         <div id="preview-workspace">
             <div class="page-scale-wrapper">
                 <div id="page-menu" class="menu-page-block">
-                    <div id="p1-placeholder" class="placeholder-text">Nessuno Sfondo caricato per il Menu</div>
+                    <div id="p1-placeholder" class="placeholder-text">Caricamento sfondo...</div>
                     
                     <div id="menu-title-container">
                         <div id="menu-title-target" class="main-menu-title">Antica Osteria</div>
@@ -327,6 +286,9 @@
     </div>
 
     <script>
+        // Costante per il file locale su GitHub (stessa cartella di index.html)
+        const DEFAULT_BG_PATH = "menu_bg.jpg"; 
+
         const defaultDataset = [
             { id: 1, active: true, cat: "mastro-birraio", catName: "Mastro Birraio", name: "Birra del Borgo", price: "6.00", desc: "Artigianale rossa prodotta con grani locali e luppoli selvatici." },
             { id: 2, active: true, cat: "condottiero", catName: "Condottiero", name: "Pappardelle al Cinghiale", price: "14.00", desc: "Pasta fresca all'uovo con ragù bianco di cinghiale locale." },
@@ -337,7 +299,6 @@
 
         let menuDataset = [];
 
-        // Funzione per scambiare le tab su smartphone
         function switchMobileTab(targetTab) {
             const panel = document.getElementById('control-panel');
             const preview = document.getElementById('preview-workspace');
@@ -372,20 +333,25 @@
             }
         }
 
-        function loadSavedBackgrounds() {
-            const bg1 = localStorage.getItem('db_single_bg');
-            if (bg1) applyBgToElement('page-menu', bg1, 'p1-placeholder', 'box-lbl-bg1');
+        // Modificato per gestire la priorità LocalStorage -> Percorso Relativo Locale
+        function loadBackground() {
+            const savedBg = localStorage.getItem('db_single_bg');
+            const menuElement = document.getElementById('page-menu');
+            
+            if (savedBg) {
+                menuElement.style.backgroundImage = `url('${savedBg}')`;
+                setLabelUploaded();
+            } else {
+                // Caricamento diretto dal repository GitHub locale
+                menuElement.style.backgroundImage = `url('${DEFAULT_BG_PATH}')`;
+            }
         }
 
-        function applyBgToElement(elementId, base64Data, placeholderId, labelBoxId) {
-            document.getElementById(elementId).style.backgroundImage = `url('${base64Data}')`;
-            const ph = document.getElementById(placeholderId);
-            if (ph) ph.style.display = 'none';
-            
-            const box = document.getElementById(labelBoxId);
+        function setLabelUploaded() {
+            const box = document.getElementById('box-lbl-bg1');
             if (box) {
                 box.classList.add('has-image');
-                box.querySelector('label').innerText = "✅ Sfondo Memorizzato";
+                box.querySelector('label').innerText = "✅ Sfondo Personalizzato Attivo";
             }
         }
 
@@ -396,12 +362,11 @@
                     const base64Data = e.target.result;
                     try {
                         localStorage.setItem(storageKey, base64Data);
-                        applyBgToElement(targetId, base64Data, 'p1-placeholder', labelBoxId);
-                    } catch (error) {
-                        alert("Spazio insufficiente! L'immagine verrà comunque mostrata temporaneamente.");
                         document.getElementById(targetId).style.backgroundImage = `url('${base64Data}')`;
-                        const ph = document.getElementById('p1-placeholder');
-                        if (ph) ph.style.display = 'none';
+                        setLabelUploaded();
+                    } catch (error) {
+                        alert("Spazio LocalStorage esaurito. L'immagine verrà applicata solo temporaneamente.");
+                        document.getElementById(targetId).style.backgroundImage = `url('${base64Data}')`;
                     }
                 }
                 reader.readAsDataURL(input.files[0]);
@@ -482,7 +447,6 @@
         }
 
         function downloadPageAsPNG(elementId, filename) {
-            // Se siamo su mobile e stiamo guardando la tab modifica, forziamo temporaneamente la visibilità del blocco prima dello scatto
             const preview = document.getElementById('preview-workspace');
             const originalDisplay = window.getComputedStyle(preview).display;
             
@@ -491,8 +455,8 @@
             const element = document.getElementById(elementId);
             html2canvas(element, {
                 scale: 3,
-                useCORS: true,
-                allowTaint: true,
+                useCORS: true,       // Fondamentale su GitHub Pages per evitare blocchi cross-origin degli asset locali
+                allowTaint: false,   // Deve essere impostato su false se si usa useCORS
                 logging: false,
                 imageTimeout: 0
             }).then(canvas => {
@@ -502,22 +466,22 @@
                 link.click();
                 if (originalDisplay === 'none') preview.style.display = 'none';
             }).catch(err => {
-                alert("Errore durante la generazione dell'immagine: " + err);
+                alert("Errore esportazione: " + err);
                 if (originalDisplay === 'none') preview.style.display = 'none';
             });
         }
 
         function resetToDefault() {
-            if (confirm("Sei sicuro di voler resettare il menu? Tutti i dati verranno cancellati.")) {
+            if (confirm("Ripristinare i dati predefiniti? Lo sfondo caricato manualmente verrà rimosso.")) {
                 localStorage.clear();
                 window.location.reload();
             }
         }
 
-        // Avvio dell'applicazione
+        // Init sequenziale ordinato
         initDatabase();
         buildEditorTable();
-        loadSavedBackgrounds();
+        loadBackground();
         renderGraphics();
     </script>
 </body>
