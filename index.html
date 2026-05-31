@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configuratore Menu Medievale - Drag & Drop Diretto</title>
+    <title>Configuratore Menu Medievale - Posizionamento Libero Zecchini</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,7 +26,7 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            user-select: none; /* Previene la selezione del testo fastidiosa durante il drag */
+            user-select: none;
         }
 
         #mobile-tabs {
@@ -47,7 +47,6 @@
             color: var(--primary-color);
             border-radius: 8px;
             cursor: pointer;
-            transition: all 0.2s ease;
         }
 
         .tab-btn.active {
@@ -73,7 +72,7 @@
             border-radius: 12px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.15);
             height: fit-content;
-            user-select: auto; /* Riattiva la selezione normale nel pannello input */
+            user-select: auto;
         }
 
         #preview-workspace {
@@ -105,22 +104,22 @@
             image-rendering: crisp-edges;
         }
 
+        /* Container principale della riga di testo */
         .menu-overlay-container {
             position: absolute;
-            left: 10%;
-            width: 80%;
+            left: 15%;
+            width: 70%;
             display: flex;
             flex-direction: row;
             align-items: center;
-            justify-content: flex-start;
-            gap: 15px;
+            justify-content: center;
         }
 
-        #anchor-mastro-birraio     { top: 41.7%; }
-        #anchor-condottiero        { top: 54.7%; }
-        #anchor-viandante          { top: 65.3%; }
-        #anchor-castellano         { top: 75.4%; }
-        #anchor-piccolo-cavaliere  { top: 85.0%; }
+        #anchor-mastro-birraio     { top: 38.0%; }
+        #anchor-condottiero        { top: 51.5%; }
+        #anchor-viandante          { top: 62.5%; }
+        #anchor-castellano         { top: 72.8%; }
+        #anchor-piccolo-cavaliere  { top: 82.5%; }
 
         .menu-text-block {
             display: flex;
@@ -128,7 +127,7 @@
             align-items: center;
             flex: 1;
             text-align: center;
-            pointer-events: none; /* Permette il click passante sui figli effettivi */
+            pointer-events: none;
         }
 
         .inspectable-box {
@@ -138,15 +137,15 @@
             transition: transform 0.05s ease;
             white-space: pre-line;
             word-wrap: break-word;
-            cursor: move; /* Cursore di spostamento */
+            cursor: move;
             pointer-events: auto;
-            touch-action: none; /* Disattiva le gesture del browser (es. scroll) durante il drag */
+            touch-action: none;
         }
 
         .item-name-box {
             font-weight: bold;
             letter-spacing: 0.3px;
-            line-height: 1.25em;
+            line-height: 1.2em;
         }
 
         .item-desc-box {
@@ -156,24 +155,38 @@
             margin-top: 2px;
         }
 
+        /* REPLICA ZECCHINO CON POSIZIONAMENTO ASSOLUTO LIBERO */
         .item-price-box {
+            position: absolute;
+            /* Valori iniziali di fallback a sinistra del blocco */
+            left: -45px; 
+            top: 0px;
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-shrink: 0;
-            width: 46px;
-            height: 46px;
-            border-radius: 46% 54% 48% 52% / 50% 48% 52% 50%;
+            zIndex: 10;
+            width: 44px;
+            height: 44px;
+            
+            /* Taglio asimmetrico per simulare la battitura a martello medievale */
+            border-radius: 44% 56% 47% 53% / 52% 46% 54% 48%;
+            
+            /* Texture metallica oro antico riflesso */
             background: 
-                radial-gradient(circle at 35% 35%, rgba(255,223,120,0.9) 0%, rgba(212,143,22,0.9) 50%, rgba(138,81,4,0.95) 85%, rgba(46,24,0,1) 100%),
-                linear-gradient(135deg, #ffd700 0%, #b8860b 50%, #664600 100%);
-            border: 2px dashed #422200;
-            outline: 1px solid #1f0f00;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.45), inset 1px 1px 3px rgba(255,255,255,0.6), inset -2px -2px 4px rgba(0,0,0,0.7);
-            color: #1c0e00; 
+                radial-gradient(circle at 35% 35%, rgba(255,228,140,0.95) 0%, rgba(217,152,30,0.95) 45%, rgba(145,87,6,0.98) 80%, rgba(54,30,2,1) 100%),
+                linear-gradient(135deg, #ffe042 0%, #bd8e14 50%, #6e4d02 100%);
+            
+            border: 2px dashed #472603;
+            outline: 1px solid #241301;
+            box-shadow: 
+                0 3px 6px rgba(0,0,0,0.5), 
+                inset 1px 1px 2px rgba(255,255,255,0.7),
+                inset -2px -2px 4px rgba(0,0,0,0.75);
+            
+            color: #211101; 
             font-weight: 800;
             font-family: 'EB Garamond', serif;
-            text-shadow: 1px 1px 1px rgba(255,243,196,0.6);
+            text-shadow: 1px 1px 1px rgba(255,245,200,0.7);
             cursor: move;
             touch-action: none;
         }
@@ -191,12 +204,11 @@
             border: 1px solid var(--border-color);
             pointer-events: none;
             display: none;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
 
         .inspect-highlight {
             outline: 2px dashed #3498db !important;
-            background-color: rgba(52, 152, 219, 0.08) !important;
+            background-color: rgba(52, 152, 219, 0.1) !important;
         }
         
         tr.inspect-highlight td {
@@ -308,7 +320,7 @@
             <h2>Impostazioni Grafica di Sfondo</h2>
             <div class="file-inputs">
                 <div class="file-box" id="box-lbl-bg1">
-                    <label for="bg1" id="lbl-bg1">🖼️ Sfondo Predefinito Attivo (menu_bg.png)</label>
+                    <label for="bg1" id="lbl-bg1">🖼️ Clicca qui per caricare Menu_Completo.jpg</label>
                     <input type="file" id="bg1" accept="image/*" onchange="processAndSaveBg(this, 'page-menu', 'db_single_bg', 'box-lbl-bg1')">
                 </div>
             </div>
@@ -325,7 +337,7 @@
             </table>
 
             <div class="btn-container">
-                <button class="btn-download" onclick="downloadPageAsPNG('page-menu', 'Menu_Completo.png')">📸 Scarica Menu Completo (PNG)</button>
+                <button class="btn-download" onclick="downloadPageAsPNG('page-menu', 'Menu_Zecchini_Finale.png')">📸 Scarica Menu Completo (PNG)</button>
             </div>
             
             <button class="btn-reset" onclick="resetToDefault()">🔄 Inizializza Tutto a Predefinito</button>
@@ -346,24 +358,24 @@
     </div>
 
     <script>
-        const DEFAULT_BG_PATH = "menu_bg.png"; 
-        const DB_KEY = "db_menu_medievale_v8_drag";
+        const DEFAULT_BG_PATH = "Menu_Completo.jpg"; 
+        const DB_KEY = "db_menu_medievale_v9_libero";
 
+        // Coordinazione di default impostate leggermente spostate per renderle subito visibili e trascinabili
         const defaultDataset = [
-            { id: 1, active: true, cat: "mastro-birraio", catName: "Mastro Birraio", name: "Birra del Borgo", price: "6", desc: "Artigianale rossa prodotta con\ngrani locali e luppoli selvatici.", nameFontDelta: 0, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 0, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 0, priceOffsetTop: 0, priceOffsetLeft: 0 },
-            { id: 2, active: true, cat: "condottiero", catName: "Condottiero", name: "Pappardelle al Cinghiale", price: "14", desc: "Pasta fresca all'uovo con\nragù bianco di cinghiale locale.", nameFontDelta: 0, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 0, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 0, priceOffsetTop: 0, priceOffsetLeft: 0 },
-            { id: 3, active: true, cat: "viandante", catName: "Viandante", name: "Zuppa di Farro e Castagne", price: "9", desc: "Antica ricetta medievale con\nlegumi, farro e castagne.", nameFontDelta: 0, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 0, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 0, priceOffsetTop: 0, priceOffsetLeft: 0 },
-            { id: 4, active: true, cat: "castellano", catName: "Castellano", name: "Ravioli ai Funghi Porcini", price: "16", desc: "Pasta ripiena saltata con porcini\ne scaglie di pecorino.", nameFontDelta: 0, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 0, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 0, priceOffsetTop: 0, priceOffsetLeft: 0 },
-            { id: 5, active: true, cat: "piccolo-cavaliere", catName: "Piccolo Cavaliere", name: "Gnocchetti al Pomodoro", price: "7", desc: "Porzione ridotta con passata\ndi pomodoro dolce e parmigiano.", nameFontDelta: 0, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 0, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 0, priceOffsetTop: 0, priceOffsetLeft: 0 }
+            { id: 1, active: true, cat: "mastro-birraio", catName: "Mastro Birraio", name: "MENU DEL MASTRO BIRRAIO", price: "6", desc: "Succo di luppolo e scaglie di drago\nBirra artigianale fresca\nservita con una focaccia sottile e croccante.", nameFontDelta: 2, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 1, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 2, priceOffsetTop: -5, priceOffsetLeft: -55 },
+            { id: 2, active: true, cat: "condottiero", catName: "Condottiero", name: "MENU DEL CONDOTTIERO", price: "10", desc: "opzione 2\nverdure e birra", nameFontDelta: 2, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 1, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 2, priceOffsetTop: -5, priceOffsetLeft: 400 },
+            { id: 3, active: true, cat: "viandante", catName: "Viandante", name: "MENU DEL VIANDANTE", price: "9", desc: "opzione 3\nprimo e birra", nameFontDelta: 2, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 1, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 2, priceOffsetTop: -5, priceOffsetLeft: -55 },
+            { id: 4, active: true, cat: "castellano", catName: "Castellano", name: "MENU DEL CASTELLANO", price: "11", desc: "opzione 4\nsecondo e birra", nameFontDelta: 2, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 1, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 2, priceOffsetTop: -5, priceOffsetLeft: 400 },
+            { id: 5, active: true, cat: "piccolo-cavaliere", catName: "Piccolo Cavaliere", name: "MENU DEL PICCOLO CAVALIERE", price: "7", desc: "opzione 5\nmenu bambini", nameFontDelta: 2, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 1, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 2, priceOffsetTop: -5, priceOffsetLeft: -55 }
         ];
 
         let menuDataset = [];
 
-        // Variabili globali per il Drag and Drop con Pointer Events (Mouse + Touch)
         let isDragging = false;
         let dragTarget = null;
         let dragItemId = null;
-        let dragFieldType = null; // 'name', 'desc', 'price'
+        let dragFieldType = null; 
         let startPointerX = 0;
         let startPointerY = 0;
         let startOffsetX = 0;
@@ -402,7 +414,7 @@
 
         function setLabelUploaded() {
             const box = document.getElementById('box-lbl-bg1');
-            if (box) { box.classList.add('has-image'); box.querySelector('label').innerText = "✅ Sfondo Personalizzato Attivo"; }
+            if (box) { box.classList.add('has-image'); box.querySelector('label').innerText = "✅ Sfondo Personalizzato Caricato"; }
         }
 
         function processAndSaveBg(input, targetId, storageKey, labelBoxId) {
@@ -425,29 +437,29 @@
                         <input type="checkbox" ${item.active ? 'checked' : ''} id="active-${item.id}" onchange="syncDataAndRender()">
                     </td>
                     <td>
-                        <b style="color:var(--primary-color); font-size:10px; display:block; margin-bottom: 2px;">PORTATA: ${item.catName.toUpperCase()}</b>
+                        <b style="color:var(--primary-color); font-size:10px; display:block; margin-bottom: 2px;">GRUPPO: ${item.catName.toUpperCase()}</b>
                         <div style="display: flex; gap: 8px; margin-bottom: 4px;">
                             <textarea id="name-${item.id}" oninput="syncDataAndRender()" style="flex: 2; font-weight:bold; height:36px;">${item.name}</textarea>
-                            <input type="text" id="price-${item.id}" value="${item.price}" oninput="syncDataAndRender()" style="flex: 0 0 75px; text-align:right; font-weight:bold; height:36px;">
+                            <input type="text" id="price-${item.id}" value="${item.price}" oninput="syncDataAndRender()" style="flex: 0 0 75px; text-align:right; font-weight:bold; height:36px;" placeholder="Prezzo">
                         </div>
                         <textarea id="desc-${item.id}" oninput="syncDataAndRender()">${item.desc}</textarea>
                         
                         <div class="typo-controls-block">
                             <div class="control-row-item" data-subbox-target="box-${item.cat}-price">
-                                <span class="label-target">Zecchino (Prezzo):</span>
+                                <span class="label-target">Zecchino Oro:</span>
                                 <div class="micro-controls">
                                     <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'price', 'font', -0.5)">A-</button>
                                     <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'price', 'font', 0.5)">A+</button>
                                 </div>
-                                <span id="status-price-${item.id}" class="lbl-micro-status">${item.priceFontDelta >= 0 ? '+' : ''}${item.priceFontDelta}pt | X:${item.priceOffsetLeft}px Y:${item.priceOffsetTop}px</span>
+                                <span id="status-price-${item.id}" class="lbl-micro-status">pt | X:${item.priceOffsetLeft}px Y:${item.priceOffsetTop}px</span>
                             </div>
                             <div class="control-row-item" data-subbox-target="box-${item.cat}-name">
-                                <span class="label-target">Testo Nome:</span>
+                                <span class="label-target">Testo Titolo:</span>
                                 <div class="micro-controls">
                                     <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'name', 'font', -0.5)">A-</button>
                                     <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'name', 'font', 0.5)">A+</button>
                                 </div>
-                                <span id="status-name-${item.id}" class="lbl-micro-status">${item.nameFontDelta >= 0 ? '+' : ''}${item.nameFontDelta}pt | X:${item.nameOffsetLeft}px Y:${item.nameOffsetTop}px</span>
+                                <span id="status-name-${item.id}" class="lbl-micro-status">pt | X:${item.nameOffsetLeft}px Y:${item.nameOffsetTop}px</span>
                             </div>
                             <div class="control-row-item" data-subbox-target="box-${item.cat}-desc">
                                 <span class="label-target">Testo Desc:</span>
@@ -455,7 +467,7 @@
                                     <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'desc', 'font', -0.5)">A-</button>
                                     <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'desc', 'font', 0.5)">A+</button>
                                 </div>
-                                <span id="status-desc-${item.id}" class="lbl-micro-status">${item.descFontDelta >= 0 ? '+' : ''}${item.descFontDelta}pt | X:${item.descOffsetLeft}px Y:${item.descOffsetTop}px</span>
+                                <span id="status-desc-${item.id}" class="lbl-micro-status">pt | X:${item.descOffsetLeft}px Y:${item.descOffsetTop}px</span>
                             </div>
                         </div>
                     </td>
@@ -493,12 +505,6 @@
             renderGraphics();
         }
 
-        function calculateAutoscalingFont(text, maxChars = 70, baseFont = 11.5) {
-            const length = text.length;
-            if (length <= 40) return baseFont;
-            return Math.max(8.0, baseFont * ((maxChars - (length - 40)) / maxChars));
-        }
-
         function renderGraphics() {
             const categories = ['mastro-birraio', 'condottiero', 'viandante', 'castellano', 'piccolo-cavaliere'];
             categories.forEach(c => { const a = document.getElementById(`anchor-${c}`); if (a) a.innerHTML = ''; });
@@ -507,28 +513,27 @@
                 if (item.active) {
                     const anchor = document.getElementById(`anchor-${item.cat}`);
                     if (anchor) {
-                        // 1. Zecchino Prezzo
+                        // 1. Bottone Prezzo ZECCHINO (Assoluto Libero)
                         if (item.price) {
                             const priceBox = document.createElement('div');
                             priceBox.id = `box-${item.cat}-price`;
                             priceBox.className = 'item-price-box'; 
-                            priceBox.style.fontSize = `${14 + item.priceFontDelta}px`;
+                            priceBox.style.fontSize = `${13 + item.priceFontDelta}px`;
                             priceBox.style.transform = `translate(${item.priceOffsetLeft}px, ${item.priceOffsetTop}px)`;
                             priceBox.textContent = item.price;
                             
-                            // Attacca Listener di Trascinamento
                             priceBox.addEventListener('pointerdown', (e) => setupDragStart(e, item.id, 'price'));
                             anchor.appendChild(priceBox);
                         }
 
-                        // 2. Blocco Testi
+                        // 2. Blocco Testi Centrato
                         const textBlock = document.createElement('div');
                         textBlock.className = 'menu-text-block';
 
                         const nameBox = document.createElement('div');
                         nameBox.id = `box-${item.cat}-name`;
                         nameBox.className = 'inspectable-box item-name-box';
-                        nameBox.style.fontSize = `${13.5 + item.nameFontDelta}px`;
+                        nameBox.style.fontSize = `${13 + item.nameFontDelta}px`;
                         nameBox.style.transform = `translate(${item.nameOffsetLeft}px, ${item.nameOffsetTop}px)`;
                         nameBox.textContent = item.name;
                         nameBox.addEventListener('pointerdown', (e) => setupDragStart(e, item.id, 'name'));
@@ -536,7 +541,7 @@
                         const descBox = document.createElement('div');
                         descBox.id = `box-${item.cat}-desc`;
                         descBox.className = 'inspectable-box item-desc-box';
-                        descBox.style.fontSize = `${calculateAutoscalingFont(item.desc, 70, 11.5) + item.descFontDelta}px`;
+                        descBox.style.fontSize = `${11 + item.descFontDelta}px`;
                         descBox.style.transform = `translate(${item.descOffsetLeft}px, ${item.descOffsetTop}px)`;
                         descBox.textContent = item.desc; 
                         descBox.addEventListener('pointerdown', (e) => setupDragStart(e, item.id, 'desc'));
@@ -549,11 +554,8 @@
             });
         }
 
-        // ==========================================================================
-        // LOGICA DI TRASCINAMENTO DIRETTO (POINTER DRAG ENGINE)
-        // ==========================================================================
+        // POINTER DRAG ENGINE CALIBRATO
         function setupDragStart(e, id, field) {
-            // Seleziona solo il tasto sinistro del mouse o il tocco
             if (e.button !== 0 && e.pointerType === 'mouse') return;
             
             isDragging = true;
@@ -566,11 +568,9 @@
             const item = menuDataset.find(x => x.id === id);
             if (!item) return;
             
-            // Registra coordinate puntatore iniziali
             startPointerX = e.clientX;
             startPointerY = e.clientY;
             
-            // Registra scostamento iniziale memorizzato nel db
             if (field === 'name') { startOffsetX = item.nameOffsetLeft; startOffsetY = item.nameOffsetTop; }
             if (field === 'desc') { startOffsetX = item.descOffsetLeft; startOffsetY = item.descOffsetTop; }
             if (field === 'price') { startOffsetX = item.priceOffsetLeft; startOffsetY = item.priceOffsetTop; }
@@ -582,28 +582,24 @@
         window.addEventListener('pointermove', (e) => {
             if (!isDragging || !dragTarget) return;
             
-            // Rileva l'eventuale fattore di scala CSS applicato per i monitor più piccoli
             const wrapper = document.querySelector('.menu-page-block');
             let scale = 1;
             if (wrapper) {
                 const transformMatrix = window.getComputedStyle(wrapper).transform;
                 if (transformMatrix && transformMatrix !== 'none') {
                     const values = transformMatrix.split('(')[1].split(')')[0].split(',');
-                    scale = parseFloat(values[0]); // Estrae il valore di zoom X
+                    scale = parseFloat(values[0]);
                 }
             }
 
-            // Calcola lo spostamento effettivo calibrato sullo zoom dello schermo
             const deltaX = (e.clientX - startPointerX) / scale;
             const deltaY = (e.clientY - startPointerY) / scale;
             
             const currentX = Math.round(startOffsetX + deltaX);
             const currentY = Math.round(startOffsetY + deltaY);
             
-            // Aggiorna l'anteprima visiva in tempo reale nel DOM
             dragTarget.style.transform = `translate(${currentX}px, ${currentY}px)`;
             
-            // Scrive temporaneamente nel dataset
             const item = menuDataset.find(x => x.id === dragItemId);
             if (item) {
                 if (dragFieldType === 'name') { item.nameOffsetLeft = currentX; item.nameOffsetTop = currentY; }
@@ -615,19 +611,13 @@
 
         window.addEventListener('pointerup', (e) => {
             if (!isDragging) return;
-            if (dragTarget) {
-                dragTarget.releasePointerCapture(e.pointerId);
-            }
+            if (dragTarget) dragTarget.releasePointerCapture(e.pointerId);
             isDragging = false;
             dragTarget = null;
-            
-            // Salva definitivamente la nuova posizione nel LocalStorage al rilascio
             localStorage.setItem(DB_KEY, JSON.stringify(menuDataset));
         });
 
-        // ==========================================================================
-        // ISPEZIONE INCROCIATA INTELLIGENTE (DISATTIVATA DURANTE IL DRAG)
-        // ==========================================================================
+        // ISPEZIONE VISIVA
         const workspace = document.getElementById('preview-workspace');
         const controlPanel = document.getElementById('control-panel');
         const tooltip = document.getElementById('debug-tooltip');
@@ -658,53 +648,18 @@
 
                 if (targetNode.id) {
                     const idString = targetNode.id;
-                    moveAndShowTooltip(e, `Trascina per spostare -> #${idString}`);
+                    moveAndShowTooltip(e, `Trascina l'elemento per spostarlo -> #${idString}`);
                     const match = idString.match(/box-(.+)-(name|desc|price)/);
                     if (match) {
                         const cat = match[1];
                         const row = controlPanel.querySelector(`tr[data-target-group="anchor-${cat}"]`);
                         if (row) { row.classList.add('inspect-highlight'); activeElementsRegistry.push(row); }
-                        const rowControl = controlPanel.querySelector(`[data-subbox-target="${idString}"]`);
-                        if (rowControl) { rowControl.classList.add('inspect-highlight'); activeElementsRegistry.push(rowControl); }
                     }
-                } else {
-                    moveAndShowTooltip(e, `Anteprima -> Sfondo Pergamena`);
                 }
             }
         });
 
         workspace.addEventListener('mouseleave', clearAllHighlights);
-
-        controlPanel.addEventListener('mousemove', (e) => {
-            if (isDragging) return;
-            const subControlRow = e.target.closest('[data-subbox-target]');
-            const mainTableRow = e.target.closest('#editor-table tbody tr');
-
-            if (subControlRow) {
-                clearAllHighlights();
-                subControlRow.classList.add('inspect-highlight');
-                activeElementsRegistry.push(subControlRow);
-                const targetBoxId = subControlRow.getAttribute('data-subbox-target');
-                const visualBox = document.getElementById(targetBoxId);
-                if (visualBox) { visualBox.classList.add('inspect-highlight'); activeElementsRegistry.push(visualBox); }
-                moveAndShowTooltip(e, `Editor -> #${targetBoxId}`);
-            } 
-            else if (mainTableRow && !subControlRow) {
-                clearAllHighlights();
-                mainTableRow.classList.add('inspect-highlight');
-                activeElementsRegistry.push(mainTableRow);
-                const anchorId = mainTableRow.getAttribute('data-target-group');
-                const anchorEl = document.getElementById(anchorId);
-                if (anchorEl) {
-                    Array.from(anchorEl.getElementsByClassName('inspectable-box')).forEach(child => { child.classList.add('inspect-highlight'); activeElementsRegistry.push(child); });
-                    const pBox = anchorEl.querySelector('.item-price-box');
-                    if(pBox) { pBox.classList.add('inspect-highlight'); activeElementsRegistry.push(pBox); }
-                }
-                moveAndShowTooltip(e, `Gruppo -> #${anchorId}`);
-            }
-        });
-
-        controlPanel.addEventListener('mouseleave', clearAllHighlights);
 
         function downloadPageAsPNG(elementId, filename) {
             clearAllHighlights();
@@ -724,7 +679,7 @@
         }
 
         function resetToDefault() {
-            if (confirm("Vuoi azzerare tutte le posizioni e i testi del Drag & Drop?")) {
+            if (confirm("Resettare le posizioni degli zecchini?")) {
                 localStorage.clear(); window.location.reload();
             }
         }
