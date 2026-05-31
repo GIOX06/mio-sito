@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configuratore Menu Medievale - Zecchino Layout</title>
+    <title>Configuratore Menu Medievale - Drag & Drop Diretto</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,6 +26,7 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
+            user-select: none; /* Previene la selezione del testo fastidiosa durante il drag */
         }
 
         #mobile-tabs {
@@ -72,6 +73,7 @@
             border-radius: 12px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.15);
             height: fit-content;
+            user-select: auto; /* Riattiva la selezione normale nel pannello input */
         }
 
         #preview-workspace {
@@ -103,7 +105,6 @@
             image-rendering: crisp-edges;
         }
 
-        /* Allineamento orizzontale per posizionare la moneta a sinistra */
         .menu-overlay-container {
             position: absolute;
             left: 10%;
@@ -121,13 +122,13 @@
         #anchor-castellano         { top: 75.4%; }
         #anchor-piccolo-cavaliere  { top: 85.0%; }
 
-        /* Container destro per blocco testi portate */
         .menu-text-block {
             display: flex;
             flex-direction: column;
             align-items: center;
             flex: 1;
             text-align: center;
+            pointer-events: none; /* Permette il click passante sui figli effettivi */
         }
 
         .inspectable-box {
@@ -137,6 +138,9 @@
             transition: transform 0.05s ease;
             white-space: pre-line;
             word-wrap: break-word;
+            cursor: move; /* Cursore di spostamento */
+            pointer-events: auto;
+            touch-action: none; /* Disattiva le gesture del browser (es. scroll) durante il drag */
         }
 
         .item-name-box {
@@ -152,7 +156,6 @@
             margin-top: 2px;
         }
 
-        /* REPLICA VETTORIALE ZECCHINO D'ORO MEDIEVALE */
         .item-price-box {
             display: flex;
             align-items: center;
@@ -160,29 +163,19 @@
             flex-shrink: 0;
             width: 46px;
             height: 46px;
-            
-            /* Bordo asimmetrico irregolare per simulare la coniazione manuale battuta a martello */
             border-radius: 46% 54% 48% 52% / 50% 48% 52% 50%;
-            
-            /* Sfondo simulazione oro antico martellato con ossidazioni scure */
             background: 
                 radial-gradient(circle at 35% 35%, rgba(255,223,120,0.9) 0%, rgba(212,143,22,0.9) 50%, rgba(138,81,4,0.95) 85%, rgba(46,24,0,1) 100%),
                 linear-gradient(135deg, #ffd700 0%, #b8860b 50%, #664600 100%);
-            
-            /* Bordatura metallica scura e ombre per alto contrasto */
             border: 2px dashed #422200;
             outline: 1px solid #1f0f00;
-            box-shadow: 
-                0 3px 6px rgba(0,0,0,0.45), 
-                inset 1px 1px 3px rgba(255,255,255,0.6),
-                inset -2px -2px 4px rgba(0,0,0,0.7);
-            
-            /* Stile testo interno alla moneta */
+            box-shadow: 0 3px 6px rgba(0,0,0,0.45), inset 1px 1px 3px rgba(255,255,255,0.6), inset -2px -2px 4px rgba(0,0,0,0.7);
             color: #1c0e00; 
             font-weight: 800;
             font-family: 'EB Garamond', serif;
             text-shadow: 1px 1px 1px rgba(255,243,196,0.6);
-            transition: transform 0.05s ease;
+            cursor: move;
+            touch-action: none;
         }
 
         #debug-tooltip {
@@ -266,7 +259,6 @@
             font-weight: bold;
             border-radius: 3px;
             cursor: pointer;
-            user-select: none;
         }
         .btn-micro:hover { background: #e4d5b7; }
         .lbl-micro-status { font-size: 10px; color: #666; font-family: monospace; min-width: 105px; text-align: right; }
@@ -312,17 +304,16 @@
 
     <div id="main-container">
 
-        <!-- PANNELLO DI CONTROLLO -->
         <div id="control-panel">
             <h2>Impostazioni Grafica di Sfondo</h2>
-            <div class="file-inputs" data-inspect-name="Input File Sfondo">
+            <div class="file-inputs">
                 <div class="file-box" id="box-lbl-bg1">
                     <label for="bg1" id="lbl-bg1">🖼️ Sfondo Predefinito Attivo (menu_bg.png)</label>
                     <input type="file" id="bg1" accept="image/*" onchange="processAndSaveBg(this, 'page-menu', 'db_single_bg', 'box-lbl-bg1')">
                 </div>
             </div>
 
-            <h2>Gestione Piatti (Moneta a Sinistra)</h2>
+            <h2>Gestione Piatti (Trascina gli oggetti nell'anteprima!)</h2>
             <table id="editor-table">
                 <thead>
                     <tr>
@@ -333,14 +324,13 @@
                 <tbody></tbody>
             </table>
 
-            <div class="btn-container" data-inspect-name="Pulsante di Esportazione">
+            <div class="btn-container">
                 <button class="btn-download" onclick="downloadPageAsPNG('page-menu', 'Menu_Completo.png')">📸 Scarica Menu Completo (PNG)</button>
             </div>
             
             <button class="btn-reset" onclick="resetToDefault()">🔄 Inizializza Tutto a Predefinito</button>
         </div>
 
-        <!-- ANTEPRIMA REAL-TIME -->
         <div id="preview-workspace">
             <div class="page-scale-wrapper">
                 <div id="page-menu" class="menu-page-block">
@@ -357,7 +347,7 @@
 
     <script>
         const DEFAULT_BG_PATH = "menu_bg.png"; 
-        const DB_KEY = "db_menu_medievale_v7_zecchino";
+        const DB_KEY = "db_menu_medievale_v8_drag";
 
         const defaultDataset = [
             { id: 1, active: true, cat: "mastro-birraio", catName: "Mastro Birraio", name: "Birra del Borgo", price: "6", desc: "Artigianale rossa prodotta con\ngrani locali e luppoli selvatici.", nameFontDelta: 0, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 0, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 0, priceOffsetTop: 0, priceOffsetLeft: 0 },
@@ -369,33 +359,34 @@
 
         let menuDataset = [];
 
+        // Variabili globali per il Drag and Drop con Pointer Events (Mouse + Touch)
+        let isDragging = false;
+        let dragTarget = null;
+        let dragItemId = null;
+        let dragFieldType = null; // 'name', 'desc', 'price'
+        let startPointerX = 0;
+        let startPointerY = 0;
+        let startOffsetX = 0;
+        let startOffsetY = 0;
+
         function switchMobileTab(targetTab) {
             const panel = document.getElementById('control-panel');
             const preview = document.getElementById('preview-workspace');
             const btnEdit = document.getElementById('btn-tab-edit');
             const btnView = document.getElementById('btn-tab-view');
-
             if (targetTab === 'edit') {
-                panel.style.display = 'block';
-                preview.style.display = 'none';
-                btnEdit.classList.add('active');
-                btnView.classList.remove('active');
+                panel.style.display = 'block'; preview.style.display = 'none';
+                btnEdit.classList.add('active'); btnView.classList.remove('active');
             } else {
-                panel.style.display = 'none';
-                preview.style.display = 'flex';
-                btnEdit.classList.remove('active');
-                btnView.classList.add('active');
+                panel.style.display = 'none'; preview.style.display = 'flex';
+                btnEdit.classList.remove('active'); btnView.classList.add('active');
             }
         }
 
         function initDatabase() {
             const savedData = localStorage.getItem(DB_KEY);
             if (savedData) {
-                try {
-                    menuDataset = JSON.parse(savedData);
-                } catch(e) {
-                    menuDataset = JSON.parse(JSON.stringify(defaultDataset));
-                }
+                try { menuDataset = JSON.parse(savedData); } catch(e) { menuDataset = JSON.parse(JSON.stringify(defaultDataset)); }
             } else {
                 menuDataset = JSON.parse(JSON.stringify(defaultDataset));
                 localStorage.setItem(DB_KEY, JSON.stringify(menuDataset));
@@ -405,29 +396,21 @@
         function loadBackground() {
             const savedBg = localStorage.getItem('db_single_bg');
             const menuElement = document.getElementById('page-menu');
-            if (savedBg) {
-                menuElement.style.backgroundImage = `url('${savedBg}')`;
-                setLabelUploaded();
-            } else {
-                menuElement.style.backgroundImage = `url('${DEFAULT_BG_PATH}')`;
-            }
+            if (savedBg) { menuElement.style.backgroundImage = `url('${savedBg}')`; setLabelUploaded(); } 
+            else { menuElement.style.backgroundImage = `url('${DEFAULT_BG_PATH}')`; }
         }
 
         function setLabelUploaded() {
             const box = document.getElementById('box-lbl-bg1');
-            if (box) {
-                box.classList.add('has-image');
-                box.querySelector('label').innerText = "✅ Sfondo Personalizzato Attivo";
-            }
+            if (box) { box.classList.add('has-image'); box.querySelector('label').innerText = "✅ Sfondo Personalizzato Attivo"; }
         }
 
         function processAndSaveBg(input, targetId, storageKey, labelBoxId) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    const base64Data = e.target.result;
-                    localStorage.setItem(storageKey, base64Data);
-                    document.getElementById(targetId).style.backgroundImage = `url('${base64Data}')`;
+                    localStorage.setItem(storageKey, e.target.result);
+                    document.getElementById(targetId).style.backgroundImage = `url('${e.target.result}')`;
                     setLabelUploaded();
                 }
                 reader.readAsDataURL(input.files[0]);
@@ -443,53 +426,34 @@
                     </td>
                     <td>
                         <b style="color:var(--primary-color); font-size:10px; display:block; margin-bottom: 2px;">PORTATA: ${item.catName.toUpperCase()}</b>
-                        
                         <div style="display: flex; gap: 8px; margin-bottom: 4px;">
                             <textarea id="name-${item.id}" oninput="syncDataAndRender()" style="flex: 2; font-weight:bold; height:36px;">${item.name}</textarea>
                             <input type="text" id="price-${item.id}" value="${item.price}" oninput="syncDataAndRender()" style="flex: 0 0 75px; text-align:right; font-weight:bold; height:36px;">
                         </div>
-                        
                         <textarea id="desc-${item.id}" oninput="syncDataAndRender()">${item.desc}</textarea>
                         
                         <div class="typo-controls-block">
-                            <!-- MONETA (PREZZO ZECCHINO) -->
                             <div class="control-row-item" data-subbox-target="box-${item.cat}-price">
                                 <span class="label-target">Zecchino (Prezzo):</span>
                                 <div class="micro-controls">
                                     <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'price', 'font', -0.5)">A-</button>
                                     <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'price', 'font', 0.5)">A+</button>
-                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'price', 'X', -2)">←</button>
-                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'price', 'X', 2)">→</button>
-                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'price', 'Y', -1)">↑</button>
-                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'price', 'Y', 1)">↓</button>
                                 </div>
                                 <span id="status-price-${item.id}" class="lbl-micro-status">${item.priceFontDelta >= 0 ? '+' : ''}${item.priceFontDelta}pt | X:${item.priceOffsetLeft}px Y:${item.priceOffsetTop}px</span>
                             </div>
-
-                            <!-- NOME -->
                             <div class="control-row-item" data-subbox-target="box-${item.cat}-name">
                                 <span class="label-target">Testo Nome:</span>
                                 <div class="micro-controls">
                                     <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'name', 'font', -0.5)">A-</button>
                                     <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'name', 'font', 0.5)">A+</button>
-                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'name', 'X', -2)">←</button>
-                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'name', 'X', 2)">→</button>
-                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'name', 'Y', -1)">↑</button>
-                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'name', 'Y', 1)">↓</button>
                                 </div>
                                 <span id="status-name-${item.id}" class="lbl-micro-status">${item.nameFontDelta >= 0 ? '+' : ''}${item.nameFontDelta}pt | X:${item.nameOffsetLeft}px Y:${item.nameOffsetTop}px</span>
                             </div>
-
-                            <!-- DESCRIZIONE -->
                             <div class="control-row-item" data-subbox-target="box-${item.cat}-desc">
                                 <span class="label-target">Testo Desc:</span>
                                 <div class="micro-controls">
                                     <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'desc', 'font', -0.5)">A-</button>
                                     <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'desc', 'font', 0.5)">A+</button>
-                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'desc', 'X', -2)">←</button>
-                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'desc', 'X', 2)">→</button>
-                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'desc', 'Y', -1)">↑</button>
-                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'desc', 'Y', 1)">↓</button>
                                 </div>
                                 <span id="status-desc-${item.id}" class="lbl-micro-status">${item.descFontDelta >= 0 ? '+' : ''}${item.descFontDelta}pt | X:${item.descOffsetLeft}px Y:${item.descOffsetTop}px</span>
                             </div>
@@ -502,26 +466,20 @@
         function adjustVectorTypography(id, targetBox, axis, amount) {
             const item = menuDataset.find(x => x.id === id);
             if (!item) return;
-
-            if (targetBox === 'name') {
-                if (axis === 'font') item.nameFontDelta = parseFloat((item.nameFontDelta + amount).toFixed(1));
-                else if (axis === 'X') item.nameOffsetLeft = parseInt(item.nameOffsetLeft + amount);
-                else if (axis === 'Y') item.nameOffsetTop = parseInt(item.nameOffsetTop + amount);
-                document.getElementById(`status-name-${id}`).innerText = `${item.nameFontDelta >= 0 ? '+' : ''}${item.nameFontDelta}pt | X:${item.nameOffsetLeft}px Y:${item.nameOffsetTop}px`;
-            } else if (targetBox === 'desc') {
-                if (axis === 'font') item.descFontDelta = parseFloat((item.descFontDelta + amount).toFixed(1));
-                else if (axis === 'X') item.descOffsetLeft = parseInt(item.descOffsetLeft + amount);
-                else if (axis === 'Y') item.descOffsetTop = parseInt(item.descOffsetTop + amount);
-                document.getElementById(`status-desc-${id}`).innerText = `${item.descFontDelta >= 0 ? '+' : ''}${item.descFontDelta}pt | X:${item.descOffsetLeft}px Y:${item.descOffsetTop}px`;
-            } else if (targetBox === 'price') {
-                if (axis === 'font') item.priceFontDelta = parseFloat((item.priceFontDelta + amount).toFixed(1));
-                else if (axis === 'X') item.priceOffsetLeft = parseInt(item.priceOffsetLeft + amount);
-                else if (axis === 'Y') item.priceOffsetTop = parseInt(item.priceOffsetTop + amount);
-                document.getElementById(`status-price-${id}`).innerText = `${item.priceFontDelta >= 0 ? '+' : ''}${item.priceFontDelta}pt | X:${item.priceOffsetLeft}px Y:${item.priceOffsetTop}px`;
+            if (axis === 'font') {
+                if (targetBox === 'name') item.nameFontDelta = parseFloat((item.nameFontDelta + amount).toFixed(1));
+                if (targetBox === 'desc') item.descFontDelta = parseFloat((item.descFontDelta + amount).toFixed(1));
+                if (targetBox === 'price') item.priceFontDelta = parseFloat((item.priceFontDelta + amount).toFixed(1));
             }
-
             localStorage.setItem(DB_KEY, JSON.stringify(menuDataset));
             renderGraphics();
+            updateStatusLabels(item);
+        }
+
+        function updateStatusLabels(item) {
+            document.getElementById(`status-name-${item.id}`).innerText = `${item.nameFontDelta >= 0 ? '+' : ''}${item.nameFontDelta}pt | X:${item.nameOffsetLeft}px Y:${item.nameOffsetTop}px`;
+            document.getElementById(`status-desc-${item.id}`).innerText = `${item.descFontDelta >= 0 ? '+' : ''}${item.descFontDelta}pt | X:${item.descOffsetLeft}px Y:${item.descOffsetTop}px`;
+            document.getElementById(`status-price-${item.id}`).innerText = `${item.priceFontDelta >= 0 ? '+' : ''}${item.priceFontDelta}pt | X:${item.priceOffsetLeft}px Y:${item.priceOffsetTop}px`;
         }
 
         function syncDataAndRender() {
@@ -531,7 +489,6 @@
                 item.desc = document.getElementById(`desc-${item.id}`).value;
                 item.active = document.getElementById(`active-${item.id}`).checked;
             });
-            
             localStorage.setItem(DB_KEY, JSON.stringify(menuDataset));
             renderGraphics();
         }
@@ -539,24 +496,18 @@
         function calculateAutoscalingFont(text, maxChars = 70, baseFont = 11.5) {
             const length = text.length;
             if (length <= 40) return baseFont;
-            const scaleFactor = (maxChars - (length - 40)) / maxChars;
-            return Math.max(8.0, baseFont * scaleFactor);
+            return Math.max(8.0, baseFont * ((maxChars - (length - 40)) / maxChars));
         }
 
-        // RENDERING IN LINEA: ZECCHINO A SINISTRA, BLOCCO TESTI A DESTRA
         function renderGraphics() {
             const categories = ['mastro-birraio', 'condottiero', 'viandante', 'castellano', 'piccolo-cavaliere'];
-            categories.forEach(c => {
-                const anchor = document.getElementById(`anchor-${c}`);
-                if (anchor) anchor.innerHTML = '';
-            });
+            categories.forEach(c => { const a = document.getElementById(`anchor-${c}`); if (a) a.innerHTML = ''; });
 
             menuDataset.forEach(item => {
                 if (item.active) {
                     const anchor = document.getElementById(`anchor-${item.cat}`);
                     if (anchor) {
-                        
-                        // 1. Iniezione Moneta Zecchino (Posizionata a sinistra nel flex flow)
+                        // 1. Zecchino Prezzo
                         if (item.price) {
                             const priceBox = document.createElement('div');
                             priceBox.id = `box-${item.cat}-price`;
@@ -564,70 +515,118 @@
                             priceBox.style.fontSize = `${14 + item.priceFontDelta}px`;
                             priceBox.style.transform = `translate(${item.priceOffsetLeft}px, ${item.priceOffsetTop}px)`;
                             priceBox.textContent = item.price;
+                            
+                            // Attacca Listener di Trascinamento
+                            priceBox.addEventListener('pointerdown', (e) => setupDragStart(e, item.id, 'price'));
                             anchor.appendChild(priceBox);
                         }
 
-                        // 2. Creazione blocco testi verticale (Nome -> Descrizione)
+                        // 2. Blocco Testi
                         const textBlock = document.createElement('div');
                         textBlock.className = 'menu-text-block';
 
-                        // Box Nome
                         const nameBox = document.createElement('div');
                         nameBox.id = `box-${item.cat}-name`;
                         nameBox.className = 'inspectable-box item-name-box';
                         nameBox.style.fontSize = `${13.5 + item.nameFontDelta}px`;
                         nameBox.style.transform = `translate(${item.nameOffsetLeft}px, ${item.nameOffsetTop}px)`;
                         nameBox.textContent = item.name;
+                        nameBox.addEventListener('pointerdown', (e) => setupDragStart(e, item.id, 'name'));
                         
-                        // Box Descrizione
                         const descBox = document.createElement('div');
                         descBox.id = `box-${item.cat}-desc`;
                         descBox.className = 'inspectable-box item-desc-box';
-                        const finalDescSize = calculateAutoscalingFont(item.desc, 70, 11.5) + item.descFontDelta;
-                        descBox.style.fontSize = `${finalDescSize}px`;
+                        descBox.style.fontSize = `${calculateAutoscalingFont(item.desc, 70, 11.5) + item.descFontDelta}px`;
                         descBox.style.transform = `translate(${item.descOffsetLeft}px, ${item.descOffsetTop}px)`;
                         descBox.textContent = item.desc; 
+                        descBox.addEventListener('pointerdown', (e) => setupDragStart(e, item.id, 'desc'));
 
                         textBlock.appendChild(nameBox);
                         textBlock.appendChild(descBox);
-                        
                         anchor.appendChild(textBlock);
                     }
                 }
             });
         }
 
-        function downloadPageAsPNG(elementId, filename) {
-            document.querySelectorAll('.inspect-highlight').forEach(el => el.classList.remove('inspect-highlight'));
-            document.getElementById('debug-tooltip').style.display = 'none';
-
-            const preview = document.getElementById('preview-workspace');
-            const originalDisplay = window.getComputedStyle(preview).display;
-            if (originalDisplay === 'none') preview.style.display = 'flex';
-
-            html2canvas(document.getElementById(elementId), {
-                scale: 3,
-                useCORS: true,       
-                allowTaint: false,   
-                logging: false
-            }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = filename;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-                if (originalDisplay === 'none') preview.style.display = 'none';
-            });
+        // ==========================================================================
+        // LOGICA DI TRASCINAMENTO DIRETTO (POINTER DRAG ENGINE)
+        // ==========================================================================
+        function setupDragStart(e, id, field) {
+            // Seleziona solo il tasto sinistro del mouse o il tocco
+            if (e.button !== 0 && e.pointerType === 'mouse') return;
+            
+            isDragging = true;
+            dragTarget = e.currentTarget;
+            dragItemId = id;
+            dragFieldType = field;
+            
+            dragTarget.setPointerCapture(e.pointerId);
+            
+            const item = menuDataset.find(x => x.id === id);
+            if (!item) return;
+            
+            // Registra coordinate puntatore iniziali
+            startPointerX = e.clientX;
+            startPointerY = e.clientY;
+            
+            // Registra scostamento iniziale memorizzato nel db
+            if (field === 'name') { startOffsetX = item.nameOffsetLeft; startOffsetY = item.nameOffsetTop; }
+            if (field === 'desc') { startOffsetX = item.descOffsetLeft; startOffsetY = item.descOffsetTop; }
+            if (field === 'price') { startOffsetX = item.priceOffsetLeft; startOffsetY = item.priceOffsetTop; }
+            
+            e.stopPropagation();
+            clearAllHighlights();
         }
 
-        function resetToDefault() {
-            if (confirm("Ripristinare le impostazioni di fabbrica del layout Zecchino?")) {
-                localStorage.clear();
-                window.location.reload();
+        window.addEventListener('pointermove', (e) => {
+            if (!isDragging || !dragTarget) return;
+            
+            // Rileva l'eventuale fattore di scala CSS applicato per i monitor più piccoli
+            const wrapper = document.querySelector('.menu-page-block');
+            let scale = 1;
+            if (wrapper) {
+                const transformMatrix = window.getComputedStyle(wrapper).transform;
+                if (transformMatrix && transformMatrix !== 'none') {
+                    const values = transformMatrix.split('(')[1].split(')')[0].split(',');
+                    scale = parseFloat(values[0]); // Estrae il valore di zoom X
+                }
             }
-        }
+
+            // Calcola lo spostamento effettivo calibrato sullo zoom dello schermo
+            const deltaX = (e.clientX - startPointerX) / scale;
+            const deltaY = (e.clientY - startPointerY) / scale;
+            
+            const currentX = Math.round(startOffsetX + deltaX);
+            const currentY = Math.round(startOffsetY + deltaY);
+            
+            // Aggiorna l'anteprima visiva in tempo reale nel DOM
+            dragTarget.style.transform = `translate(${currentX}px, ${currentY}px)`;
+            
+            // Scrive temporaneamente nel dataset
+            const item = menuDataset.find(x => x.id === dragItemId);
+            if (item) {
+                if (dragFieldType === 'name') { item.nameOffsetLeft = currentX; item.nameOffsetTop = currentY; }
+                if (dragFieldType === 'desc') { item.descOffsetLeft = currentX; item.descOffsetTop = currentY; }
+                if (dragFieldType === 'price') { item.priceOffsetLeft = currentX; item.priceOffsetTop = currentY; }
+                updateStatusLabels(item);
+            }
+        });
+
+        window.addEventListener('pointerup', (e) => {
+            if (!isDragging) return;
+            if (dragTarget) {
+                dragTarget.releasePointerCapture(e.pointerId);
+            }
+            isDragging = false;
+            dragTarget = null;
+            
+            // Salva definitivamente la nuova posizione nel LocalStorage al rilascio
+            localStorage.setItem(DB_KEY, JSON.stringify(menuDataset));
+        });
 
         // ==========================================================================
-        // ISPEZIONE INCROCIATA BI-DIREZIONALE
+        // ISPEZIONE INCROCIATA INTELLIGENTE (DISATTIVATA DURANTE IL DRAG)
         // ==========================================================================
         const workspace = document.getElementById('preview-workspace');
         const controlPanel = document.getElementById('control-panel');
@@ -635,6 +634,7 @@
         let activeElementsRegistry = [];
 
         function moveAndShowTooltip(e, label) {
+            if (isDragging) return;
             tooltip.style.display = 'block';
             tooltip.innerText = label;
             tooltip.style.left = (e.clientX + 15) + 'px';
@@ -648,9 +648,9 @@
         }
 
         workspace.addEventListener('mousemove', (e) => {
+            if (isDragging) { clearAllHighlights(); return; }
             clearAllHighlights();
-            const hitElement = e.target;
-            const targetNode = hitElement.closest('.item-name-box, .item-desc-box, .item-price-box, .menu-page-block');
+            const targetNode = e.target.closest('.item-name-box, .item-desc-box, .item-price-box, .menu-page-block');
             
             if (targetNode) {
                 targetNode.classList.add('inspect-highlight');
@@ -658,7 +658,7 @@
 
                 if (targetNode.id) {
                     const idString = targetNode.id;
-                    moveAndShowTooltip(e, `Anteprima -> #${idString}`);
+                    moveAndShowTooltip(e, `Trascina per spostare -> #${idString}`);
                     const match = idString.match(/box-(.+)-(name|desc|price)/);
                     if (match) {
                         const cat = match[1];
@@ -676,9 +676,9 @@
         workspace.addEventListener('mouseleave', clearAllHighlights);
 
         controlPanel.addEventListener('mousemove', (e) => {
-            const hitElement = e.target;
-            const subControlRow = hitElement.closest('[data-subbox-target]');
-            const mainTableRow = hitElement.closest('#editor-table tbody tr');
+            if (isDragging) return;
+            const subControlRow = e.target.closest('[data-subbox-target]');
+            const mainTableRow = e.target.closest('#editor-table tbody tr');
 
             if (subControlRow) {
                 clearAllHighlights();
@@ -700,16 +700,40 @@
                     const pBox = anchorEl.querySelector('.item-price-box');
                     if(pBox) { pBox.classList.add('inspect-highlight'); activeElementsRegistry.push(pBox); }
                 }
-                moveAndShowTooltip(e, `Editor Gruppo -> #${anchorId}`);
+                moveAndShowTooltip(e, `Gruppo -> #${anchorId}`);
             }
         });
 
         controlPanel.addEventListener('mouseleave', clearAllHighlights);
 
+        function downloadPageAsPNG(elementId, filename) {
+            clearAllHighlights();
+            const preview = document.getElementById('preview-workspace');
+            const originalDisplay = window.getComputedStyle(preview).display;
+            if (originalDisplay === 'none') preview.style.display = 'flex';
+
+            html2canvas(document.getElementById(elementId), {
+                scale: 3, useCORS: true, allowTaint: false, logging: false
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                if (originalDisplay === 'none') preview.style.display = 'none';
+            });
+        }
+
+        function resetToDefault() {
+            if (confirm("Vuoi azzerare tutte le posizioni e i testi del Drag & Drop?")) {
+                localStorage.clear(); window.location.reload();
+            }
+        }
+
         initDatabase();
         buildEditorTable();
         loadBackground();
         renderGraphics();
+        menuDataset.forEach(item => updateStatusLabels(item));
     </script>
 </body>
 </html>
