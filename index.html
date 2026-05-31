@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configuratore Menu Medievale - Moneta ad Alto Contrasto</title>
+    <title>Configuratore Menu Medievale - Zecchino Layout</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -103,14 +103,16 @@
             image-rendering: crisp-edges;
         }
 
+        /* Allineamento orizzontale per posizionare la moneta a sinistra */
         .menu-overlay-container {
             position: absolute;
-            left: 15%;
-            width: 70%;
+            left: 10%;
+            width: 80%;
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
+            gap: 15px;
         }
 
         #anchor-mastro-birraio     { top: 41.7%; }
@@ -119,11 +121,19 @@
         #anchor-castellano         { top: 75.4%; }
         #anchor-piccolo-cavaliere  { top: 85.0%; }
 
+        /* Container destro per blocco testi portate */
+        .menu-text-block {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            text-align: center;
+        }
+
         .inspectable-box {
             width: 100%;
             color: #1c0e00;
             font-family: 'EB Garamond', 'Georgia', serif;
-            text-align: center;
             transition: transform 0.05s ease;
             white-space: pre-line;
             word-wrap: break-word;
@@ -142,26 +152,37 @@
             margin-top: 2px;
         }
 
-        /* MONETA MEDIEVALE AD ALTO CONTRASTO */
+        /* REPLICA VETTORIALE ZECCHINO D'ORO MEDIEVALE */
         .item-price-box {
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 4px auto 0 auto;
-            width: fit-content;
-            min-width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            /* Gradient metallico oro/bronzo antico ad alto contrasto */
-            background: radial-gradient(circle at 35% 35%, #f39c12 0%, #d35400 60%, #5e2700 100%);
-            /* Doppio bordo scuro per staccare nettamente dallo sfondo pergamena */
-            border: 2px solid #2c1100;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.4), inset 0 2px 4px rgba(255,255,255,0.4);
-            color: #ffffff; /* Testo bianco per un contrasto perfetto sulla moneta scura */
-            font-weight: bold;
-            font-family: 'Cinzel', 'EB Garamond', serif;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-            padding: 2px 6px;
+            flex-shrink: 0;
+            width: 46px;
+            height: 46px;
+            
+            /* Bordo asimmetrico irregolare per simulare la coniazione manuale battuta a martello */
+            border-radius: 46% 54% 48% 52% / 50% 48% 52% 50%;
+            
+            /* Sfondo simulazione oro antico martellato con ossidazioni scure */
+            background: 
+                radial-gradient(circle at 35% 35%, rgba(255,223,120,0.9) 0%, rgba(212,143,22,0.9) 50%, rgba(138,81,4,0.95) 85%, rgba(46,24,0,1) 100%),
+                linear-gradient(135deg, #ffd700 0%, #b8860b 50%, #664600 100%);
+            
+            /* Bordatura metallica scura e ombre per alto contrasto */
+            border: 2px dashed #422200;
+            outline: 1px solid #1f0f00;
+            box-shadow: 
+                0 3px 6px rgba(0,0,0,0.45), 
+                inset 1px 1px 3px rgba(255,255,255,0.6),
+                inset -2px -2px 4px rgba(0,0,0,0.7);
+            
+            /* Stile testo interno alla moneta */
+            color: #1c0e00; 
+            font-weight: 800;
+            font-family: 'EB Garamond', serif;
+            text-shadow: 1px 1px 1px rgba(255,243,196,0.6);
+            transition: transform 0.05s ease;
         }
 
         #debug-tooltip {
@@ -291,6 +312,7 @@
 
     <div id="main-container">
 
+        <!-- PANNELLO DI CONTROLLO -->
         <div id="control-panel">
             <h2>Impostazioni Grafica di Sfondo</h2>
             <div class="file-inputs" data-inspect-name="Input File Sfondo">
@@ -300,7 +322,7 @@
                 </div>
             </div>
 
-            <h2>Gestione Piatti (Ordine: Nome, Descrizione, Prezzo Coin)</h2>
+            <h2>Gestione Piatti (Moneta a Sinistra)</h2>
             <table id="editor-table">
                 <thead>
                     <tr>
@@ -318,6 +340,7 @@
             <button class="btn-reset" onclick="resetToDefault()">🔄 Inizializza Tutto a Predefinito</button>
         </div>
 
+        <!-- ANTEPRIMA REAL-TIME -->
         <div id="preview-workspace">
             <div class="page-scale-wrapper">
                 <div id="page-menu" class="menu-page-block">
@@ -334,7 +357,7 @@
 
     <script>
         const DEFAULT_BG_PATH = "menu_bg.png"; 
-        const DB_KEY = "db_menu_medievale_v6_coin"; // Chiave isolata per la struttura con moneta
+        const DB_KEY = "db_menu_medievale_v7_zecchino";
 
         const defaultDataset = [
             { id: 1, active: true, cat: "mastro-birraio", catName: "Mastro Birraio", name: "Birra del Borgo", price: "6", desc: "Artigianale rossa prodotta con\ngrani locali e luppoli selvatici.", nameFontDelta: 0, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 0, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 0, priceOffsetTop: 0, priceOffsetLeft: 0 },
@@ -370,19 +393,6 @@
             if (savedData) {
                 try {
                     menuDataset = JSON.parse(savedData);
-                    menuDataset.forEach(item => {
-                        if (item.nameFontDelta === undefined) item.nameFontDelta = 0;
-                        if (item.nameOffsetTop === undefined) item.nameOffsetTop = 0;
-                        if (item.nameOffsetLeft === undefined) item.nameOffsetLeft = 0;
-                        
-                        if (item.descFontDelta === undefined) item.descFontDelta = 0;
-                        if (item.descOffsetTop === undefined) item.descOffsetTop = 0;
-                        if (item.descOffsetLeft === undefined) item.descOffsetLeft = 0;
-
-                        if (item.priceFontDelta === undefined) item.priceFontDelta = 0;
-                        if (item.priceOffsetTop === undefined) item.priceOffsetTop = 0;
-                        if (item.priceOffsetLeft === undefined) item.priceOffsetLeft = 0;
-                    });
                 } catch(e) {
                     menuDataset = JSON.parse(JSON.stringify(defaultDataset));
                 }
@@ -416,14 +426,9 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const base64Data = e.target.result;
-                    try {
-                        localStorage.setItem(storageKey, base64Data);
-                        document.getElementById(targetId).style.backgroundImage = `url('${base64Data}')`;
-                        setLabelUploaded();
-                    } catch (error) {
-                        alert("Spazio insufficiente, immagine caricata temporaneamente.");
-                        document.getElementById(targetId).style.backgroundImage = `url('${base64Data}')`;
-                    }
+                    localStorage.setItem(storageKey, base64Data);
+                    document.getElementById(targetId).style.backgroundImage = `url('${base64Data}')`;
+                    setLabelUploaded();
                 }
                 reader.readAsDataURL(input.files[0]);
             }
@@ -437,18 +442,33 @@
                         <input type="checkbox" ${item.active ? 'checked' : ''} id="active-${item.id}" onchange="syncDataAndRender()">
                     </td>
                     <td>
-                        <b style="color:var(--primary-color); font-size:10px; display:block; margin-bottom: 2px;">MENU DEL ${item.catName.toUpperCase()}</b>
+                        <b style="color:var(--primary-color); font-size:10px; display:block; margin-bottom: 2px;">PORTATA: ${item.catName.toUpperCase()}</b>
                         
                         <div style="display: flex; gap: 8px; margin-bottom: 4px;">
-                            <textarea id="name-${item.id}" oninput="syncDataAndRender()" style="flex: 2; font-weight:bold; height:36px;" placeholder="Nome piatto...">${item.name}</textarea>
-                            <input type="text" id="price-${item.id}" value="${item.price}" oninput="syncDataAndRender()" style="flex: 0 0 75px; text-align:right; font-weight:bold; height:36px;" placeholder="Prezzo...">
+                            <textarea id="name-${item.id}" oninput="syncDataAndRender()" style="flex: 2; font-weight:bold; height:36px;">${item.name}</textarea>
+                            <input type="text" id="price-${item.id}" value="${item.price}" oninput="syncDataAndRender()" style="flex: 0 0 75px; text-align:right; font-weight:bold; height:36px;">
                         </div>
                         
-                        <textarea id="desc-${item.id}" oninput="syncDataAndRender()" placeholder="Descrizione piatto...">${item.desc}</textarea>
+                        <textarea id="desc-${item.id}" oninput="syncDataAndRender()">${item.desc}</textarea>
                         
                         <div class="typo-controls-block">
+                            <!-- MONETA (PREZZO ZECCHINO) -->
+                            <div class="control-row-item" data-subbox-target="box-${item.cat}-price">
+                                <span class="label-target">Zecchino (Prezzo):</span>
+                                <div class="micro-controls">
+                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'price', 'font', -0.5)">A-</button>
+                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'price', 'font', 0.5)">A+</button>
+                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'price', 'X', -2)">←</button>
+                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'price', 'X', 2)">→</button>
+                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'price', 'Y', -1)">↑</button>
+                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'price', 'Y', 1)">↓</button>
+                                </div>
+                                <span id="status-price-${item.id}" class="lbl-micro-status">${item.priceFontDelta >= 0 ? '+' : ''}${item.priceFontDelta}pt | X:${item.priceOffsetLeft}px Y:${item.priceOffsetTop}px</span>
+                            </div>
+
+                            <!-- NOME -->
                             <div class="control-row-item" data-subbox-target="box-${item.cat}-name">
-                                <span class="label-target">Box Nome:</span>
+                                <span class="label-target">Testo Nome:</span>
                                 <div class="micro-controls">
                                     <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'name', 'font', -0.5)">A-</button>
                                     <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'name', 'font', 0.5)">A+</button>
@@ -460,8 +480,9 @@
                                 <span id="status-name-${item.id}" class="lbl-micro-status">${item.nameFontDelta >= 0 ? '+' : ''}${item.nameFontDelta}pt | X:${item.nameOffsetLeft}px Y:${item.nameOffsetTop}px</span>
                             </div>
 
+                            <!-- DESCRIZIONE -->
                             <div class="control-row-item" data-subbox-target="box-${item.cat}-desc">
-                                <span class="label-target">Box Desc:</span>
+                                <span class="label-target">Testo Desc:</span>
                                 <div class="micro-controls">
                                     <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'desc', 'font', -0.5)">A-</button>
                                     <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'desc', 'font', 0.5)">A+</button>
@@ -471,19 +492,6 @@
                                     <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'desc', 'Y', 1)">↓</button>
                                 </div>
                                 <span id="status-desc-${item.id}" class="lbl-micro-status">${item.descFontDelta >= 0 ? '+' : ''}${item.descFontDelta}pt | X:${item.descOffsetLeft}px Y:${item.descOffsetTop}px</span>
-                            </div>
-                            
-                            <div class="control-row-item" data-subbox-target="box-${item.cat}-price">
-                                <span class="label-target">Moneta Prezzo:</span>
-                                <div class="micro-controls">
-                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'price', 'font', -0.5)">A-</button>
-                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'price', 'font', 0.5)">A+</button>
-                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'price', 'X', -2)">←</button>
-                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'price', 'X', 2)">→</button>
-                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'price', 'Y', -1)">↑</button>
-                                    <button class="btn-micro" onclick="adjustVectorTypography(${item.id}, 'price', 'Y', 1)">↓</button>
-                                </div>
-                                <span id="status-price-${item.id}" class="lbl-micro-status">${item.priceFontDelta >= 0 ? '+' : ''}${item.priceFontDelta}pt | X:${item.priceOffsetLeft}px Y:${item.priceOffsetTop}px</span>
                             </div>
                         </div>
                     </td>
@@ -535,7 +543,7 @@
             return Math.max(8.0, baseFont * scaleFactor);
         }
 
-        // RENDERING CON NUOVO ORDINE CRONOLOGICO VISIVO (NOME -> DESCRIZIONE -> PREZZO MONETA)
+        // RENDERING IN LINEA: ZECCHINO A SINISTRA, BLOCCO TESTI A DESTRA
         function renderGraphics() {
             const categories = ['mastro-birraio', 'condottiero', 'viandante', 'castellano', 'piccolo-cavaliere'];
             categories.forEach(c => {
@@ -547,7 +555,23 @@
                 if (item.active) {
                     const anchor = document.getElementById(`anchor-${item.cat}`);
                     if (anchor) {
-                        // 1. Box Nome (Primo elemento)
+                        
+                        // 1. Iniezione Moneta Zecchino (Posizionata a sinistra nel flex flow)
+                        if (item.price) {
+                            const priceBox = document.createElement('div');
+                            priceBox.id = `box-${item.cat}-price`;
+                            priceBox.className = 'item-price-box'; 
+                            priceBox.style.fontSize = `${14 + item.priceFontDelta}px`;
+                            priceBox.style.transform = `translate(${item.priceOffsetLeft}px, ${item.priceOffsetTop}px)`;
+                            priceBox.textContent = item.price;
+                            anchor.appendChild(priceBox);
+                        }
+
+                        // 2. Creazione blocco testi verticale (Nome -> Descrizione)
+                        const textBlock = document.createElement('div');
+                        textBlock.className = 'menu-text-block';
+
+                        // Box Nome
                         const nameBox = document.createElement('div');
                         nameBox.id = `box-${item.cat}-name`;
                         nameBox.className = 'inspectable-box item-name-box';
@@ -555,7 +579,7 @@
                         nameBox.style.transform = `translate(${item.nameOffsetLeft}px, ${item.nameOffsetTop}px)`;
                         nameBox.textContent = item.name;
                         
-                        // 2. Box Descrizione (Secondo elemento)
+                        // Box Descrizione
                         const descBox = document.createElement('div');
                         descBox.id = `box-${item.cat}-desc`;
                         descBox.className = 'inspectable-box item-desc-box';
@@ -564,21 +588,10 @@
                         descBox.style.transform = `translate(${item.descOffsetLeft}px, ${item.descOffsetTop}px)`;
                         descBox.textContent = item.desc; 
 
-                        // 3. Box Prezzo dentro la Moneta (Terzo elemento)
-                        const priceBox = document.createElement('div');
-                        priceBox.id = `box-${item.cat}-price`;
-                        priceBox.className = 'item-price-box'; 
-                        priceBox.style.fontSize = `${13 + item.priceFontDelta}px`;
-                        priceBox.style.transform = `translate(${item.priceOffsetLeft}px, ${item.priceOffsetTop}px)`;
-                        // Se c'è un valore mostra solo il numero o la cifra immessa, la formattazione a moneta è nativa CSS
-                        priceBox.textContent = item.price ? item.price : '';
-
-                        // Append iniezione sequenziale ordinata
-                        anchor.appendChild(nameBox);
-                        anchor.appendChild(descBox);
-                        if (item.price) {
-                            anchor.appendChild(priceBox);
-                        }
+                        textBlock.appendChild(nameBox);
+                        textBlock.appendChild(descBox);
+                        
+                        anchor.appendChild(textBlock);
                     }
                 }
             });
@@ -592,39 +605,33 @@
             const originalDisplay = window.getComputedStyle(preview).display;
             if (originalDisplay === 'none') preview.style.display = 'flex';
 
-            const element = document.getElementById(elementId);
-            html2canvas(element, {
+            html2canvas(document.getElementById(elementId), {
                 scale: 3,
                 useCORS: true,       
                 allowTaint: false,   
-                logging: false,
-                imageTimeout: 0
+                logging: false
             }).then(canvas => {
                 const link = document.createElement('a');
                 link.download = filename;
                 link.href = canvas.toDataURL('image/png');
                 link.click();
                 if (originalDisplay === 'none') preview.style.display = 'none';
-            }).catch(err => {
-                alert("Errore esportazione: " + err);
-                if (originalDisplay === 'none') preview.style.display = 'none';
             });
         }
 
         function resetToDefault() {
-            if (confirm("Vuoi cancellare i testi e le posizioni per ripristinare il menu moneta predefinito?")) {
+            if (confirm("Ripristinare le impostazioni di fabbrica del layout Zecchino?")) {
                 localStorage.clear();
                 window.location.reload();
             }
         }
 
         // ==========================================================================
-        // ISPEZIONE INCROCIATA BI-DIREZIONALE AGGIORNATA
+        // ISPEZIONE INCROCIATA BI-DIREZIONALE
         // ==========================================================================
         const workspace = document.getElementById('preview-workspace');
         const controlPanel = document.getElementById('control-panel');
         const tooltip = document.getElementById('debug-tooltip');
-        
         let activeElementsRegistry = [];
 
         function moveAndShowTooltip(e, label) {
@@ -652,20 +659,13 @@
                 if (targetNode.id) {
                     const idString = targetNode.id;
                     moveAndShowTooltip(e, `Anteprima -> #${idString}`);
-                    
                     const match = idString.match(/box-(.+)-(name|desc|price)/);
                     if (match) {
                         const cat = match[1];
                         const row = controlPanel.querySelector(`tr[data-target-group="anchor-${cat}"]`);
-                        if (row) {
-                            row.classList.add('inspect-highlight');
-                            activeElementsRegistry.push(row);
-                        }
+                        if (row) { row.classList.add('inspect-highlight'); activeElementsRegistry.push(row); }
                         const rowControl = controlPanel.querySelector(`[data-subbox-target="${idString}"]`);
-                        if (rowControl) {
-                            rowControl.classList.add('inspect-highlight');
-                            activeElementsRegistry.push(rowControl);
-                        }
+                        if (rowControl) { rowControl.classList.add('inspect-highlight'); activeElementsRegistry.push(rowControl); }
                     }
                 } else {
                     moveAndShowTooltip(e, `Anteprima -> Sfondo Pergamena`);
@@ -679,51 +679,33 @@
             const hitElement = e.target;
             const subControlRow = hitElement.closest('[data-subbox-target]');
             const mainTableRow = hitElement.closest('#editor-table tbody tr');
-            const groupTarget = hitElement.closest('.file-inputs');
 
             if (subControlRow) {
                 clearAllHighlights();
                 subControlRow.classList.add('inspect-highlight');
                 activeElementsRegistry.push(subControlRow);
-
                 const targetBoxId = subControlRow.getAttribute('data-subbox-target');
                 const visualBox = document.getElementById(targetBoxId);
-                if (visualBox) {
-                    visualBox.classList.add('inspect-highlight');
-                    activeElementsRegistry.push(visualBox);
-                }
+                if (visualBox) { visualBox.classList.add('inspect-highlight'); activeElementsRegistry.push(visualBox); }
                 moveAndShowTooltip(e, `Editor -> #${targetBoxId}`);
             } 
             else if (mainTableRow && !subControlRow) {
                 clearAllHighlights();
                 mainTableRow.classList.add('inspect-highlight');
                 activeElementsRegistry.push(mainTableRow);
-                
                 const anchorId = mainTableRow.getAttribute('data-target-group');
                 const anchorEl = document.getElementById(anchorId);
                 if (anchorEl) {
-                    Array.from(anchorEl.children).forEach(child => {
-                        child.classList.add('inspect-highlight');
-                        activeElementsRegistry.push(child);
-                    });
+                    Array.from(anchorEl.getElementsByClassName('inspectable-box')).forEach(child => { child.classList.add('inspect-highlight'); activeElementsRegistry.push(child); });
+                    const pBox = anchorEl.querySelector('.item-price-box');
+                    if(pBox) { pBox.classList.add('inspect-highlight'); activeElementsRegistry.push(pBox); }
                 }
                 moveAndShowTooltip(e, `Editor Gruppo -> #${anchorId}`);
-            }
-            else if (groupTarget) {
-                clearAllHighlights();
-                groupTarget.classList.add('inspect-highlight');
-                activeElementsRegistry.push(groupTarget);
-                moveAndShowTooltip(e, `Pannello -> File Sfondo`);
-            } else {
-                if(!hitElement.closest('input, textarea, button, td, label')) {
-                    clearAllHighlights();
-                }
             }
         });
 
         controlPanel.addEventListener('mouseleave', clearAllHighlights);
 
-        // Bootstrap App
         initDatabase();
         buildEditorTable();
         loadBackground();
