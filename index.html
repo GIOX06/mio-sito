@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configuratore Menu Medievale - Advanced Typography Control</title>
+    <title>Configuratore Menu Medievale - Salvataggio Persistente</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -122,7 +122,6 @@
             padding-bottom: 4px;
         }
 
-        /* I CONTENITORI MASTER AGISCONO DA ANCORE POSIZIONALI SULLA PERGAMENA */
         .menu-overlay-container {
             position: absolute;
             left: 20%;
@@ -139,27 +138,26 @@
         #anchor-castellano         { top: 75.4%; }
         #anchor-piccolo-cavaliere  { top: 85.0%; }
 
-        /* BOX ATOMICI INDIPENDENTI CON INTERLINEA ADATTIVA ED EDIT MULTILINEA */
         .inspectable-box {
             width: 100%;
             color: #1c0e00;
             font-family: 'EB Garamond', 'Georgia', serif;
             text-align: center;
             transition: transform 0.05s ease;
-            white-space: pre-line; /* Supporto nativo per i ritorni a capo (\n) */
+            white-space: pre-line;
             word-wrap: break-word;
         }
 
         .item-name-box {
             font-weight: bold;
             letter-spacing: 0.3px;
-            line-height: 1.25em; /* Interlinea proporzionale al font */
+            line-height: 1.25em;
         }
 
         .item-desc-box {
             font-style: italic;
             color: #3d250d;
-            line-height: 1.2em;  /* Interlinea proporzionale al font */
+            line-height: 1.2em;
             margin-top: 2px;
         }
 
@@ -294,7 +292,6 @@
 
     <div id="main-container">
 
-        <!-- PANEL -->
         <div id="control-panel">
             <h2>Impostazioni Titolo e Grafica</h2>
             <div class="control-group" data-inspect-name="Input Titolo">
@@ -309,7 +306,7 @@
                 </div>
             </div>
 
-            <h2>Gestione Piatti (Controlli Indipendenti)</h2>
+            <h2>Gestione Piatti (Salvataggio Persistente)</h2>
             <table id="editor-table">
                 <thead>
                     <tr>
@@ -328,7 +325,6 @@
             <button class="btn-reset" onclick="resetToDefault()">🔄 Inizializza Tutto a Predefinito</button>
         </div>
 
-        <!-- WORKSPACE PREVIEW -->
         <div id="preview-workspace">
             <div class="page-scale-wrapper">
                 <div id="page-menu" class="menu-page-block">
@@ -337,7 +333,6 @@
                         <div id="menu-title-target" class="main-menu-title">Antica Osteria</div>
                     </div>
 
-                    <!-- ANCORE FISSE PER I GRUPPI PORTATA -->
                     <div id="anchor-mastro-birraio" class="menu-overlay-container"></div>
                     <div id="anchor-condottiero" class="menu-overlay-container"></div>
                     <div id="anchor-viandante" class="menu-overlay-container"></div>
@@ -351,8 +346,8 @@
 
     <script>
         const DEFAULT_BG_PATH = "menu_bg.png"; 
+        const DB_KEY = "db_menu_medievale_v3_stable"; // Nuova chiave sicura e isolata
 
-        // DATASET STRUTTURATO CON VARIABILI TIPOGRAFICHE SEPARATE PER NOME E DESCRIZIONE
         const defaultDataset = [
             { id: 1, active: true, cat: "mastro-birraio", catName: "Mastro Birraio", name: "Birra del Borgo", price: "6.00", desc: "Artigianale rossa prodotta con\ngrani locali e luppoli selvatici.", nameFontDelta: 0, nameOffsetTop: 0, descFontDelta: 0, descOffsetTop: 0 },
             { id: 2, active: true, cat: "condottiero", catName: "Condottiero", name: "Pappardelle al Cinghiale", price: "14.00", desc: "Pasta fresca all'uovo con\nragù bianco di cinghiale locale.", nameFontDelta: 0, nameOffsetTop: 0, descFontDelta: 0, descOffsetTop: 0 },
@@ -382,23 +377,30 @@
             }
         }
 
+        // FUNZIONE DI INIZIALIZZAZIONE ADATTIVA: Unisce i dati esistenti salvati con la nuova struttura
         function initDatabase() {
-            const savedData = localStorage.getItem('db_menu_medievale_v2');
+            const savedData = localStorage.getItem(DB_KEY);
             if (savedData) {
-                menuDataset = JSON.parse(savedData);
-                // Sanificazione per retrocompatibilità parametri atomici
-                menuDataset.forEach(item => {
-                    if (item.nameFontDelta === undefined) item.nameFontDelta = 0;
-                    if (item.nameOffsetTop === undefined) item.nameOffsetTop = 0;
-                    if (item.descFontDelta === undefined) item.descFontDelta = 0;
-                    if (item.descOffsetTop === undefined) item.descOffsetTop = 0;
-                });
+                try {
+                    menuDataset = JSON.parse(savedData);
+                    // Controllo di sicurezza: se mancano parametri tipografici li aggiunge dinamicamente senza resettare i testi
+                    menuDataset.forEach(item => {
+                        if (item.nameFontDelta === undefined) item.nameFontDelta = 0;
+                        if (item.nameOffsetTop === undefined) item.nameOffsetTop = 0;
+                        if (item.descFontDelta === undefined) item.descFontDelta = 0;
+                        if (item.descOffsetTop === undefined) item.descOffsetTop = 0;
+                    });
+                } catch(e) {
+                    // In caso di errore irreversibile nel JSON, carica i predefiniti
+                    menuDataset = JSON.parse(JSON.stringify(defaultDataset));
+                }
             } else {
+                // Primo avvio assoluto
                 menuDataset = JSON.parse(JSON.stringify(defaultDataset));
-                localStorage.setItem('db_menu_medievale_v2', JSON.stringify(menuDataset));
+                localStorage.setItem(DB_KEY, JSON.stringify(menuDataset));
             }
 
-            const savedTitle = localStorage.getItem('db_menu_main_title');
+            const savedTitle = localStorage.getItem('db_menu_main_title_v3');
             if(savedTitle) {
                 document.getElementById('input-main-title').value = savedTitle;
             }
@@ -433,7 +435,7 @@
                         document.getElementById(targetId).style.backgroundImage = `url('${base64Data}')`;
                         setLabelUploaded();
                     } catch (error) {
-                        alert("Spazio di archiviazione locale esaurito. Rendering temporaneo applicato.");
+                        alert("Spazio memoria locale pieno. L'immagine verrà mostrata solo temporaneamente.");
                         document.getElementById(targetId).style.backgroundImage = `url('${base64Data}')`;
                     }
                 }
@@ -441,7 +443,6 @@
             }
         }
 
-        // GENERAZIONE RIGHE TABELLA CON INTERFACCIA DI CONTROLLO DOUBLE-BOX MULTI-TARGET
         function buildEditorTable() {
             const tbody = document.querySelector("#editor-table tbody");
             tbody.innerHTML = menuDataset.map(item => `
@@ -451,11 +452,10 @@
                     </td>
                     <td>
                         <b style="color:var(--primary-color); font-size:10px; display:block;">MENU DEL ${item.catName.toUpperCase()}</b>
-                        <textarea id="name-${item.id}" oninput="syncDataAndRender()" style="margin-bottom:4px; font-weight:bold; height:36px;" placeholder="Nome piatto (Invio per andare a capo)">${item.name}</textarea>
-                        <textarea id="desc-${item.id}" oninput="syncDataAndRender()" placeholder="Descrizione piatto (Invio per andare a capo)">${item.desc}</textarea>
+                        <textarea id="name-${item.id}" oninput="syncDataAndRender()" style="margin-bottom:4px; font-weight:bold; height:36px;" placeholder="Nome piatto...">${item.name}</textarea>
+                        <textarea id="desc-${item.id}" oninput="syncDataAndRender()" placeholder="Descrizione piatto...">${item.desc}</textarea>
                         
                         <div class="typo-controls-block">
-                            <!-- CONTROLLI NOME -->
                             <div class="control-row-item" data-subbox-target="box-${item.cat}-name">
                                 <span class="label-target">Box Nome:</span>
                                 <div class="micro-controls">
@@ -467,7 +467,6 @@
                                 <span id="status-name-${item.id}" class="lbl-micro-status">${item.nameFontDelta >= 0 ? '+' : ''}${item.nameFontDelta}pt / ${item.nameOffsetTop >= 0 ? '+' : ''}${item.nameOffsetTop}px</span>
                             </div>
                             
-                            <!-- CONTROLLI DESCRIZIONE -->
                             <div class="control-row-item" data-subbox-target="box-${item.cat}-desc">
                                 <span class="label-target">Box Desc:</span>
                                 <div class="micro-controls">
@@ -485,7 +484,6 @@
             `).join('');
         }
 
-        // MOTORE DI AGGIORNAMENTO TIPOGRAFICO SELETTIVO (ATOMIC ENGINE)
         function adjustAtomicTypography(id, targetBox, type, amount) {
             const item = menuDataset.find(x => x.id === id);
             if (!item) return;
@@ -500,16 +498,18 @@
                 document.getElementById(`status-desc-${id}`).innerText = `${item.descFontDelta >= 0 ? '+' : ''}${item.descFontDelta}pt / ${item.descOffsetTop >= 0 ? '+' : ''}${item.descOffsetTop}px`;
             }
 
-            localStorage.setItem('db_menu_medievale_v2', JSON.stringify(menuDataset));
+            // Salvataggio immediato al click dei pulsanti
+            localStorage.setItem(DB_KEY, JSON.stringify(menuDataset));
             renderGraphics();
         }
 
         function updateTitleAndRender() {
             const titleVal = document.getElementById('input-main-title').value;
-            localStorage.setItem('db_menu_main_title', titleVal);
+            localStorage.setItem('db_menu_main_title_v3', titleVal);
             renderGraphics();
         }
 
+        // SALVATAGGIO IN TEMPO REALE AD OGNI LETTERA DIGITATA (AUTO-IMPLEMENTAZIONE)
         function syncDataAndRender() {
             menuDataset.forEach(item => {
                 item.name = document.getElementById(`name-${item.id}`).value;
@@ -518,11 +518,10 @@
                 item.active = document.getElementById(`active-${item.id}`).checked;
             });
             
-            localStorage.setItem('db_menu_medievale_v2', JSON.stringify(menuDataset));
+            localStorage.setItem(DB_KEY, JSON.stringify(menuDataset));
             renderGraphics();
         }
 
-        // CALCOLO DINAMICO DI SICUREZZA PER SCONGIURARE OVERFLOW MACROSCOPICI
         function calculateAutoscalingFont(text, maxChars = 70, baseFont = 11.5) {
             const length = text.length;
             if (length <= 40) return baseFont;
@@ -530,7 +529,6 @@
             return Math.max(8.0, baseFont * scaleFactor);
         }
 
-        // INIEZIONE GRAFICA CON DOPPIO BOX SEPARATO E REGOLE DI INTERLINEA PROPORZIONALI EM
         function renderGraphics() {
             const currentTitle = document.getElementById('input-main-title').value;
             document.getElementById('menu-title-target').innerText = currentTitle;
@@ -538,14 +536,13 @@
             const categories = ['mastro-birraio', 'condottiero', 'viandante', 'castellano', 'piccolo-cavaliere'];
             categories.forEach(c => {
                 const anchor = document.getElementById(`anchor-${c}`);
-                anchor.innerHTML = '';
+                if (anchor) anchor.innerHTML = '';
             });
 
             menuDataset.forEach(item => {
                 if (item.active) {
                     const anchor = document.getElementById(`anchor-${item.cat}`);
                     if (anchor) {
-                        // 1. Costruzione Box Nome Indipendente
                         const nameBox = document.createElement('div');
                         nameBox.id = `box-${item.cat}-name`;
                         nameBox.className = 'inspectable-box item-name-box';
@@ -555,7 +552,6 @@
                         nameBox.style.transform = `translateY(${item.nameOffsetTop}px)`;
                         nameBox.innerHTML = `${item.name} <span class="item-price-span">- € ${item.price}</span>`;
                         
-                        // 2. Costruzione Box Descrizione Indipendente (Mantiene nativamente i \n scritti nell'editor)
                         const descBox = document.createElement('div');
                         descBox.id = `box-${item.cat}-desc`;
                         descBox.className = 'inspectable-box item-desc-box';
@@ -566,7 +562,6 @@
                         descBox.style.transform = `translateY(${item.descOffsetTop}px)`;
                         descBox.textContent = item.desc; 
 
-                        // Aggancio dei nodi disaccoppiati all'ancora della portata
                         anchor.appendChild(nameBox);
                         anchor.appendChild(descBox);
                     }
@@ -602,14 +597,14 @@
         }
 
         function resetToDefault() {
-            if (confirm("Vuoi azzerare tutte le modifiche, i ritorni a capo e le configurazioni dei singoli Box?")) {
+            if (confirm("Attenzione! Questo cancellerà definitivamente tutti i tuoi testi salvati e le modifiche grafiche. Vuoi procedere?")) {
                 localStorage.clear();
                 window.location.reload();
             }
         }
 
         // ==========================================================================
-        // ISPEZIONE INCROCIATA BI-DIREZIONALE ESTESA PER BOX ATOMICI DISACCOPPIATI
+        // ISPEZIONE COORDINATA BI-DIREZIONALE
         // ==========================================================================
         const workspace = document.getElementById('preview-workspace');
         const controlPanel = document.getElementById('control-panel');
@@ -630,7 +625,6 @@
             activeElementsRegistry = [];
         }
 
-        // Eventi Mouse su Anteprima (Pergamena -> Tabella)
         workspace.addEventListener('mousemove', (e) => {
             clearAllHighlights();
             const hitElement = e.target;
@@ -644,17 +638,14 @@
                     const idString = targetNode.id;
                     moveAndShowTooltip(e, `Anteprima -> #${idString}`);
                     
-                    // Seleziona la riga della tabella associata alla categoria
                     const match = idString.match(/box-(.+)-(name|desc)/);
                     if (match) {
                         const cat = match[1];
-                        const sub = match[2];
                         const row = controlPanel.querySelector(`tr[data-target-group="anchor-${cat}"]`);
                         if (row) {
                             row.classList.add('inspect-highlight');
                             activeElementsRegistry.push(row);
                         }
-                        // Evidenzia lo specifico sub-controllo nel pannello
                         const rowControl = controlPanel.querySelector(`[data-subbox-target="${idString}"]`);
                         if (rowControl) {
                             rowControl.classList.add('inspect-highlight');
@@ -669,7 +660,6 @@
 
         workspace.addEventListener('mouseleave', clearAllHighlights);
 
-        // Eventi Mouse su Pannello Controllo (Tabella -> Anteprima)
         controlPanel.addEventListener('mousemove', (e) => {
             const hitElement = e.target;
             const subControlRow = hitElement.closest('[data-subbox-target]');
@@ -697,7 +687,6 @@
                 const anchorId = mainTableRow.getAttribute('data-target-group');
                 const anchorEl = document.getElementById(anchorId);
                 if (anchorEl) {
-                    // Evidenzia l'intero blocco (sia nome che descrizione contemporaneamente)
                     Array.from(anchorEl.children).forEach(child => {
                         child.classList.add('inspect-highlight');
                         activeElementsRegistry.push(child);
@@ -728,7 +717,7 @@
 
         controlPanel.addEventListener('mouseleave', clearAllHighlights);
 
-        // Bootstrap applicazione
+        // Core Boot
         initDatabase();
         buildEditorTable();
         loadBackground();
