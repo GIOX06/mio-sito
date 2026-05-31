@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configuratore Menu Medievale - Ripristino Sfondo Predefinito</title>
+    <title>Configuratore Menu Medievale - Zecchini Autentici</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -154,6 +154,7 @@
             margin-top: 2px;
         }
 
+        /* CONFIGURAZIONE ZECCHINO CON IMMAGINE PNG AUTENTICA */
         .item-price-box {
             position: absolute;
             left: -45px; 
@@ -162,22 +163,27 @@
             align-items: center;
             justify-content: center;
             z-index: 10;
-            width: 44px;
-            height: 44px;
-            border-radius: 44% 56% 47% 53% / 52% 46% 54% 48%;
-            background: 
-                radial-gradient(circle at 35% 35%, rgba(255,228,140,0.95) 0%, rgba(217,152,30,0.95) 45%, rgba(145,87,6,0.98) 80%, rgba(54,30,2,1) 100%),
-                linear-gradient(135deg, #ffe042 0%, #bd8e14 50%, #6e4d02 100%);
-            border: 2px dashed #472603;
-            outline: 1px solid #241301;
-            box-shadow: 
-                0 3px 6px rgba(0,0,0,0.5), 
-                inset 1px 1px 2px rgba(255,255,255,0.7),
-                inset -2px -2px 4px rgba(0,0,0,0.75);
-            color: #211101; 
+            width: 46px; /* Dimensione ideale per coprire i vecchi cerchietti */
+            height: 46px;
+            
+            /* Caricamento file zecchino-medievale.png */
+            background-image: url('zecchino-medievale.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            
+            filter: drop-shadow(0px 3px 4px rgba(0,0,0,0.45));
+            
+            /* Stile testo prezzo sopra la moneta */
+            color: #1b0c02; 
             font-weight: 800;
             font-family: 'EB Garamond', serif;
-            text-shadow: 1px 1px 1px rgba(255,245,200,0.7);
+            /* Contorno chiaro per staccare lo scritto dallo sfondo dorato elaborato */
+            text-shadow: 
+                -1px -1px 0 #fff5cc,  
+                 1px -1px 0 #fff5cc,
+                -1px  1px 0 #fff5cc,
+                 1px  1px 0 #fff5cc;
             cursor: move;
             touch-action: none;
         }
@@ -316,7 +322,7 @@
                 </div>
             </div>
 
-            <h2>Gestione Piatti (Trascina gli oggetti nell'anteprima!)</h2>
+            <h2>Gestione Piatti (Trascina gli zecchini nell'anteprima!)</h2>
             <table id="editor-table">
                 <thead>
                     <tr>
@@ -349,9 +355,8 @@
     </div>
 
     <script>
-        // RIPRISTINATO IL FILE PREDEFINITO CORRETTO
         const DEFAULT_BG_PATH = "menu_bg.png"; 
-        const DB_KEY = "db_menu_medievale_v10_bg";
+        const DB_KEY = "db_menu_medievale_v11_realcoin";
 
         const defaultDataset = [
             { id: 1, active: true, cat: "mastro-birraio", catName: "Mastro Birraio", name: "Birra del Borgo", price: "6", desc: "Artigianale rossa prodotta con\ngrani locali e luppoli selvatici.", nameFontDelta: 0, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 0, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 2, priceOffsetTop: -5, priceOffsetLeft: -55 },
@@ -504,12 +509,12 @@
                 if (item.active) {
                     const anchor = document.getElementById(`anchor-${item.cat}`);
                     if (anchor) {
-                        // Zecchino Libero
+                        // Rendering Zecchino con immagine PNG
                         if (item.price) {
                             const priceBox = document.createElement('div');
                             priceBox.id = `box-${item.cat}-price`;
                             priceBox.className = 'item-price-box'; 
-                            priceBox.style.fontSize = `${13 + item.priceFontDelta}px`;
+                            priceBox.style.fontSize = `${14 + item.priceFontDelta}px`;
                             priceBox.style.transform = `translate(${item.priceOffsetLeft}px, ${item.priceOffsetTop}px)`;
                             priceBox.textContent = item.price;
                             
@@ -545,7 +550,6 @@
             });
         }
 
-        // DRAG ENGINE CONTROL
         function setupDragStart(e, id, field) {
             if (e.button !== 0 && e.pointerType === 'mouse') return;
             
@@ -608,7 +612,6 @@
             localStorage.setItem(DB_KEY, JSON.stringify(menuDataset));
         });
 
-        // HIGHLIGHTS
         const workspace = document.getElementById('preview-workspace');
         const controlPanel = document.getElementById('control-panel');
         const tooltip = document.getElementById('debug-tooltip');
