@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configuratore Menu Medievale - Zecchini Autentici</title>
+    <title>Configuratore Menu Medievale - Zecchini 3D</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -154,7 +154,7 @@
             margin-top: 2px;
         }
 
-        /* STILE DELLA MONETA REALE */
+        /* CONFIGURAZIONE RITAGLIO TONDO E EFFETTO MONETA 3D */
         .item-price-box {
             position: absolute;
             left: 0; 
@@ -163,27 +163,42 @@
             align-items: center;
             justify-content: center;
             z-index: 10;
-            width: 48px; /* Dimensione ottimale per coprire i vecchi cerchietti */
-            height: 48px;
             
-            /* Puntamento al file zecchinomedievale.png */
-            background-image: url('zecchinomedievale.png');
-            background-size: cover;
+            /* Dimensione della moneta */
+            width: 46px; 
+            height: 46px;
+            
+            /* Taglio a cerchio perfetto per eliminare gli angoli bianchi */
+            border-radius: 50%; 
+            
+            /* Caricamento e centratura dello zecchino */
+            background-image: url('zecchino-medievale.jpg');
+            background-size: 108% 108%; /* Leggero zoom per escludere eventuali bordini esterni */
             background-position: center;
             background-repeat: no-repeat;
             
-            filter: drop-shadow(0px 3px 5px rgba(0,0,0,0.5));
+            /* EFFETTO MULTI-OMBRA ORO E 3D:
+               1. Ombra interna scura (inset) per dare profondità al conio
+               2. Bordino chiaro in alto a sinistra per simulare il riflesso della luce sulla lamina d'oro
+               3. Ombra morbida esterna per staccare la moneta dalla pergamena sottostante */
+            box-shadow: 
+                inset 0 0 8px rgba(0, 0, 0, 0.6),
+                inset 2px 2px 3px rgba(255, 240, 180, 0.5),
+                0 4px 6px rgba(0, 0, 0, 0.4),
+                0 1px 3px rgba(0, 0, 0, 0.3);
             
-            /* Stile del numero sopra la moneta */
+            /* Stile del testo sopra la moneta */
             color: #1a0800; 
             font-weight: 800;
             font-family: 'EB Garamond', serif;
-            /* Forte contorno per renderlo leggibile sulle venature dell'oro */
+            
+            /* Contorno chiaro per contrastare i rilievi scuri dell'oro antico */
             text-shadow: 
                 -1.5px -1.5px 0 #fff8d6,  
                  1.5px -1.5px 0 #fff8d6,
                 -1.5px  1.5px 0 #fff8d6,
                  1.5px  1.5px 0 #fff8d6;
+                 
             cursor: move;
             touch-action: none;
         }
@@ -356,9 +371,8 @@
 
     <script>
         const DEFAULT_BG_PATH = "menu_bg.png"; 
-        const DB_KEY = "db_menu_medievale_v12_perfectcoin";
+        const DB_KEY = "db_menu_medievale_v13_3dcoin";
 
-        // Coordinazione iniziale ottimizzata basata sulle posizioni dei cerchi originali
         const defaultDataset = [
             { id: 1, active: true, cat: "mastro-birraio", catName: "Mastro Birraio", name: "Birra del Borgo", price: "6", desc: "Artigianale rossa prodotta con\ngrani locali e luppoli selvatici.", nameFontDelta: 0, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 0, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 2, priceOffsetTop: -2, priceOffsetLeft: -54 },
             { id: 2, active: true, cat: "condottiero", catName: "Condottiero", name: "Pappardelle al Cinghiale", price: "10", desc: "Pasta fresca all'uovo con\nragù bianco di cinghiale locale.", nameFontDelta: 0, nameOffsetTop: 0, nameOffsetLeft: 0, descFontDelta: 0, descOffsetTop: 0, descOffsetLeft: 0, priceFontDelta: 2, priceOffsetTop: -12, priceOffsetLeft: 236 },
@@ -510,7 +524,7 @@
                 if (item.active) {
                     const anchor = document.getElementById(`anchor-${item.cat}`);
                     if (anchor) {
-                        // Moneta Zecchino PNG
+                        // Moneta Zecchino con ritaglio circolare e ombre 3D
                         if (item.price) {
                             const priceBox = document.createElement('div');
                             priceBox.id = `box-${item.cat}-price`;
