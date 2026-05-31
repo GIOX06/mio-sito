@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configuratore Menu Medievale - Ispezione Globale Coordinata</title>
+    <title>Configuratore Menu Medievale - Ispezione Strutturale</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -182,7 +182,6 @@
             overflow: hidden;
         }
 
-        /* STILIZZAZIONE DEL DIAGNOSTIC TOOLTIP */
         #debug-tooltip {
             position: fixed;
             z-index: 9999;
@@ -199,15 +198,9 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
 
-        /* HIGHLIGHT CRISTALLINO SULLE RIGHE E SUI BOX */
         .inspect-highlight {
             outline: 2px dashed #3498db !important;
             background-color: rgba(52, 152, 219, 0.08) !important;
-        }
-        
-        /* Stile specifico per evidenziare la riga della tabella quando si punta l'anteprima */
-        tr.inspect-highlight td {
-            background-color: rgba(52, 152, 219, 0.12) !important;
         }
 
         h2 { color: var(--primary-color); margin-bottom: 15px; font-size: 1.3rem; border-bottom: 2px solid var(--border-color); padding-bottom: 5px;}
@@ -288,12 +281,12 @@
 
         <div id="control-panel">
             <h2>Impostazioni Titolo e Grafica</h2>
-            <div class="control-group" data-inspect-name="Input Titolo">
+            <div class="control-group">
                 <label for="input-main-title">Titolo Principale del Menu:</label>
                 <input type="text" id="input-main-title" value="Antica Osteria" oninput="updateTitleAndRender()">
             </div>
 
-            <div class="file-inputs" data-inspect-name="Input File Sfondo">
+            <div class="file-inputs">
                 <div class="file-box" id="box-lbl-bg1">
                     <label for="bg1" id="lbl-bg1">🖼️ Sovrascrivi Sfondo (Opzionale)</label>
                     <input type="file" id="bg1" accept="image/*" onchange="processAndSaveBg(this, 'page-menu', 'db_single_bg', 'box-lbl-bg1')">
@@ -312,7 +305,7 @@
                 <tbody></tbody>
             </table>
 
-            <div class="btn-container" data-inspect-name="Pulsante di Esportazione">
+            <div class="btn-container">
                 <button class="btn-download" onclick="downloadPageAsPNG('page-menu', 'Menu_Completo.png')">📸 Scarica Menu Completo (PNG)</button>
             </div>
             
@@ -340,6 +333,7 @@
     </div>
 
     <script>
+        // Corretto da menu_bg.jpg a menu_bg.png per allinearsi al repository GitHub
         const DEFAULT_BG_PATH = "menu_bg.png"; 
 
         const defaultDataset = [
@@ -430,7 +424,7 @@
         function buildEditorTable() {
             const tbody = document.querySelector("#editor-table tbody");
             tbody.innerHTML = menuDataset.map(item => `
-                <tr id="editor-row-${item.id}" data-target-box="box-${item.cat}">
+                <tr>
                     <td style="text-align:center;">
                         <input type="checkbox" ${item.active ? 'checked' : ''} id="active-${item.id}" onchange="syncDataAndRender()">
                     </td>
@@ -538,8 +532,8 @@
         }
 
         function downloadPageAsPNG(elementId, filename) {
-            // Pulizia totale delle classi di tracciamento e debug prima dello scatto
-            document.querySelectorAll('.inspect-highlight').forEach(el => el.classList.remove('inspect-highlight'));
+            const activeHighlights = document.querySelectorAll('.inspect-highlight');
+            activeHighlights.forEach(el => el.classList.remove('inspect-highlight'));
             document.getElementById('debug-tooltip').style.display = 'none';
 
             const preview = document.getElementById('preview-workspace');
@@ -573,111 +567,51 @@
             }
         }
 
-        // ==========================================================================
-        // SISTEMA DI ISPEZIONE INCROCIATO BI-DIREZIONALE (GLOBAL INSPECTOR)
-        // ==========================================================================
         const workspace = document.getElementById('preview-workspace');
-        const controlPanel = document.getElementById('control-panel');
         const tooltip = document.getElementById('debug-tooltip');
-        
-        let activeElementsRegistry = [];
+        let lastHighlightedElement = null;
 
-        // Funzione centralizzata per aggiornare la posizione e il testo del Tooltip
-        function moveAndShowTooltip(e, label) {
-            tooltip.style.display = 'block';
-            tooltip.innerText = label;
-            tooltip.style.left = (e.clientX + 15) + 'px';
-            tooltip.style.top = (e.clientY + 15) + 'px';
-        }
-
-        function clearAllHighlights() {
-            tooltip.style.display = 'none';
-            activeElementsRegistry.forEach(el => {
-                if (el) el.classList.remove('inspect-highlight');
-            });
-            activeElementsRegistry = [];
-        }
-
-        // 1. ASCOLTATORE SULL'ANTEPRIMA (PERGAMENA -> PANNELLO)
         workspace.addEventListener('mousemove', (e) => {
-            clearAllHighlights();
             const hitElement = e.target;
             const targetNode = hitElement.closest('.menu-overlay, #menu-title-container, .menu-page-block');
             
             if (targetNode) {
+                if (lastHighlightedElement && lastHighlightedElement !== targetNode) {
+                    lastHighlightedElement.classList.remove('inspect-highlight');
+                }
                 targetNode.classList.add('inspect-highlight');
-                activeElementsRegistry.push(targetNode);
+                lastHighlightedElement = targetNode;
 
-                let label = "";
+                let identifierText = "";
                 if (targetNode.id) {
-                    label = `Anteprima -> #${targetNode.id}`;
-                    
-                    // Cerca se esiste una riga corrispondente nell'editor
-                    const correspondingRow = controlPanel.querySelector(`tr[data-target-box="${targetNode.id}"]`);
-                    if (correspondingRow) {
-                        correspondingRow.classList.add('inspect-highlight');
-                        activeElementsRegistry.push(correspondingRow);
-                    }
-                } else {
-                    label = `Anteprima -> .menu-page-block`;
+                    identifierText = `ID: #${targetNode.id}`;
+                } else if (targetNode.className) {
+                    const cleanClass = targetNode.className.replace('inspect-highlight', '').trim();
+                    identifierText = `Classe: .${cleanClass.split(' ').join('.')}`;
                 }
-                moveAndShowTooltip(e, label);
-            }
-        });
 
-        workspace.addEventListener('mouseleave', clearAllHighlights);
-
-        // 2. ASCOLTATORE SUL PANNELLO DI CONTROLLO (PANNELLO -> ANTEPRIMA)
-        control-panel.addEventListener('mousemove', (e) => {
-            const hitElement = e.target;
-            
-            // Intercetta se siamo sopra una riga della tabella portate
-            const rowTarget = hitElement.closest('#editor-table tbody tr');
-            // Intercetta se siamo sopra un input generico fuori tabella con label descrittiva
-            const groupTarget = hitElement.closest('.control-group, .file-inputs');
-
-            if (rowTarget) {
-                clearAllHighlights();
-                rowTarget.classList.add('inspect-highlight');
-                activeElementsRegistry.push(rowTarget);
-
-                const targetBoxId = rowTarget.getAttribute('data-target-box');
-                const visualBox = document.getElementById(targetBoxId);
+                tooltip.style.display = 'block';
+                tooltip.innerText = identifierText;
                 
-                if (visualBox) {
-                    visualBox.classList.add('inspect-highlight');
-                    activeElementsRegistry.push(visualBox);
-                }
-                
-                moveAndShowTooltip(e, `Editor -> #${targetBoxId}`);
-            } 
-            else if (groupTarget) {
-                clearAllHighlights();
-                groupTarget.classList.add('inspect-highlight');
-                activeElementsRegistry.push(groupTarget);
-
-                const name = groupTarget.getAttribute('data-inspect-name') || "Controllo Grafico";
-                
-                // Se puntiamo l'input del titolo, evidenziamo anche il blocco titolo sulla pergamena
-                if(groupTarget.querySelector('#input-main-title')) {
-                    const titleBox = document.getElementById('menu-title-container');
-                    if(titleBox) {
-                        titleBox.classList.add('inspect-highlight');
-                        activeElementsRegistry.push(titleBox);
-                    }
-                }
-                moveAndShowTooltip(e, `Pannello -> ${name}`);
+                tooltip.style.left = (e.clientX + 15) + 'px';
+                tooltip.style.top = (e.clientY + 15) + 'px';
             } else {
-                // Rimuove l'evidenziazione se si passa sopra elementi neutri del pannello (es. titoli h2)
-                if(!hitElement.closest('input, textarea, button, td, label')) {
-                    clearAllHighlights();
-                }
+                clearInspectorState();
             }
         });
 
-        control-panel.addEventListener('mouseleave', clearAllHighlights);
+        workspace.addEventListener('mouseleave', () => {
+            clearInspectorState();
+        });
 
-        // Inizializzazione applicazione
+        function clearInspectorState() {
+            tooltip.style.display = 'none';
+            if (lastHighlightedElement) {
+                lastHighlightedElement.classList.remove('inspect-highlight');
+                lastHighlightedElement = null;
+            }
+        }
+
         initDatabase();
         buildEditorTable();
         loadBackground();
