@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configuratore Menu Medievale - Controllo Tipografico Avanzato</title>
+    <title>Configuratore Menu Medievale - Ispezione Strutturale</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -79,6 +79,7 @@
             justify-content: center;
             align-items: center;
             flex-shrink: 0;
+            position: relative; /* Necessario per il posizionamento assoluto del tooltip di debug */
         }
 
         .page-scale-wrapper {
@@ -143,10 +144,9 @@
             justify-content: center;
             text-align: center;
             gap: 2px;
-            transition: transform 0.1s ease; /* Fluidità di spostamento manuale */
+            transition: transform 0.1s ease;
         }
 
-        /* Altezze percentuali storiche fisse di partenza */
         #box-mastro-birraio     { top: 41.7%; }
         #box-condottiero        { top: 54.7%; }
         #box-viandante          { top: 65.3%; }
@@ -182,6 +182,29 @@
             overflow: hidden;
         }
 
+        /* STILIZZAZIONE DEL DIAGNOSTIC TOOLTIP */
+        #debug-tooltip {
+            position: fixed;
+            z-index: 9999;
+            background: rgba(28, 14, 0, 0.95);
+            color: #ebdcb9;
+            padding: 6px 10px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 11px;
+            font-weight: bold;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            pointer-events: none; /* Impedisce al tooltip di bloccare gli eventi mouseover sottostanti */
+            display: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        /* HIGHLIGHT VISIVO SULL'OGGETTO ISPEZIONATO SULLA PERGAMENA */
+        .inspect-highlight {
+            outline: 2px dashed #3498db !important;
+            background-color: rgba(52, 152, 219, 0.08) !important;
+        }
+
         h2 { color: var(--primary-color); margin-bottom: 15px; font-size: 1.3rem; border-bottom: 2px solid var(--border-color); padding-bottom: 5px;}
         .control-group { margin-bottom: 15px; }
         .control-group label { display: block; font-size: 12px; font-weight: bold; color: var(--primary-color); margin-bottom: 5px; }
@@ -197,7 +220,6 @@
         input[type="text"], textarea { width: 100%; border: 1px solid #ccc; border-radius: 4px; padding: 6px; font-family: inherit; }
         textarea { resize: vertical; height: 42px; font-size: 11px; }
         
-        /* MICRO-CONTROLLI INTERFACCIA UTENTE */
         .micro-controls {
             display: flex;
             gap: 5px;
@@ -250,6 +272,9 @@
 </head>
 <body>
 
+    <!-- TOOLTIP DINAMICO PER ISPEZIONE OGGETTI -->
+    <div id="debug-tooltip"></div>
+
     <div id="mobile-tabs">
         <button id="btn-tab-edit" class="tab-btn active" onclick="switchMobileTab('edit')">✍️ Modifica Menu</button>
         <button id="btn-tab-view" class="tab-btn" onclick="switchMobileTab('view')">👁️ Vedi Anteprima</button>
@@ -267,7 +292,7 @@
             <div class="file-inputs">
                 <div class="file-box" id="box-lbl-bg1">
                     <label for="bg1" id="lbl-bg1">🖼️ Sovrascrivi Sfondo (Opzionale)</label>
-                    <input type="file" id="bg1" accept="image/*" onchange="processAndSaveBg(this, 'page-menu', 'db_single_bg', 'box-lbl-bg1')">
+                    <input type="file" id="bg1" accept="image/*" onchange="processAndSaveBg(this, 'page-menu', 'db_single_bg', 'box-lbl-bg1') border-color">
                 </div>
             </div>
 
@@ -313,7 +338,6 @@
     <script>
         const DEFAULT_BG_PATH = "menu_bg.jpg"; 
 
-        // Dataset iniziale arricchito con parametri tipografici extra (fontDelta e offsetTop)
         const defaultDataset = [
             { id: 1, active: true, cat: "mastro-birraio", catName: "Mastro Birraio", name: "Birra del Borgo", price: "6.00", desc: "Artigianale rossa prodotta con grani locali e luppoli selvatici.", fontDelta: 0, offsetTop: 0 },
             { id: 2, active: true, cat: "condottiero", catName: "Condottiero", name: "Pappardelle al Cinghiale", price: "14.00", desc: "Pasta fresca all'uovo con ragù bianco di cinghiale locale.", fontDelta: 0, offsetTop: 0 },
@@ -347,7 +371,6 @@
             const savedData = localStorage.getItem('db_menu_medievale_single');
             if (savedData) {
                 menuDataset = JSON.parse(savedData);
-                // Patch protettiva per retrocompatibilità qualora mancassero i nuovi campi nei vecchi salvataggi
                 menuDataset.forEach(item => {
                     if (item.fontDelta === undefined) item.fontDelta = 0;
                     if (item.offsetTop === undefined) item.offsetTop = 0;
@@ -400,7 +423,6 @@
             }
         }
 
-        // Creazione interfaccia con l'aggiunta delle pulsantiere per Font e Posizionamento Verticale
         function buildEditorTable() {
             const tbody = document.querySelector("#editor-table tbody");
             tbody.innerHTML = menuDataset.map(item => `
@@ -430,7 +452,6 @@
             `).join('');
         }
 
-        // Modifica dei dati tipografici dinamici
         function adjustTypography(id, type, amount) {
             const item = menuDataset.find(x => x.id === id);
             if (!item) return;
@@ -441,13 +462,11 @@
                 item.offsetTop = parseInt(item.offsetTop + amount);
             }
 
-            // Aggiorna l'etichetta di stato numerica nel pannello di controllo
             const statusLabel = document.getElementById(`status-${id}`);
             if (statusLabel) {
                 statusLabel.innerText = `(${item.fontDelta >= 0 ? '+' : ''}${item.fontDelta}pt / ${item.offsetTop >= 0 ? '+' : ''}${item.offsetTop}px)`;
             }
 
-            // Salva e renderizza i cambiamenti all'istante
             localStorage.setItem('db_menu_medievale_single', JSON.stringify(menuDataset));
             renderGraphics();
         }
@@ -485,7 +504,7 @@
             categories.forEach(c => {
                 const box = document.getElementById(`box-${c}`);
                 box.innerHTML = '';
-                box.style.transform = 'none'; // reset posizionamento manuale prima del ricalcolo
+                box.style.transform = 'none'; 
             });
 
             menuDataset.forEach(item => {
@@ -496,8 +515,6 @@
                         wrapper.className = 'item-wrapper';
 
                         const cleanDesc = item.desc.replace(/\n/g, " ").trim();
-                        
-                        // Calcola basi e applica le correzioni manuali inserite dall'utente (+/- fontDelta)
                         const autoDescSize = calculateAutoscalingFont(cleanDesc, 60, 11.5) + item.fontDelta;
                         const headerFontSize = 13.5 + item.fontDelta;
 
@@ -510,8 +527,6 @@
                             </div>
                         `;
                         box.appendChild(wrapper);
-
-                        // Applica lo spostamento verticale personalizzato (Up/Down) via CSS Translate
                         box.style.transform = `translateY(${item.offsetTop}px)`;
                     }
                 }
@@ -519,6 +534,11 @@
         }
 
         function downloadPageAsPNG(elementId, filename) {
+            // Disattiva temporaneamente l'effetto ispezione visiva per pulire l'output PNG finalizzato
+            const activeHighlights = document.querySelectorAll('.inspect-highlight');
+            activeHighlights.forEach(el => el.classList.remove('inspect-highlight'));
+            document.getElementById('debug-tooltip').style.display = 'none';
+
             const preview = document.getElementById('preview-workspace');
             const originalDisplay = window.getComputedStyle(preview).display;
             
@@ -550,7 +570,64 @@
             }
         }
 
-        // Bootstrapping iniziale dell'applicazione
+        // ==========================================================================
+        // MOTORE DI ISPEZIONE DIAGNOSTICA (TOOLTIP REAL-TIME)
+        // ==========================================================================
+        const workspace = document.getElementById('preview-workspace');
+        const tooltip = document.getElementById('debug-tooltip');
+        let lastHighlightedElement = null;
+
+        workspace.addEventListener('mousemove', (e) => {
+            // Ottieni l'elemento preciso che si trova sotto il cursore
+            const hitElement = e.target;
+            
+            // Trova il più vicino contenitore logico rilevante all'interno della pergamena
+            const targetNode = hitElement.closest('.menu-overlay, #menu-title-container, .menu-page-block');
+            
+            if (targetNode) {
+                // Gestione Highlight Grafico Temporaneo
+                if (lastHighlightedElement && lastHighlightedElement !== targetNode) {
+                    lastHighlightedElement.classList.remove('inspect-highlight');
+                }
+                targetNode.classList.add('inspect-highlight');
+                lastHighlightedElement = targetNode;
+
+                // Estrazione dati strutturali dell'oggetto puntato
+                let identifierText = "";
+                if (targetNode.id) {
+                    identifierText = `ID: #${targetNode.id}`;
+                } else if (targetNode.className) {
+                    // Pulisce le classi di debug dall'output testuale del tooltip
+                    const cleanClass = targetNode.className.replace('inspect-highlight', '').trim();
+                    identifierText = `Classe: .${cleanClass.split(' ').join('.')}`;
+                }
+
+                // Aggiornamento posizionamento e visibilità del Tooltip Diagnostic
+                tooltip.style.display = 'block';
+                tooltip.innerText = identifierText;
+                
+                // Offset di posizionamento rispetto al puntatore mouse per evitare sfarfallii
+                tooltip.style.left = (e.clientX + 15) + 'px';
+                tooltip.style.top = (e.clientY + 15) + 'px';
+            } else {
+                clearInspectorState();
+            }
+        });
+
+        // Reset dello stato quando il mouse esce completamente dall'area di anteprima
+        workspace.addEventListener('mouseleave', () => {
+            clearInspectorState();
+        });
+
+        function clearInspectorState() {
+            tooltip.style.display = 'none';
+            if (lastHighlightedElement) {
+                lastHighlightedElement.classList.remove('inspect-highlight');
+                lastHighlightedElement = null;
+            }
+        }
+
+        // Inizializzazione applicativa sequenziale
         initDatabase();
         buildEditorTable();
         loadBackground();
